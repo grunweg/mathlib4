@@ -26,7 +26,8 @@ of the Hahn-Banach theorem for TVS, which does not exist yet
 variable {𝕜: Type*} [NormedField 𝕜]
   {X Y Z: Type*} [NormedAddCommGroup X] [NormedSpace 𝕜 X] [NormedAddCommGroup Y] [NormedSpace 𝕜 Y]
   [NormedAddCommGroup Z] [NormedSpace 𝕜 Z]
-  {X' Y' : Type*} [NormedAddCommGroup X'] [NormedSpace 𝕜 X'] [NormedAddCommGroup Y'] [NormedSpace 𝕜 Y']
+  {X' Y' : Type*} [NormedAddCommGroup X'] [NormedSpace 𝕜 X']
+  [NormedAddCommGroup Y'] [NormedSpace 𝕜 Y']
   {S T : X →L[𝕜] Y}
 
 open FiniteDimensional
@@ -52,8 +53,8 @@ namespace IsFredholm
 
 -- TODO: avoid the erw's here!
 /-- If `T` is Fredholm, so is any scalar multiple `c T` for `c ≠ 0`. -/
-lemma smul (hT : IsFredholm 𝕜 (X := X) (Y := Y) T) {c : 𝕜} (hc : c ≠ 0) :
-    IsFredholm 𝕜 (X := X) (Y := Y) (c • T) := by
+lemma smul (hT : IsFredholm 𝕜 T) {c : 𝕜} (hc : c ≠ 0) :
+    IsFredholm 𝕜 (c • T) := by
   constructor
   · erw [LinearMap.ker_smul T.toLinearMap _ hc]
     exact hT.1
@@ -61,7 +62,7 @@ lemma smul (hT : IsFredholm 𝕜 (X := X) (Y := Y) T) {c : 𝕜} (hc : c ≠ 0) 
     exact hT.2
 
 /-- If `T` is Fredholm and `c ≠ 0`, then `c • T` has the same Fredholm index as `T`. -/
-lemma index_smul (_hT : IsFredholm 𝕜 (X := X) (Y := Y) T) {c : 𝕜} (hc : c ≠ 0) :
+lemma index_smul (_hT : IsFredholm 𝕜 T) {c : 𝕜} (hc : c ≠ 0) :
     index 𝕜 X Y (c • T) = index 𝕜 X Y T := by
   simp only [index]
   erw [LinearMap.ker_smul T.toLinearMap _ hc, T.range_smul _ hc]
@@ -69,11 +70,19 @@ lemma index_smul (_hT : IsFredholm 𝕜 (X := X) (Y := Y) T) {c : 𝕜} (hc : c 
 
 /-- A continuous linear equivalence is Fredholm, with Fredholm index 0. -/
 lemma _root_.ContinuousLinearEquiv.isFredholm (T : X ≃L[𝕜] Y) :
-    IsFredholm 𝕜 (X := X) (Y := Y) T := by
+    IsFredholm 𝕜 T.toContinuousLinearMap := by
   -- TODO: why are these erw's needed?
   constructor
-  · erw [LinearEquiv.ker T.toLinearEquiv]
-    exact Module.Finite.bot 𝕜 X
+  · sorry --erw [LinearMap.ker T.toLinearEquiv]
+    -- missing: [LinearMapClass.ker T] -- [ContinuousLinearEquiv.ker T]
+
+    -- (f : F) [LinearMapClass F A B]
+
+    --exact Module.Finite.bot 𝕜 X
+    -- have :=
+    -- simp at this
+    -- rw [this]
+    -- better: rw [simp% this]
   · erw [LinearEquiv.range T.toLinearEquiv]
     exact Module.Finite.of_finite
 
