@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Kim Morrison
 -/
 import Mathlib.Algebra.Group.PUnit
+import Mathlib.CategoryTheory.Monoidal.Attr
 import Mathlib.CategoryTheory.Monoidal.Braided.Basic
 import Mathlib.CategoryTheory.Monoidal.CoherenceLemmas
 import Mathlib.CategoryTheory.Monoidal.Discrete
@@ -16,6 +17,12 @@ We define monoids in a monoidal category `C` and show that the category of monoi
 the category of lax monoidal functors from the unit monoidal category to `C`.  We also show that if
 `C` is braided, then the category of monoids is naturally monoidal.
 
+## Simp set for monoid object tautologies
+
+In this file, we also provide a simp set called `mon_tauto` whose goal is to prove all tautologies
+involving (commutative) monoid objects in a (braided) monoidal category.
+
+Please read the documentation in `Mathlib/CategoryTheory/Monoidal/Attr.lean` for full details.
 -/
 
 universe v₁ v₂ v₃ u₁ u₂ u₃ u
@@ -44,6 +51,7 @@ class Mon_Class (X : C) where
   mul_assoc' : (mul ▷ X) ≫ mul = (α_ X X X).hom ≫ (X ◁ mul) ≫ mul := by aesop_cat
 
 namespace Mon_Class
+variable {M X Y : C} [Mon_Class M]
 
 @[inherit_doc] scoped notation "μ" => Mon_Class.mul
 @[inherit_doc] scoped notation "μ["M"]" => Mon_Class.mul (X := M)
@@ -53,14 +61,24 @@ namespace Mon_Class
 /- The simp attribute is reserved for the unprimed versions. -/
 attribute [reassoc] one_mul' mul_one' mul_assoc'
 
-@[reassoc (attr := simp)]
+@[reassoc (attr := simp, mon_tauto)]
 theorem one_mul (X : C) [Mon_Class X] : η ▷ X ≫ μ = (λ_ X).hom := one_mul'
 
-@[reassoc (attr := simp)]
+@[reassoc (attr := simp, mon_tauto)]
 theorem mul_one (X : C) [Mon_Class X] : X ◁ η ≫ μ = (ρ_ X).hom := mul_one'
 
 @[reassoc (attr := simp)]
 theorem mul_assoc (X : C) [Mon_Class X] : μ ▷ X ≫ μ = (α_ X X X).hom ≫ X ◁ μ ≫ μ := mul_assoc'
+
+@[reassoc (attr := simp, mon_tauto)]
+lemma associator_inv_comp_tensorHom_mul_comp_mul (f : X ⊗ Y ⟶ M) :
+    (α_ X Y (M ⊗ M)).inv ≫ (f ⊗ₘ μ) ≫ μ = X ◁ Y ◁ μ ≫ (α_ X Y M).inv ≫ f ▷ M ≫ μ := by
+  simp [tensorHom_def']
+
+@[reassoc (attr := simp, mon_tauto)]
+lemma associator_hom_comp_mul_tensorHom_comp_mul (f : X ⊗ Y ⟶ M) :
+    (α_ (M ⊗ M) X Y).hom ≫ (μ ⊗ₘ f) ≫ μ = μ ▷ X ▷ Y ≫ (α_ M X Y).hom ≫ M ◁ f ≫ μ := by
+  simp [tensorHom_def]
 
 @[simps]
 instance : Mon_Class (𝟙_ C) where
@@ -79,6 +97,34 @@ theorem ext {X : C} (h₁ h₂ : Mon_Class X) (H : h₁.mul = h₂.mul) : h₁ =
 end Mon_Class
 
 open scoped Mon_Class
+
+namespace Mathlib.Tactic.MonSimp
+variable {C : Type*} [Category C] [MonoidalCategory C] {M X X₁ X₂ X₃ Y Y₁ Y₂ Y₃ Z : C} [Mon_Class M]
+
+attribute [mon_tauto] Category.id_comp Category.comp_id Category.assoc tensorμ tensorδ
+
+@[mon_tauto] lemma whiskerLeft_def (X : C) (f : Y ⟶ Z) : X ◁ f = 𝟙 X ⊗ₘ f := by simp
+@[mon_tauto] lemma whiskerRight_def (f : X ⟶ Y) (Z : C) : f ▷ Z = f ⊗ₘ 𝟙 Z := by simp
+
+@[reassoc (attr := mon_tauto)]
+lemma mul_assoc_hom : (α_ M M M).hom ≫ (𝟙 M ⊗ₘ μ) ≫ μ = (μ ⊗ₘ 𝟙 M) ≫ μ := by simp
+@[reassoc (attr := mon_tauto)]
+lemma mul_assoc_inv : (α_ M M M).inv ≫ (μ ⊗ₘ 𝟙 M) ≫ μ = (𝟙 M ⊗ₘ μ) ≫ μ := by simp
+
+@[reassoc (attr := mon_tauto)]
+lemma mul_mul_assoc_hom : (α_ M M (M ⊗ M)).hom ≫ (𝟙 M ⊗ₘ (𝟙 M ⊗ₘ μ) ≫ μ) ≫ μ = (μ ⊗ₘ μ) ≫ μ := by
+  simp [← cancel_epi (α_ M M (M ⊗ M)).inv]
+
+@[reassoc (attr := mon_tauto)]
+lemma mul_mul_assoc_inv :
+    (α_ (M ⊗ M) M M).inv ≫ ((μ ⊗ₘ 𝟙 M) ≫ μ ⊗ₘ 𝟙 M) ≫ μ = (μ ⊗ₘ μ) ≫ μ := by
+  simp [← cancel_epi (α_ (M ⊗ M) M M).hom, ← Mon_Class.mul_assoc]
+
+@[reassoc (attr := mon_tauto)]
+lemma tensorHom_comp_tensorHom (f₁ : X₁ ⟶ X₂) (g₁ : Y₁ ⟶ Y₂) (f₂ : X₂ ⟶ X₃) (g₂ : Y₂ ⟶ Y₃) :
+    (f₁ ⊗ₘ g₁) ≫ (f₂ ⊗ₘ g₂) = (f₁ ≫ f₂) ⊗ₘ (g₁ ≫ g₂) := by simp
+
+end Mathlib.Tactic.MonSimp
 
 variable {M N O : C} [Mon_Class M] [Mon_Class N] [Mon_Class O]
 
@@ -848,13 +894,18 @@ open scoped Mon_Class
 
 namespace IsCommMon
 
-@[reassoc (attr := simp)]
+@[reassoc (attr := simp, mon_tauto)]
 theorem mul_comm (X : C) [Mon_Class X] [IsCommMon X] : (β_ X X).hom ≫ μ = μ := mul_comm'
 
 instance : IsCommMon (𝟙_ C) where
   mul_comm' := by dsimp; rw [braiding_leftUnitor, unitors_equal]
 
 end IsCommMon
+
+variable (M) in
+@[reassoc (attr := simp)]
+lemma Mon_Class.mul_mul_mul_comm [IsCommMon M] :
+    tensorμ M M M M ≫ (μ ⊗ₘ μ) ≫ μ = (μ ⊗ₘ μ) ≫ μ := by simp only [mon_tauto]
 
 end
 
