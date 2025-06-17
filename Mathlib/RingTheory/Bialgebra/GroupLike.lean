@@ -94,11 +94,11 @@ lemma IsGroupLikeElem.ringInverse (ha : IsGroupLikeElem R a) :
 variable (R A) in
 /-- The group of group-like elements in a bialgebra. -/
 abbrev GroupLike : Type _ := ({
-  carrier := {u | IsGroupLikeElem R (u : A)}
-  mul_mem' := .mul
-  one_mem' := .one
-  inv_mem' := .unitsInv
-} : Subgroup Aˣ)
+    carrier := {u | IsGroupLikeElem R (u : A)}
+    mul_mem' := .mul
+    one_mem' := .one
+    inv_mem' := .unitsInv
+  } : Subgroup Aˣ)
 
 end Semiring
 
