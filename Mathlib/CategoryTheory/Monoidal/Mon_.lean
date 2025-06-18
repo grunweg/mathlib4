@@ -61,24 +61,14 @@ variable {M X Y : C} [Mon_Class M]
 /- The simp attribute is reserved for the unprimed versions. -/
 attribute [reassoc] one_mul' mul_one' mul_assoc'
 
-@[reassoc (attr := simp, mon_tauto)]
+@[reassoc (attr := simp)]
 theorem one_mul (X : C) [Mon_Class X] : η ▷ X ≫ μ = (λ_ X).hom := one_mul'
 
-@[reassoc (attr := simp, mon_tauto)]
+@[reassoc (attr := simp)]
 theorem mul_one (X : C) [Mon_Class X] : X ◁ η ≫ μ = (ρ_ X).hom := mul_one'
 
 @[reassoc (attr := simp)]
 theorem mul_assoc (X : C) [Mon_Class X] : μ ▷ X ≫ μ = (α_ X X X).hom ≫ X ◁ μ ≫ μ := mul_assoc'
-
-@[reassoc (attr := simp, mon_tauto)]
-lemma associator_inv_comp_tensorHom_mul_comp_mul (f : X ⊗ Y ⟶ M) :
-    (α_ X Y (M ⊗ M)).inv ≫ (f ⊗ₘ μ) ≫ μ = X ◁ Y ◁ μ ≫ (α_ X Y M).inv ≫ f ▷ M ≫ μ := by
-  simp [tensorHom_def']
-
-@[reassoc (attr := simp, mon_tauto)]
-lemma associator_hom_comp_mul_tensorHom_comp_mul (f : X ⊗ Y ⟶ M) :
-    (α_ (M ⊗ M) X Y).hom ≫ (μ ⊗ₘ f) ≫ μ = μ ▷ X ▷ Y ≫ (α_ M X Y).hom ≫ M ◁ f ≫ μ := by
-  simp [tensorHom_def]
 
 @[simps]
 instance : Mon_Class (𝟙_ C) where
@@ -98,33 +88,52 @@ end Mon_Class
 
 open scoped Mon_Class
 
-namespace Mathlib.Tactic.MonSimp
-variable {C : Type*} [Category C] [MonoidalCategory C] {M X X₁ X₂ X₃ Y Y₁ Y₂ Y₃ Z : C} [Mon_Class M]
+namespace Mathlib.Tactic.MonTauto
+variable {C : Type*} [Category C] [MonoidalCategory C] {M W X X₁ X₂ X₃ Y Y₁ Y₂ Y₃ Z Z₁ Z₂ : C}
+  [Mon_Class M]
 
-attribute [mon_tauto] Category.id_comp Category.comp_id Category.assoc tensorμ tensorδ
+attribute [mon_tauto] Category.id_comp Category.comp_id Category.assoc
+  tensor_id tensorμ tensorδ
 
 @[mon_tauto] lemma whiskerLeft_def (X : C) (f : Y ⟶ Z) : X ◁ f = 𝟙 X ⊗ₘ f := by simp
 @[mon_tauto] lemma whiskerRight_def (f : X ⟶ Y) (Z : C) : f ▷ Z = f ⊗ₘ 𝟙 Z := by simp
 
 @[reassoc (attr := mon_tauto)]
-lemma mul_assoc_hom : (α_ M M M).hom ≫ (𝟙 M ⊗ₘ μ) ≫ μ = (μ ⊗ₘ 𝟙 M) ≫ μ := by simp
-@[reassoc (attr := mon_tauto)]
-lemma mul_assoc_inv : (α_ M M M).inv ≫ (μ ⊗ₘ 𝟙 M) ≫ μ = (𝟙 M ⊗ₘ μ) ≫ μ := by simp
+lemma associator_hom_comp_tensorHom_tensorHom (f : X₁ ⟶ X₂) (g : Y₁ ⟶ Y₂) (h : Z₁ ⟶ Z₂) :
+    (α_ X₁ Y₁ Z₁).hom ≫ (f ⊗ₘ g ⊗ₘ h) = ((f ⊗ₘ g) ⊗ₘ h) ≫ (α_ X₂ Y₂ Z₂).hom := by simp
 
 @[reassoc (attr := mon_tauto)]
-lemma mul_mul_assoc_hom : (α_ M M (M ⊗ M)).hom ≫ (𝟙 M ⊗ₘ (𝟙 M ⊗ₘ μ) ≫ μ) ≫ μ = (μ ⊗ₘ μ) ≫ μ := by
-  simp [← cancel_epi (α_ M M (M ⊗ M)).inv]
+lemma associator_inv_comp_tensorHom_tensorHom (f : X₁ ⟶ X₂) (g : Y₁ ⟶ Y₂) (h : Z₁ ⟶ Z₂) :
+    (α_ X₁ Y₁ Z₁).inv ≫ ((f ⊗ₘ g) ⊗ₘ h) = (f ⊗ₘ g ⊗ₘ h) ≫ (α_ X₂ Y₂ Z₂).inv := by simp
 
 @[reassoc (attr := mon_tauto)]
-lemma mul_mul_assoc_inv :
-    (α_ (M ⊗ M) M M).inv ≫ ((μ ⊗ₘ 𝟙 M) ≫ μ ⊗ₘ 𝟙 M) ≫ μ = (μ ⊗ₘ μ) ≫ μ := by
-  simp [← cancel_epi (α_ (M ⊗ M) M M).hom, ← Mon_Class.mul_assoc]
+lemma associator_hom_comp_tensorHom_tensorHom_comp (f : X₁ ⟶ X₂) (g : Y₁ ⟶ Y₂) (h : Z₁ ⟶ Z₂)
+    (gh : Y₂ ⊗ Z₂ ⟶ W) :
+    (α_ X₁ Y₁ Z₁).hom ≫ (f ⊗ₘ ((g ⊗ₘ h) ≫ gh)) =
+      ((f ⊗ₘ g) ⊗ₘ h) ≫ (α_ X₂ Y₂ Z₂).hom ≫ (𝟙 _ ⊗ₘ gh) := by simp [tensorHom_def]
+
+@[reassoc (attr := mon_tauto)]
+lemma associator_inv_comp_tensorHom_tensorHom_comp (f : X₁ ⟶ X₂) (g : Y₁ ⟶ Y₂) (h : Z₁ ⟶ Z₂)
+    (fg : X₂ ⊗ Y₂ ⟶ W) :
+    (α_ X₁ Y₁ Z₁).inv ≫ (((f ⊗ₘ g) ≫ fg) ⊗ₘ h) =
+      (f ⊗ₘ g ⊗ₘ h) ≫ (α_ X₂ Y₂ Z₂).inv ≫ (fg ⊗ₘ 𝟙 _) := by simp [tensorHom_def']
 
 @[reassoc (attr := mon_tauto)]
 lemma tensorHom_comp_tensorHom (f₁ : X₁ ⟶ X₂) (g₁ : Y₁ ⟶ Y₂) (f₂ : X₂ ⟶ X₃) (g₂ : Y₂ ⟶ Y₃) :
     (f₁ ⊗ₘ g₁) ≫ (f₂ ⊗ₘ g₂) = (f₁ ≫ f₂) ⊗ₘ (g₁ ≫ g₂) := by simp
 
-end Mathlib.Tactic.MonSimp
+@[reassoc (attr := mon_tauto)] lemma one_mul : (η ⊗ₘ 𝟙 M) ≫ μ = (λ_ M).hom := by simp
+@[reassoc (attr := mon_tauto)] lemma mul_one : (𝟙 M ⊗ₘ η) ≫ μ = (ρ_ M).hom := by simp
+
+@[reassoc (attr := mon_tauto)]
+lemma mul_assoc_hom (f : X ⟶ M) :
+    (α_ X M M).hom ≫ (f ⊗ₘ μ) ≫ μ = ((f ⊗ₘ 𝟙 M) ≫ μ ⊗ₘ 𝟙 M) ≫ μ := by simp [tensorHom_def]
+
+@[reassoc (attr := mon_tauto)]
+lemma mul_assoc_inv (f : X ⟶ M) :
+    (α_ M M X).inv ≫ (μ ⊗ₘ f) ≫ μ = (𝟙 M ⊗ₘ (𝟙 M ⊗ₘ f) ≫ μ) ≫ μ  := by simp [tensorHom_def']
+
+end Mathlib.Tactic.MonTauto
 
 variable {M N O : C} [Mon_Class M] [Mon_Class N] [Mon_Class O]
 
@@ -887,18 +896,21 @@ section
 variable [BraidedCategory.{v₁} C]
 
 /-- Predicate for a monoid object to be commutative. -/
-class IsCommMon (X : C) [Mon_Class X] where
-  mul_comm' : (β_ X X).hom ≫ μ = μ := by aesop_cat
+class IsCommMon (M : C) [Mon_Class M] where
+  mul_comm (M) : (β_ M M).hom ≫ μ = μ := by aesop_cat
 
 open scoped Mon_Class
 
 namespace IsCommMon
 
+attribute [reassoc (attr := simp, mon_tauto)] mul_comm
+
+variable (M) in
 @[reassoc (attr := simp, mon_tauto)]
-theorem mul_comm (X : C) [Mon_Class X] [IsCommMon X] : (β_ X X).hom ≫ μ = μ := mul_comm'
+lemma mul_comm' [IsCommMon M] : (β_ M M).inv ≫ μ = μ := by simp [← cancel_epi (β_ M M).hom]
 
 instance : IsCommMon (𝟙_ C) where
-  mul_comm' := by dsimp; rw [braiding_leftUnitor, unitors_equal]
+  mul_comm := by dsimp; rw [braiding_leftUnitor, unitors_equal]
 
 end IsCommMon
 
@@ -906,6 +918,11 @@ variable (M) in
 @[reassoc (attr := simp)]
 lemma Mon_Class.mul_mul_mul_comm [IsCommMon M] :
     tensorμ M M M M ≫ (μ ⊗ₘ μ) ≫ μ = (μ ⊗ₘ μ) ≫ μ := by simp only [mon_tauto]
+
+variable (M) in
+@[reassoc (attr := simp)]
+lemma Mon_Class.mul_mul_mul_comm' [IsCommMon M] :
+    tensorδ M M M M ≫ (μ ⊗ₘ μ) ≫ μ = (μ ⊗ₘ μ) ≫ μ := by simp only [mon_tauto]
 
 end
 
