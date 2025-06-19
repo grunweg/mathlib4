@@ -569,7 +569,7 @@ variable {x y z : ℚ}
 #conv field_simp2 => (1 : ℚ)
 
 -- Combining powers of a single atom.
-section
+section singleAtom
 
 /-- info: 1 -/
 #guard_msgs in
@@ -599,22 +599,53 @@ section
 #guard_msgs in
 #conv field_simp2 => x ^ 3 * x ^ 42
 
+-- Inverses and exponent -1 are normalised to the same output.
+/-- info: x ^ (-1) -/
+#guard_msgs in
+#conv field_simp2 => x⁻¹
+
+/-- info: x ^ (-1) -/
+#guard_msgs in
+#conv field_simp2 => x ^ (-1 : ℤ)
+
+-- Exponents in ℕ and ℤ are treated the same.
+/-- info: x ^ 5 -/
+#guard_msgs in
+#conv field_simp2 => x ^ 2 * x ^ (3 : ℤ)
+
+/-- info: x ^ 2 -/
+#guard_msgs in
+#conv field_simp2 => x ^ (1 : ℤ) * x
+
+/-- info: 1 -/
+#guard_msgs in
+#conv field_simp2 => x ^ (0 : ℤ)
+
+/-- info: x ^ (-3) -/
+#guard_msgs in
+#conv field_simp2 => x ^ (-1 : ℤ) * x ^ (-2 : ℤ)
+
+/-- info: x ^ (-3) -/
+#guard_msgs in
+#conv field_simp2 => x⁻¹ ^ 1 * x⁻¹ ^ 2
+
 section -- variable exponents are not supported
+
 variable {k : ℤ}
 
 /-- info: x ^ k * x ^ 2 -/
 #guard_msgs in
 #conv field_simp2 => x ^ k * x ^ 2
 
+/-- info: x ^ k * x ^ (-k) -/
+#guard_msgs in
+#conv field_simp2 => x ^ k * x ^ (-k)
+
 end
 
-/-- info: x ^ (-3) -/
-#guard_msgs in
-#conv field_simp2 =>x ^ (-1 : ℤ) * x ^ (-2 : ℤ)
+section cancellation
 
--- Cancellation: if x could be zero, we cannot cancel x * x⁻¹.
--- TODO: right now, we always cancel (which we should not)
-
+-- If the exponents for a single atom do not add to zero, we can always cancel them.
 /-- info: 1 -/
 #guard_msgs in
 #conv field_simp2 => x * x⁻¹
@@ -635,8 +666,51 @@ end
 #guard_msgs in
 #conv field_simp2 => x / x ^ 4
 
+/-- info: x ^ (-31) -/
+#guard_msgs in
+#conv field_simp2 => x * x ^5 * x⁻¹ ^ 37
+
+-- This also holds if the exponents added up to zero at some intermediate stage.
+/-- info: x -/
+#guard_msgs in
+#conv field_simp2 => x * x ^ 2 * x ^ (-2 : ℤ)
+
+/-- info: x -/
+#guard_msgs in
+#conv field_simp2 => x ^ 3 * x ^ (-3 : ℤ) * x
+
+/-- info: x -/
+#guard_msgs in
+#conv field_simp2 => x ^ 3 * x⁻¹ ^ 3 * x
+
+-- Some atom "in the middle" does not inhibit cancellation.
+/-- info: x ^ 3 * y ^ 4 -/
+#guard_msgs in
+#conv field_simp2 => x ^ 2 * y ^ 2 * x⁻¹ * y ^ 2 * x ^ (-1 : ℤ) * x ^ 3
+
+/-- info: x ^ 2 * y ^ 2 -/
+#guard_msgs in
+#conv field_simp2 => x ^ 3 * x⁻¹ * y ^ 2 * x⁻¹ * x ^ (-1 : ℤ) * x ^ 2
+
+-- If x could be zero, we cannot cancel a term `x * x⁻¹`.
+-- However, we can simplify e.g. `x ^ 3 * x ^ (-3)` to `x * x⁻¹`.
+
+-- TODO: right now, we always cancel (which we should not do!!)
+/-- info: 1 -/
+#guard_msgs in
+#conv field_simp2 => x ^ 17 * x ^ (-17 : ℤ)
+
+/-- info: 1 -/
+#guard_msgs in
+#conv field_simp2 => x ^ 3 * x⁻¹ ^ 3
+
+/-- info: 1 -/
+#guard_msgs in
+#conv field_simp2 => x ^ 3 * x ^ (-2 : ℤ) * x⁻¹
+
 -- If x is non-zero, we do cancel.
-section
+section docancel
+
 variable {hx : x ≠ 0}
 
 /-- info: 1 -/
@@ -659,18 +733,34 @@ variable {hx : x ≠ 0}
 #guard_msgs in
 #conv field_simp2 => x / x ^ 4
 
-end
+/-- info: 1 -/
+#guard_msgs in
+#conv field_simp2 => x ^ 17 * x ^ (-17 : ℤ)
 
--- Combining this works also when other atoms are "in the way".
--- TODO: these tests are broken
+/-- info: 1 -/
+#guard_msgs in
+#conv field_simp2 => x ^ 3 * x⁻¹ ^ 3
+
+/-- info: 1 -/
+#guard_msgs in
+#conv field_simp2 => x ^ 3 * x ^ (-2 : ℤ) * x⁻¹
+
+end docancel
+
+end cancellation
+
+end singleAtom
+
+-- Combining cancellation across multiple atoms.
+section
 
 /-- info: x ^ 3 * y ^ 4 -/
 #guard_msgs in
-#conv field_simp2 => x ^1 * y * x ^2 * y ^ 3
+#conv field_simp2 => x ^ 1 * y * x ^ 2 * y ^ 3
 
 /-- info: x ^ 3 -/
 #guard_msgs in
-#conv field_simp2 => x ^ 1 * y * x ^2 * y⁻¹
+#conv field_simp2 => x ^ 1 * y * x ^ 2 * y⁻¹
 
 variable {y' : ℚ} (hy' : y' ≠ 0)
 
@@ -678,11 +768,41 @@ variable {y' : ℚ} (hy' : y' ≠ 0)
 #guard_msgs in
 #conv field_simp2 => x ^ 1 * y * x ^ 2 * y⁻¹
 
+-- TODO: is wrong, cannot prove the atom is non-zero
+/-- info: 1 -/
+#guard_msgs in
+#conv field_simp2 => (x * y) / (y * x)
+
+section
+
+variable {h : x * y ≠ 0}
+/-- info: 1 -/
+#guard_msgs in
+#conv field_simp2 => (x * y) / (y * x)
+
 end
 
-/-- info: x -/
+section -- Inferring non-zeroness from non-zeroness of each factor.
+
+section
+variable {hx : x ≠ 0} {hy : y ≠ 0}
+/-- info: 1 -/
 #guard_msgs in
-#conv field_simp2 => x
+#conv field_simp2 => (x * y) / (y * x)
+end
+
+section
+
+variable {hx : x ≠ 0} {h' : y * z ≠ 0}
+/-- info: 1 -/
+#guard_msgs in
+#conv field_simp2 => (x * y * z) / (y * z * x)
+
+end
+
+end
+
+end
 
 /-- info: x + y -/
 #guard_msgs in
@@ -692,9 +812,7 @@ end
 #guard_msgs in
 #conv field_simp2 => x * y
 
-/-- info: 1 -/
-#guard_msgs in
-#conv field_simp2 => (x * y) / (y * x)
+
 
 /-- info: x * (y + 1) -/
 #guard_msgs in
