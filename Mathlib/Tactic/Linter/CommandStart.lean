@@ -286,7 +286,7 @@ to avoid cutting into "words".
 
 *Note*. `start` is the number of characters *from the right* where our focus is!
 -/
-def mkWindow (orig : String) (start ctx : Nat) : String :=
+def mkWindow (orig : Substring) (start ctx : Nat) : String :=
   let head := orig.dropRight (start + 1) -- `orig`, up to one character before the discrepancy
   let middle := orig.takeRight (start + 1)
   let headCtx := head.takeRightWhile (!·.isWhitespace)
@@ -324,9 +324,8 @@ def commandStartLinter : Linter where run := withSetOptionIn fun stx ↦ do
   if let some fmt := fmt then
     let st := fmt.pretty
     let origSubstring := stx.getSubstring?.getD default
-    let orig := origSubstring.toString
 
-    let scan := parallelScan orig st
+    let scan := parallelScan origSubstring.toString st
 
     let docStringEnd := stx.find? (·.isOfKind ``Parser.Command.docComment) |>.getD default
     let docStringEnd := docStringEnd.getTailPos? |>.getD default
@@ -346,8 +345,8 @@ def commandStartLinter : Linter where run := withSetOptionIn fun stx ↦ do
       unless docStringEnd ≤ rg.start do return
 
       let ctx := 4 -- the number of characters after the mismatch that linter prints
-      let srcWindow := mkWindow orig s.srcNat (ctx + s.length)
-      let expectedWindow := mkWindow st s.fmtPos (ctx + (1))
+      let srcWindow := mkWindow origSubstring s.srcNat (ctx + s.length)
+      let expectedWindow := mkWindow st.toSubstring s.fmtPos (ctx + (1))
       Linter.logLint linter.style.commandStart (.ofRange rg)
         m!"{s.msg} in the source\n\n\
           This part of the code\n  '{srcWindow}'\n\
