@@ -108,13 +108,13 @@ Produces a `FormatError` from the input data.  It expects
 In particular, it extracts the position information within the string, both as number of characters
 and as `String.Pos`.
 -/
-def mkFormatError (ls ms : String) (msg : String) (length : Nat := 1) : FormatError where
-  srcNat := ls.length
-  srcEndPos := ls.endPos
+def mkFormatError (ls : Substring) (ms : String) (msg : String) (length : Nat := 1) : FormatError where
+  srcNat := ls.toString.length
+  srcEndPos := ls.toString.endPos
   fmtPos := ms.length
   msg := msg
   length := length
-  srcStartPos := ls.endPos
+  srcStartPos := ls.toString.endPos
 
 /--
 Add a new `FormatError` `f` to the array `fs`, trying, as much as possible, to merge the new
@@ -138,7 +138,7 @@ flagging some line-breaking changes.
 (The pretty-printer does not always produce desirably formatted code.)
 -/
 partial
-def parallelScanAux (as : Array FormatError) (L M : String) : Array FormatError :=
+def parallelScanAux (as : Array FormatError) (L : Substring) (M : String) : Array FormatError :=
   if M.trim.isEmpty then as else
   -- We try as hard as possible to scan the strings one character at a time.
   -- However, single line comments introduced with `--` pretty-print differently than `/--`.
@@ -150,18 +150,18 @@ def parallelScanAux (as : Array FormatError) (L M : String) : Array FormatError 
   -- doc-strings).  In this case, we drop everything until the following line break in the
   -- original syntax, and for the same amount of characters in the pretty-printed one, since the
   -- pretty-printer *erases* the line break at the end of a single line comment.
-  if L.take 3 == "/--" && M.take 3 == "/--" then
+  if L.take 3 == "/--".toSubstring && M.take 3 == "/--" then
     parallelScanAux as (L.drop 3) (M.drop 3) else
-  if L.take 2 == "--" then
+  if L.take 2 == "--".toSubstring then
     let newL := L.dropWhile (· != '\n')
-    let diff := L.length - newL.length
+    let diff := (L.takeWhile (· != '\n')).toString.length
     -- Assumption: if `L` contains an embedded inline comment, so does `M`
     -- (modulo additional whitespace).
     -- This holds because we call this function with `M` being a pretty-printed version of `L`.
     -- If the pretty-printer changes in the future, this code may need to be adjusted.
     let newM := M.dropWhile (· != '-') |>.drop diff
     parallelScanAux as newL.trimLeft newM.trimLeft else
-  if L.take 2 == "-/" then
+  if L.take 2 == "-/".toSubstring then
     let newL := L.drop 2 |>.trimLeft
     let newM := M.drop 2 |>.trimLeft
     parallelScanAux as newL newM else
@@ -190,7 +190,7 @@ def parallelScanAux (as : Array FormatError) (L M : String) : Array FormatError 
       pushFormatError as (mkFormatError ls ms "Oh no! (Unreachable?)")
 
 @[inherit_doc parallelScanAux]
-def parallelScan (src fmt : String) : Array FormatError :=
+def parallelScan (src : Substring) (fmt : String) : Array FormatError :=
   parallelScanAux ∅ src fmt
 
 namespace Style.CommandStart
@@ -325,7 +325,7 @@ def commandStartLinter : Linter where run := withSetOptionIn fun stx ↦ do
     let st := fmt.pretty
     let origSubstring := stx.getSubstring?.getD default
 
-    let scan := parallelScan origSubstring.toString st
+    let scan := parallelScan origSubstring st
 
     let docStringEnd := stx.find? (·.isOfKind ``Parser.Command.docComment) |>.getD default
     let docStringEnd := docStringEnd.getTailPos? |>.getD default
