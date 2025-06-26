@@ -90,6 +90,66 @@ lemma contMDiffOn_localFrame_baseSet
   intro y hy
   simp [localFrame, hy, localFrame_toBasis_at]
 
+section
+
+open Set
+
+-- M be a smooth manifold modeled on (E, H)
+variable {𝕜 E E' M M' H H' : Type*} [NontriviallyNormedField 𝕜]
+  [NormedAddCommGroup E] [NormedAddCommGroup E'] [NormedSpace 𝕜 E] [NormedSpace 𝕜 E']
+  [TopologicalSpace H] [TopologicalSpace M] [TopologicalSpace H'] [TopologicalSpace M']
+  {n : WithTop ℕ∞} {I : ModelWithCorners 𝕜 E H} {I' : ModelWithCorners 𝕜 E' H'}
+  [ChartedSpace H M] /-[IsManifold I n M]-/ [ChartedSpace H' M'] -- [IsManifold I' n M']
+  {f : M → M'} {s t : Set M}
+
+lemma _root_.ContMDiffOn.union (hf : ContMDiffOn I I' n f s) (hf' : ContMDiffOn I I' n f t)
+    (hs : IsOpen s) (ht : IsOpen t) :
+    ContMDiffOn I I' n f (s ∪ t) := by
+  intro x hx
+  obtain (hx | hx) := hx
+  · exact (hf x hx).contMDiffAt (hs.mem_nhds hx) |>.contMDiffWithinAt
+  · exact (hf' x hx).contMDiffAt (ht.mem_nhds hx) |>.contMDiffWithinAt
+
+lemma contMDiff_of_contMDiffOn_union_of_isOpen (hf : ContMDiffOn I I' n f s)
+    (hf' : ContMDiffOn I I' n f t)
+    (hst : s ∪ t = univ) (hs : IsOpen s) (ht : IsOpen t) :
+    ContMDiff I I' n f := by
+  rw [← contMDiffOn_univ, ← hst]
+  exact hf.union hf' hs ht
+
+lemma ContMDiffOn.iUnion {ι : Type*} {s : ι → Set M}
+    (hf : ∀ i : ι, ContMDiffOn I I' n f (s i)) (hs : ∀ i, IsOpen (s i)) :
+    ContMDiffOn I I' n f (⋃ i, s i) := by
+  rintro x ⟨si, ⟨i, rfl⟩, hxsi⟩
+  exact (hf i).contMDiffAt ((hs i).mem_nhds hxsi) |>.contMDiffWithinAt
+
+lemma contMDiff_of_contMDiffOn_iUnion_of_isOpen {ι : Type*} {s : ι → Set M}
+    (hf : ∀ i : ι, ContMDiffOn I I' n f (s i)) (hs : ∀ i, IsOpen (s i)) (hs' : ⋃ i, s i = univ) :
+    ContMDiff I I' n f := by
+  rw [← contMDiffOn_univ, ← hs']
+  exact ContMDiffOn.iUnion hf hs
+
+-- XXX: this this need a zero in M'? then it's too restrictive for our purposes...
+-- more general version than contMDiff_of_tsupport, because not assuming a zero
+lemma ContMDiff.of_bump_function [SMul 𝕜 M'] {s : Set M} (hf : ContMDiffOn I I' n f s) (hs : IsOpen s)
+    {ψ : M → 𝕜} (hΨ : ContMDiff I 𝓘(𝕜) n ψ) (hψ' : tsupport ψ ⊆ s) : ContMDiff I I' n (ψ • f) := by
+  apply contMDiff_of_contMDiffOn_union_of_isOpen ?_ (t := (tsupport ψ)ᶜ) ?_ ?_ hs ?_
+  · sorry -- want scalar multiplicaiton as C^n
+  · -- abstraction of "zero section is C^k"... useful? is there a better abstraction?
+    have : ContMDiff I I' n (fun x ↦ (0 : 𝕜) • f x) := sorry
+    have := this.contMDiffOn (s := (tsupport ψ)ᶜ)
+    apply this.congr
+    intro y hy
+    simp [image_eq_zero_of_notMem_tsupport hy]
+  · apply le_antisymm -- should be easier!
+    · simp
+    · rw [← union_compl_self (s := tsupport ψ)]
+      change tsupport ψ ∪ (tsupport ψ)ᶜ ⊆ s ∪ (tsupport ψ)ᶜ
+      gcongr
+  · exact isOpen_compl_iff.mpr <| isClosed_tsupport ψ
+
+end
+
 /-- Each local frame is a smooth section, globally. -/
 lemma contMDiff_localFrame (e : Trivialization F (Bundle.TotalSpace.proj : Bundle.TotalSpace F V → M))
     [MemTrivializationAtlas e]
@@ -106,16 +166,15 @@ lemma contMDiff_localFrame (e : Trivialization F (Bundle.TotalSpace.proj : Bundl
     apply this.congr
     intro y hy
     congr
-    sorry
-
-  -- missing lemma: these togegher suffice
+    sorry -- will have the scalar product here, apply image_eq_zero_of_notMem_tsupport hy
+  #check ContMDiff.of_bump_function
+  -- missing lemma: these together suffice
   -- if f is contMDiffOn a collection of open sets which cover M, it's contMDiff
   -- also add a binary special case, and perhaps (to be seen!)
   -- even a special case of that for a "bump function" (i.e. support within U, smooth there)
   -- or a lemma: suffices to check contMDiffOn U and supp f ⊆ U ?
+  -- that exists: see contMDiff_of_tsupport and nearby
   sorry
-
-#exit
 
 -- XXX: is this result actually needed now? perhaps not, because of the toBasis definition?
 /-- At each point `x ∈ M`, the sections `{sⁱ(x)}` of a local frame form a basis for `V x`. -/
