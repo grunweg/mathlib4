@@ -129,16 +129,15 @@ lemma contMDiff_of_contMDiffOn_iUnion_of_isOpen {ι : Type*} {s : ι → Set M}
   rw [← contMDiffOn_univ, ← hs']
   exact ContMDiffOn.iUnion hf hs
 
--- XXX: this this need a zero in M'? then it's too restrictive for our purposes...
 -- more general version than contMDiff_of_tsupport, because not assuming a zero
+-- XXX: is there a better abstraction for the hypothesis hf'?
+-- in my application is `contMDiff_zeroSection`
 lemma ContMDiff.of_bump_function [SMul 𝕜 M'] {s : Set M} (hf : ContMDiffOn I I' n f s) (hs : IsOpen s)
-    {ψ : M → 𝕜} (hΨ : ContMDiff I 𝓘(𝕜) n ψ) (hψ' : tsupport ψ ⊆ s) : ContMDiff I I' n (ψ • f) := by
+    {ψ : M → 𝕜} (hΨ : ContMDiff I 𝓘(𝕜) n ψ) (hψ' : tsupport ψ ⊆ s)
+    (hf' : ContMDiff I I' n ((0 : 𝕜) • f)) : ContMDiff I I' n (ψ • f) := by
   apply contMDiff_of_contMDiffOn_union_of_isOpen ?_ (t := (tsupport ψ)ᶜ) ?_ ?_ hs ?_
   · sorry -- want scalar multiplicaiton as C^n
-  · -- abstraction of "zero section is C^k"... useful? is there a better abstraction?
-    have : ContMDiff I I' n (fun x ↦ (0 : 𝕜) • f x) := sorry
-    have := this.contMDiffOn (s := (tsupport ψ)ᶜ)
-    apply this.congr
+  · apply hf'.contMDiffOn (s := (tsupport ψ)ᶜ).congr
     intro y hy
     simp [image_eq_zero_of_notMem_tsupport hy]
   · apply le_antisymm -- should be easier!
@@ -152,15 +151,22 @@ end
 
 /-- Each local frame is a smooth section, globally. -/
 lemma contMDiff_localFrame (e : Trivialization F (Bundle.TotalSpace.proj : Bundle.TotalSpace F V → M))
-    [MemTrivializationAtlas e]
+    [MemTrivializationAtlas e] [T2Space M] -- TODO: needs real numbers now... [FiniteDimensional ℝ E]
     (b : Basis ι 𝕜 F) (i : ι) :
     ContMDiff I (I.prod 𝓘(𝕜, F)) n (fun x ↦ TotalSpace.mk' F x (b.localFrame e i x)) := by
   -- on e.baseSet, it's smooth by construction (a product of a bump function and sth else)
   have : ContMDiffOn I (I.prod 𝓘(𝕜, F)) n (fun x ↦ TotalSpace.mk' F x (b.localFrame e i x)) e.baseSet :=
     contMDiffOn_localFrame_baseSet I n e b i
 
+  let x₀ : M := sorry -- choose something in e.baseSet
+  have : x₀ ∈ e.baseSet := sorry
+  have hs := e.open_baseSet.mem_nhds this
+  have aux := SmoothBumpFunction.nhds_basis_support hs (E := E)
+  obtain ⟨ψ, _, hψ⟩ := (SmoothBumpFunction.nhds_basis_support (I := I) hs).mem_iff.1 hs
+
   -- outside of support ψ, it's zero, hence also smooth
   let U : Set M := sorry -- support of ψ
+
   have : ContMDiffOn I (I.prod 𝓘(𝕜, F)) n (fun x ↦ TotalSpace.mk' F x (b.localFrame e i x)) Uᶜ := by
     have : ContMDiffOn I (I.prod 𝓘(𝕜, F)) n (fun x ↦ TotalSpace.mk' F x (0 : V x)) Uᶜ := by sorry
     apply this.congr
