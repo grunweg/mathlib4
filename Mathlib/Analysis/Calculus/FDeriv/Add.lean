@@ -153,6 +153,18 @@ theorem fderiv_const_smul'' (c : R) [Invertible c] :
       simp
     simp [fderiv_zero_of_not_differentiableAt h, fderiv_zero_of_not_differentiableAt this]
 
+lemma fderiv_const_smul''' {𝕜 : Type*} [NontriviallyNormedField 𝕜] [Module 𝕜 E] [Module 𝕜 F]
+    [SMulCommClass 𝕜 𝕜 F] [ContinuousConstSMul 𝕜 F] (c : 𝕜) : fderiv 𝕜 (c • f) = c • fderiv 𝕜 f := by
+  obtain (rfl | ha) := eq_or_ne c 0
+  · simp-- [fderiv_zero]
+    apply fderiv_zero
+  · have : Invertible c := invertibleOfNonzero ha
+    exact fderiv_const_smul'' ..
+
+
+  sorry
+
+#exit
 @[deprecated (since := "2025-06-14")] alias fderiv_const_smul' := fderiv_const_smul
 
 end ConstSMul
