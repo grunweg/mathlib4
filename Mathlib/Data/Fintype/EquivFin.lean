@@ -15,8 +15,8 @@ and show some instances of `Infinite`.
 
 ## Main declarations
 
-* `Fintype.truncEquivFin`: A fintype `α` is computably equivalent to `Fin (card α)`. The
-  `Trunc`-free, noncomputable version is `Fintype.equivFin`.
+* `Fintype.truncEquivFin`: A fintype `α` is computably equivalent to `Fin (card α)`.
+  The `Trunc`-free, noncomputable version is `Finite.equivFin`.
 * `Fintype.truncEquivOfCardEq` `Fintype.equivOfCardEq`: Two fintypes of same cardinality are
   equivalent. See above.
 * `Fin.equiv_iff_eq`: `Fin m ≃ Fin n` iff `m = n`.
@@ -51,7 +51,7 @@ Since it is not unique and depends on which permutation
 of the universe list is used, the equivalence is wrapped in `Trunc` to
 preserve computability.
 
-See `Fintype.equivFin` for the noncomputable version,
+See `Finite.equivFin` for the noncomputable version,
 and `Fintype.truncEquivFinOfCardEq` and `Fintype.equivFinOfCardEq`
 for an equiv `α ≃ Fin n` given `Fintype.card α = n`.
 
@@ -172,6 +172,13 @@ theorem finite_iff_nonempty_fintype (α : Type*) : Finite α ↔ Nonempty (Finty
 instance because we want `Fintype` instances to be useful for computations. -/
 noncomputable def Fintype.ofFinite (α : Type*) [Finite α] : Fintype α :=
   (nonempty_fintype α).some
+
+noncomputable def Finite.equivFin (α) [Finite α] :
+  haveI := Fintype.ofFinite α;
+  α ≃ Fin (Fintype.card α) :=
+  haveI := Fintype.ofFinite α;
+  letI := Classical.decEq α
+  (Fintype.truncEquivFin α).out
 
 theorem Finite.of_injective {α β : Sort*} [Finite β] (f : α → β) (H : Injective f) : Finite α := by
   rcases Finite.exists_equiv_fin β with ⟨n, ⟨e⟩⟩
