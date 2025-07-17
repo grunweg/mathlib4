@@ -438,24 +438,22 @@ def convexCombination' {ι : Type*} {s : Finset ι} (hs : Finset.Nonempty s)
     -- (by continuity, which I'll also assume)
     -- so, need to shrink the open set and patch together, awful, but can be done
     have bettersetup : ∀ x, f i₀ x ≠ 1 := sorry
-    have side_computation := calc fun X σ x ↦ ∑ i ∈ insert i₀ s, f i x • cov i X σ x
-      _ = fun X σ x ↦ f i₀ x • cov i₀ X σ x + ∑ i ∈ s, f i x • cov i X σ x := by
-        simp [Finset.sum_insert hi₀]
-      _ = fun X σ x ↦ f i₀ x • cov i₀ X σ x + (1 - f i₀ x) • ∑ i ∈ s, g i x • cov i X σ x := by
-        ext X σ x
-        congr
-        rw [Finset.smul_sum]
-        congr; ext i
-        simp only [g]
-        -- this should be obvious now!
-        rw [← smul_assoc, smul_eq_mul, mul_div_cancel₀ (a := f i x) (b := 1 - f i₀ x)]
-        rw [sub_ne_zero]; exact (bettersetup x).symm
+    have side_computation (X σ x) : ∑ i ∈ insert i₀ s, f i x • cov i X σ x
+        = f i₀ x • cov i₀ X σ x + (1 - f i₀ x) • ∑ i ∈ s, g i x • cov i X σ x := calc
+        _ = f i₀ x • cov i₀ X σ x + ∑ i ∈ s, f i x • cov i X σ x := by
+          simp [Finset.sum_insert hi₀]
+        _ = f i₀ x • cov i₀ X σ x + (1 - f i₀ x) • ∑ i ∈ s, g i x • cov i X σ x := by
+          congr
+          rw [Finset.smul_sum]
+          congr; ext i
+          simp only [g]
+          -- this should be obvious now!
+          rw [← smul_assoc, smul_eq_mul, mul_div_cancel₀ (a := f i x) (b := 1 - f i₀ x)]
+          rw [sub_ne_zero]; exact (bettersetup x).symm
     have : IsCovariantDerivativeOn F (fun X σ x ↦
         f i₀ x • cov i₀ X σ x + (1 - f i₀ x) • ∑ i ∈ s, g i x • cov i X σ x) u :=
       (h i₀).convexCombination (h' hg) _
-    apply this.congr
-    intro X σ x hx
-    sorry
+    exact this.congr fun X σ {x} hx ↦ (side_computation ..).symm
 
 /-- A convex combination of finitely many `C^k` connections on `u` is a `C^k` connection on `u`. -/
 lemma _root_.ContMDiffCovariantDerivativeOn.convexCombination' {n : ℕ∞}
