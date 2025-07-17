@@ -405,7 +405,7 @@ auxiliary case, where every weight functions is never one. -/
 def convexCombination'_aux {ι : Type*} {s : Finset ι} (hs : Finset.Nonempty s)
     {u : Set M} {cov : ι → (Π x : M, TangentSpace I x) → (Π x : M, V x) → (Π x : M, V x)}
     (h : ∀ i, IsCovariantDerivativeOn F (cov i) u) {f : ι → M → 𝕜} (hf : Set.EqOn (∑ i ∈ s, f i) 1 u)
-    (hf' : ∀ i ∈ s, ∀ x ∈ u, f i x ≠ 1) :
+    (hf₂ : ∀ i ∈ s, ∀ x ∈ u, f i x ≠ 0) (hf₃ : ∀ i ∈ s, ∀ x ∈ u, f i x ≠ 1) :
     IsCovariantDerivativeOn F (fun X σ x ↦ ∑ i ∈ s, (f i x) • (cov i) X σ x) u := by
   classical
   induction hs using Finset.Nonempty.cons_induction generalizing f with
@@ -431,15 +431,29 @@ def convexCombination'_aux {ι : Type*} {s : Finset ι} (hs : Finset.Nonempty s)
           simp
           refine (inv_mul_eq_one₀ ?_).mpr rfl
           rw [sub_ne_zero]; symm
-          apply hf' i₀ (Finset.mem_cons_self i₀ s)
+          apply hf₃ i₀ (Finset.mem_cons_self i₀ s)
           exact hx
-    have hg' : ∀ i ∈ s, ∀ x ∈ u, g i x ≠ 0 := sorry
+    have hg₂ : ∀ i ∈ s, ∀ x ∈ u, g i x ≠ 0 := by
+      intro i hi x hx
+      simp only [ne_eq, div_eq_zero_iff, not_or, g]
+      refine ⟨hf₂ i (Finset.mem_cons_of_mem hi) x hx, ?_⟩
+      rw [sub_eq_zero]
+      exact (hf₃ i₀ (Finset.mem_cons_self i₀ s) x hx).symm
+    have hg₃ : ∀ i ∈ s, ∀ x ∈ u, g i x ≠ 1 := by
+      intro i hi x hx
+      simp [g]
+      -- wan the f i to never be 1/2... that's fishy!
+      -- simp only [ne_eq, div_eq_zero_iff, not_or, g]
+      -- refine ⟨hf₂ i (Finset.mem_cons_of_mem hi) x hx, ?_⟩
+      -- rw [sub_eq_zero]
+      -- exact (hf₃ i₀ (Finset.mem_cons_self i₀ s) x hx).symm
+      sorry
 
     -- TODO: rejigger my set-up to provide this
     -- at x, some function is non-zero, and then the same holds in a neighbourhood
     -- (by continuity, which I'll also assume)
     -- so, need to shrink the open set and patch together, awful, but can be done
-    have bettersetup : ∀ x, f i₀ x ≠ 1 := sorry
+    have bettersetup : ∀ x, f i₀ x ≠ 1 := sorry -- XXX use assumption instead
     have side_computation (X σ x) : ∑ i ∈ insert i₀ s, f i x • cov i X σ x
         = f i₀ x • cov i₀ X σ x + (1 - f i₀ x) • ∑ i ∈ s, g i x • cov i X σ x := calc
         _ = f i₀ x • cov i₀ X σ x + ∑ i ∈ s, f i x • cov i X σ x := by
@@ -455,11 +469,10 @@ def convexCombination'_aux {ι : Type*} {s : Finset ι} (hs : Finset.Nonempty s)
     have : IsCovariantDerivativeOn F (fun X σ x ↦
         f i₀ x • cov i₀ X σ x + (1 - f i₀ x) • ∑ i ∈ s, g i x • cov i X σ x) u := by
       apply (h i₀).convexCombination --(h' hg hg') _
-      apply h'
+      apply h' ?_ _ hg₃
       apply hg
-      · intro i hi
-        intro x hx
-        sorry -- apply hg'
+      · intro i hi x hx
+        apply hg₂ _ hi _ hx
     exact this.congr fun X σ {x} hx ↦ (side_computation ..).symm
 
 #exit
