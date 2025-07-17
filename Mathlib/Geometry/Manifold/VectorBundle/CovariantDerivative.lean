@@ -400,13 +400,69 @@ lemma _root_.ContMDiffCovariantDerivativeOn.convexCombination
     · exact hf.smul_section <| Hcov.contMDiff hX hσ
     · exact (contMDiffOn_const.sub hf).smul_section <| Hcov'.contMDiff hX hσ
 
-/-- A finite convex combination of covariant derivatives is a covariant derivative. -/
+/-- A finite convex combination of covariant derivatives is a covariant derivative:
+auxiliary case, where every weight functions is never one. -/
 def convexCombination'_aux {ι : Type*} {s : Finset ι} (hs : Finset.Nonempty s)
     {u : Set M} {cov : ι → (Π x : M, TangentSpace I x) → (Π x : M, V x) → (Π x : M, V x)}
-    (h : ∀ i, IsCovariantDerivativeOn F (cov i) u) {f : ι → M → 𝕜} (hf : ∑ i ∈ s, f i = 1)
-    (hf' : ∀ i ∈ s, ∀ x ∈ u, f i x ≠ 0) :
+    (h : ∀ i, IsCovariantDerivativeOn F (cov i) u) {f : ι → M → 𝕜} (hf : Set.EqOn (∑ i ∈ s, f i) 1 u)
+    (hf' : ∀ i ∈ s, ∀ x ∈ u, f i x ≠ 1) :
     IsCovariantDerivativeOn F (fun X σ x ↦ ∑ i ∈ s, (f i x) • (cov i) X σ x) u := by
-  sorry
+  classical
+  induction hs using Finset.Nonempty.cons_induction generalizing f with
+  | singleton a =>
+    simp at hf ⊢
+    sorry -- use congruence now! simp_all
+  | cons i₀ s hi₀ hs h' =>
+    simp only [Finset.cons_eq_insert]
+    let g : ι → M → 𝕜 := fun i x ↦ f i x / (1 - f i₀ x)
+    have hg : Set.EqOn (∑ i ∈ s, g i) 1 u := by
+      intro x hx
+      simp [g]
+      calc ∑ i ∈ s, f i x / (1 - f i₀ x)
+        _ = ∑ i ∈ s, (1 - f i₀ x)⁻¹ • f i x := by simp_rw [smul_eq_mul, inv_mul_eq_div]
+        _ = (1 - f i₀ x)⁻¹ • ∑ i ∈ s, f i x := by rw [Finset.smul_sum]
+        _ = (1 - f i₀ x)⁻¹ • (∑ i ∈ Finset.cons i₀ s hi₀, f i x - f i₀ x):= by
+          congr
+          rw [eq_sub_iff_add_eq, Finset.sum_cons, add_comm]
+        _ = (1 - f i₀ x)⁻¹ • (1 - f i₀ x):= by
+          congr
+          sorry -- simp [hf]
+        _ = 1 := by
+          simp
+          refine (inv_mul_eq_one₀ ?_).mpr rfl
+          rw [sub_ne_zero]; symm
+          apply hf' i₀ (Finset.mem_cons_self i₀ s)
+          exact hx
+    have hg' : ∀ i ∈ s, ∀ x ∈ u, g i x ≠ 0 := sorry
+
+    -- TODO: rejigger my set-up to provide this
+    -- at x, some function is non-zero, and then the same holds in a neighbourhood
+    -- (by continuity, which I'll also assume)
+    -- so, need to shrink the open set and patch together, awful, but can be done
+    have bettersetup : ∀ x, f i₀ x ≠ 1 := sorry
+    have side_computation (X σ x) : ∑ i ∈ insert i₀ s, f i x • cov i X σ x
+        = f i₀ x • cov i₀ X σ x + (1 - f i₀ x) • ∑ i ∈ s, g i x • cov i X σ x := calc
+        _ = f i₀ x • cov i₀ X σ x + ∑ i ∈ s, f i x • cov i X σ x := by
+          simp [Finset.sum_insert hi₀]
+        _ = f i₀ x • cov i₀ X σ x + (1 - f i₀ x) • ∑ i ∈ s, g i x • cov i X σ x := by
+          congr
+          rw [Finset.smul_sum]
+          congr; ext i
+          simp only [g]
+          -- this should be obvious now!
+          rw [← smul_assoc, smul_eq_mul, mul_div_cancel₀ (a := f i x) (b := 1 - f i₀ x)]
+          rw [sub_ne_zero]; exact (bettersetup x).symm
+    have : IsCovariantDerivativeOn F (fun X σ x ↦
+        f i₀ x • cov i₀ X σ x + (1 - f i₀ x) • ∑ i ∈ s, g i x • cov i X σ x) u := by
+      apply (h i₀).convexCombination --(h' hg hg') _
+      apply h'
+      apply hg
+      · intro i hi
+        intro x hx
+        sorry -- apply hg'
+    exact this.congr fun X σ {x} hx ↦ (side_computation ..).symm
+
+#exit
 
 /-- A finite convex combination of covariant derivatives is a covariant derivative. -/
 def convexCombination' {ι : Type*} {s : Finset ι} (hs : Finset.Nonempty s)
