@@ -143,8 +143,10 @@ lemma isGroupoid_of_reflects_iso {C D : Type*} [Category C] [Category D]
     IsGroupoid C where
   all_isIso _ := isIso_of_reflects_iso _ F
 
+universe u' in
 /-- A category equipped with a fully faithful functor to a groupoid is fully faithful -/
-def Groupoid.ofFullyFaithfulToGroupoid {C : Type*} [𝒞 : Category C] {D : Type u} [Groupoid.{v} D]
+def Groupoid.ofFullyFaithfulToGroupoid {C : Type*} [𝒞 : Category.{u'} C]
+    {D : Type u} [Groupoid.{v} D]
     (F : C ⥤ D) (h : F.FullyFaithful) : Groupoid C :=
   { 𝒞 with
     inv f := h.preimage <| Groupoid.inv (F.map f)
