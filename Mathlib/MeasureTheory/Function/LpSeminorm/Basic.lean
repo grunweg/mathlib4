@@ -77,6 +77,26 @@ eLpNorm_lt_top_iff_lintegral_rpow_nnnorm_lt_top := eLpNorm_lt_top_iff_lintegral_
 
 end Top
 
+def bar {_ : MeasurableSpace α} (ε : Type*) [TopologicalSpace ε] [ContinuousENorm ε] [AddCommMonoid ε]
+    (p : ℝ≥0∞) (μ : Measure α := by volume_tac) : ENormedAddCommMonoid (α → ε) where
+  enorm f := eLpNorm f p μ
+  continuous_enorm :=
+    sorry -- is this true in meaningful cases? perhaps, need to rejigger the definition again...
+  add f g := f + g
+  add_assoc f g h := by ext; simp [add_assoc]
+  add_comm f g := by ext; simp [add_comm]
+  zero := (0 : α → ε)
+  zero_add f := by ext; simp
+  add_zero f := by ext; simp
+  enorm_zero := by
+    --apply eLpNorm_zero
+    --apply?
+    sorry -- by exact? once the right lemma is imported
+  enorm_add_le f g := sorry -- may require conditions on p
+  nsmul n f := fun x ↦ n • f x -- can this be inferred in another way? should it?
+  nsmul_zero f := by ext; simp -- should this be inferred by default?
+  nsmul_succ n f := by ext x; simp [succ_nsmul] -- should this be inferred by default?
+
 section Zero
 
 @[simp]
@@ -173,6 +193,27 @@ alias memℒp_measure_zero := memLp_measure_zero
 end ContinuousENorm
 
 end Zero
+
+-- WHY does this error with a timeout at wnhf when pasted here, as opposed to above?
+/- def baz {_ : MeasurableSpace α} (ε : Type*) [TopologicalSpace ε] [ContinuousENorm ε] [AddCommMonoid ε]
+    (p : ℝ≥0∞) (μ : Measure α := by volume_tac) : ENormedAddCommMonoid (α → ε) where
+  enorm f := eLpNorm f p μ
+  continuous_enorm := sorry -- when is this true?
+  add f g := f + g
+  add_assoc f g h := by ext; simp [add_assoc]
+  add_comm f g := sorry--by sorry--ext; simp [add_comm]
+  zero := 0
+  zero_add f := by ext; simp
+  add_zero f := by ext; simp
+  enorm_zero := by
+    apply eLpNorm_zero
+    --apply?
+    sorry -- by exact? once the right lemma is imported
+  enorm_add_le f g := sorry -- may require conditions on p
+  nsmul n f := fun x ↦ n • f x -- can this be inferred in another way? should it?
+  nsmul_zero f := by ext; simp -- should this be inferred by default?
+  nsmul_succ n f := by ext x; simp [succ_nsmul] -- should this be inferred by default?
+-/
 
 section Neg
 
