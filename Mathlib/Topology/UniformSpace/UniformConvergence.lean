@@ -123,6 +123,10 @@ theorem tendstoUniformlyOn_iff_tendstoUniformly_comp_coe :
     TendstoUniformlyOn F f p s ↔ TendstoUniformly (fun i (x : s) => F i x) (f ∘ (↑)) p :=
   forall₂_congr fun u _ => by simp
 
+lemma tendstoUniformlyOn_iff_restrict {K : Set α} : TendstoUniformlyOn F f p K ↔
+    TendstoUniformly (fun n : ι => K.restrict (F n)) (K.restrict f) p :=
+  tendstoUniformlyOn_iff_tendstoUniformly_comp_coe
+
 /-- A sequence of functions `Fₙ` converges uniformly to a limiting function `f` w.r.t.
 filter `p` iff the function `(n, x) ↦ (f x, Fₙ x)` converges along `p ×ˢ ⊤` to the uniformity.
 In other words: one knows nothing about the behavior of `x` in this limit.
@@ -290,20 +294,20 @@ alias TendstoUniformly.prod := TendstoUniformly.prodMk
 /-- Uniform convergence on a filter `p'` to a constant function is equivalent to convergence in
 `p ×ˢ p'`. -/
 theorem tendsto_prod_filter_iff {c : β} :
-    Tendsto (↿F) (p ×ˢ p') (𝓝 c) ↔ TendstoUniformlyOnFilter F (fun _ => c) p p' := by
+    Tendsto ↿F (p ×ˢ p') (𝓝 c) ↔ TendstoUniformlyOnFilter F (fun _ => c) p p' := by
   simp_rw [nhds_eq_comap_uniformity, tendsto_comap_iff]
   rfl
 
 /-- Uniform convergence on a set `s` to a constant function is equivalent to convergence in
 `p ×ˢ 𝓟 s`. -/
 theorem tendsto_prod_principal_iff {c : β} :
-    Tendsto (↿F) (p ×ˢ 𝓟 s) (𝓝 c) ↔ TendstoUniformlyOn F (fun _ => c) p s := by
+    Tendsto ↿F (p ×ˢ 𝓟 s) (𝓝 c) ↔ TendstoUniformlyOn F (fun _ => c) p s := by
   rw [tendstoUniformlyOn_iff_tendstoUniformlyOnFilter]
   exact tendsto_prod_filter_iff
 
 /-- Uniform convergence to a constant function is equivalent to convergence in `p ×ˢ ⊤`. -/
 theorem tendsto_prod_top_iff {c : β} :
-    Tendsto (↿F) (p ×ˢ ⊤) (𝓝 c) ↔ TendstoUniformly F (fun _ => c) p := by
+    Tendsto ↿F (p ×ˢ ⊤) (𝓝 c) ↔ TendstoUniformly F (fun _ => c) p := by
   rw [tendstoUniformly_iff_tendstoUniformlyOnFilter]
   exact tendsto_prod_filter_iff
 
@@ -314,7 +318,7 @@ theorem tendstoUniformlyOn_empty : TendstoUniformlyOn F f p ∅ := fun u _ => by
 theorem tendstoUniformlyOn_singleton_iff_tendsto :
     TendstoUniformlyOn F f p {x} ↔ Tendsto (fun n : ι => F n x) p (𝓝 (f x)) := by
   simp_rw [tendstoUniformlyOn_iff_tendsto, Uniform.tendsto_nhds_right, tendsto_def]
-  exact forall₂_congr fun u _ => by simp [mem_prod_principal, preimage]
+  exact forall₂_congr fun u _ => by simp [preimage]
 
 /-- If a sequence `g` converges to some `b`, then the sequence of constant functions
 `fun n ↦ fun a ↦ g n` converges to the constant function `fun a ↦ b` on any set `s` -/
@@ -330,19 +334,19 @@ theorem Filter.Tendsto.tendstoUniformlyOn_const {g : ι → β} {b : β} (hg : T
   tendstoUniformlyOn_iff_tendstoUniformlyOnFilter.mpr (hg.tendstoUniformlyOnFilter_const (𝓟 s))
 
 theorem UniformContinuousOn.tendstoUniformlyOn [UniformSpace α] [UniformSpace γ] {U : Set α}
-    {V : Set β} {F : α → β → γ} (hF : UniformContinuousOn (↿F) (U ×ˢ V)) (hU : x ∈ U) :
+    {V : Set β} {F : α → β → γ} (hF : UniformContinuousOn ↿F (U ×ˢ V)) (hU : x ∈ U) :
     TendstoUniformlyOn F (F x) (𝓝[U] x) V := by
   set φ := fun q : α × β => ((x, q.2), q)
   rw [tendstoUniformlyOn_iff_tendsto]
-  change Tendsto (Prod.map (↿F) ↿F ∘ φ) (𝓝[U] x ×ˢ 𝓟 V) (𝓤 γ)
+  change Tendsto (Prod.map ↿F ↿F ∘ φ) (𝓝[U] x ×ˢ 𝓟 V) (𝓤 γ)
   simp only [nhdsWithin, Filter.prod_eq_inf, comap_inf, inf_assoc, comap_principal, inf_principal]
   refine hF.comp (Tendsto.inf ?_ <| tendsto_principal_principal.2 fun x hx => ⟨⟨hU, hx.2⟩, hx⟩)
-  simp only [uniformity_prod_eq_comap_prod, tendsto_comap_iff, (· ∘ ·),
+  simp only [uniformity_prod_eq_comap_prod, tendsto_comap_iff,
     nhds_eq_comap_uniformity, comap_comap]
   exact tendsto_comap.prodMk (tendsto_diag_uniformity _ _)
 
 theorem UniformContinuousOn.tendstoUniformly [UniformSpace α] [UniformSpace γ] {U : Set α}
-    (hU : U ∈ 𝓝 x) {F : α → β → γ} (hF : UniformContinuousOn (↿F) (U ×ˢ (univ : Set β))) :
+    (hU : U ∈ 𝓝 x) {F : α → β → γ} (hF : UniformContinuousOn ↿F (U ×ˢ (univ : Set β))) :
     TendstoUniformly F (F x) (𝓝 x) := by
   simpa only [tendstoUniformlyOn_univ, nhdsWithin_eq_nhds.2 hU]
     using hF.tendstoUniformlyOn (mem_of_mem_nhds hU)
@@ -350,6 +354,63 @@ theorem UniformContinuousOn.tendstoUniformly [UniformSpace α] [UniformSpace γ]
 theorem UniformContinuous₂.tendstoUniformly [UniformSpace α] [UniformSpace γ] {f : α → β → γ}
     (h : UniformContinuous₂ f) : TendstoUniformly f (f x) (𝓝 x) :=
   UniformContinuousOn.tendstoUniformly univ_mem <| by rwa [univ_prod_univ, uniformContinuousOn_univ]
+
+namespace Filter.HasBasis
+
+variable {X ιX ια ιβ : Type*}
+
+/-- An anologue of `Filter.HasBasis.tendsto_right_iff` for `TendstoUniformlyOnFilter`. -/
+lemma tendstoUniformlyOnFilter_iff_of_uniformity {F : X → α → β} {f : α → β}
+    {l : Filter X} {l' : Filter α} {pβ : ιβ → Prop} {sβ : ιβ → Set (β × β)}
+    (hβ : (uniformity β).HasBasis pβ sβ) :
+    TendstoUniformlyOnFilter F f l l' ↔
+      (∀ i, pβ i → ∀ᶠ n in l ×ˢ l', (f n.2, F n.1 n.2) ∈ sβ i) := by
+  rw [tendstoUniformlyOnFilter_iff_tendsto, hβ.tendsto_right_iff]
+
+/-- An anologue of `Filter.HasBasis.tendsto_iff` for `TendstoUniformlyOnFilter`. -/
+lemma tendstoUniformlyOnFilter_iff {F : X → α → β} {f : α → β}
+    {l : Filter X} {l' : Filter α} {pX : ιX → Prop} {sX : ιX → Set X}
+    {pα : ια → Prop} {sα : ια → Set α} {pβ : ιβ → Prop} {sβ : ιβ → Set (β × β)}
+    (hl : l.HasBasis pX sX) (hl' : l'.HasBasis pα sα)
+    (hβ : (uniformity β).HasBasis pβ sβ) :
+    TendstoUniformlyOnFilter F f l l' ↔
+      (∀ i, pβ i → ∃ j k, (pX j ∧ pα k) ∧ ∀ x a, x ∈ sX j → a ∈ sα k → (f a, F x a) ∈ sβ i) := by
+  simp [hβ.tendstoUniformlyOnFilter_iff_of_uniformity, (hl.prod hl').eventually_iff]
+
+/-- An anologue of `Filter.HasBasis.tendsto_right_iff` for `TendstoUniformlyOn`. -/
+lemma tendstoUniformlyOn_iff_of_uniformity {F : X → α → β} {f : α → β}
+    {l : Filter X} {s : Set α} {pβ : ιβ → Prop} {sβ : ιβ → Set (β × β)}
+    (hβ : (uniformity β).HasBasis pβ sβ) :
+    TendstoUniformlyOn F f l s ↔
+      (∀ i, pβ i → ∀ᶠ n in l, ∀ x ∈ s, (f x, F n x) ∈ sβ i) := by
+  simp_rw [tendstoUniformlyOn_iff_tendsto, hβ.tendsto_right_iff, eventually_prod_principal_iff]
+
+/-- An anologue of `Filter.HasBasis.tendsto_iff` for `TendstoUniformlyOn`. -/
+lemma tendstoUniformlyOn_iff {F : X → α → β} {f : α → β}
+    {l : Filter X} {s : Set α} {pX : ιX → Prop} {sX : ιX → Set X} {pβ : ιβ → Prop}
+    {sβ : ιβ → Set (β × β)} (hl : l.HasBasis pX sX) (hβ : (uniformity β).HasBasis pβ sβ) :
+    TendstoUniformlyOn F f l s ↔
+      (∀ i, pβ i → ∃ j, pX j ∧ ∀ ⦃x⦄, x ∈ sX j → ∀ a ∈ s, (f a, F x a) ∈ sβ i) := by
+  simp [hβ.tendstoUniformlyOn_iff_of_uniformity, hl.eventually_iff]
+
+/-- An anologue of `Filter.HasBasis.tendsto_right_iff` for `TendstoUniformly`. -/
+lemma tendstoUniformly_iff_of_uniformity {F : X → α → β} {f : α → β}
+    {l : Filter X} {pβ : ιβ → Prop} {sβ : ιβ → Set (β × β)}
+    (hβ : (uniformity β).HasBasis pβ sβ) :
+    TendstoUniformly F f l ↔
+      (∀ i, pβ i → ∀ᶠ n in l, ∀ x, (f x, F n x) ∈ sβ i) := by
+  simp_rw [← tendstoUniformlyOn_univ, hβ.tendstoUniformlyOn_iff_of_uniformity, mem_univ,
+    true_imp_iff]
+
+/-- An anologue of `Filter.HasBasis.tendsto_iff` for `TendstoUniformly`. -/
+lemma tendstoUniformly_iff {F : X → α → β} {f : α → β}
+    {l : Filter X} {pX : ιX → Prop} {sX : ιX → Set X} (hl : l.HasBasis pX sX)
+    {pβ : ιβ → Prop} {sβ : ιβ → Set (β × β)} (hβ : (uniformity β).HasBasis pβ sβ) :
+    TendstoUniformly F f l ↔
+      (∀ i, pβ i → ∃ j, pX j ∧ ∀ ⦃x⦄, x ∈ sX j → ∀ a, (f a, F x a) ∈ sβ i) := by
+  simp only [hβ.tendstoUniformly_iff_of_uniformity, hl.eventually_iff]
+
+end Filter.HasBasis
 
 /-- A sequence is uniformly Cauchy if eventually all of its pairwise differences are
 uniformly bounded -/
@@ -425,10 +486,8 @@ theorem UniformCauchySeqOn.tendstoUniformlyOn_of_tendsto (hF : UniformCauchySeqO
     (hF.uniformCauchySeqOnFilter.tendstoUniformlyOnFilter_of_tendsto hF')
 
 theorem UniformCauchySeqOnFilter.mono_left {p'' : Filter ι} (hf : UniformCauchySeqOnFilter F p p')
-    (hp : p'' ≤ p) : UniformCauchySeqOnFilter F p'' p' := by
-  intro u hu
-  have := (hf u hu).filter_mono (p'.prod_mono_left (Filter.prod_mono hp hp))
-  exact this.mono (by simp)
+    (hp : p'' ≤ p) : UniformCauchySeqOnFilter F p'' p' := fun u hu =>
+  (hf u hu).filter_mono (p'.prod_mono_left (Filter.prod_mono hp hp))
 
 theorem UniformCauchySeqOnFilter.mono_right {p'' : Filter α} (hf : UniformCauchySeqOnFilter F p p')
     (hp : p'' ≤ p') : UniformCauchySeqOnFilter F p p'' := fun u hu =>

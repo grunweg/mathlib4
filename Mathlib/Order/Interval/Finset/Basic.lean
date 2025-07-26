@@ -72,7 +72,8 @@ theorem nonempty_Ioc : (Ioc a b).Nonempty ↔ a < b := by
 @[aesop safe apply (rule_sets := [finsetNonempty])]
 alias ⟨_, Aesop.nonempty_Ioc_of_lt⟩ := nonempty_Ioc
 
--- TODO: This is nonsense. A locally finite order is never densely ordered
+-- TODO: This is nonsense. A locally finite order is never densely ordered;
+-- See `not_lt_of_denselyOrdered_of_locallyFinite`
 @[simp]
 theorem nonempty_Ioo [DenselyOrdered α] : (Ioo a b).Nonempty ↔ a < b := by
   rw [← coe_nonempty, coe_Ioo, Set.nonempty_Ioo]
@@ -90,6 +91,7 @@ theorem Ioc_eq_empty_iff : Ioc a b = ∅ ↔ ¬a < b := by
   rw [← coe_eq_empty, coe_Ioc, Set.Ioc_eq_empty_iff]
 
 -- TODO: This is nonsense. A locally finite order is never densely ordered
+-- See `not_lt_of_denselyOrdered_of_locallyFinite`
 @[simp]
 theorem Ioo_eq_empty_iff [DenselyOrdered α] : Ioo a b = ∅ ↔ ¬a < b := by
   rw [← coe_eq_empty, coe_Ioo, Set.Ioo_eq_empty_iff]
@@ -102,23 +104,23 @@ alias ⟨_, Ioc_eq_empty⟩ := Ioc_eq_empty_iff
 
 @[simp]
 theorem Ioo_eq_empty (h : ¬a < b) : Ioo a b = ∅ :=
-  eq_empty_iff_forall_not_mem.2 fun _ hx => h ((mem_Ioo.1 hx).1.trans (mem_Ioo.1 hx).2)
+  eq_empty_iff_forall_notMem.2 fun _ hx => h ((mem_Ioo.1 hx).1.trans (mem_Ioo.1 hx).2)
 
 @[simp]
 theorem Icc_eq_empty_of_lt (h : b < a) : Icc a b = ∅ :=
-  Icc_eq_empty h.not_le
+  Icc_eq_empty h.not_ge
 
 @[simp]
 theorem Ico_eq_empty_of_le (h : b ≤ a) : Ico a b = ∅ :=
-  Ico_eq_empty h.not_lt
+  Ico_eq_empty h.not_gt
 
 @[simp]
 theorem Ioc_eq_empty_of_le (h : b ≤ a) : Ioc a b = ∅ :=
-  Ioc_eq_empty h.not_lt
+  Ioc_eq_empty h.not_gt
 
 @[simp]
 theorem Ioo_eq_empty_of_le (h : b ≤ a) : Ioo a b = ∅ :=
-  Ioo_eq_empty h.not_lt
+  Ioo_eq_empty h.not_gt
 
 theorem left_mem_Icc : a ∈ Icc a b ↔ a ≤ b := by simp only [mem_Icc, true_and, le_rfl]
 
@@ -128,13 +130,21 @@ theorem right_mem_Icc : b ∈ Icc a b ↔ a ≤ b := by simp only [mem_Icc, and_
 
 theorem right_mem_Ioc : b ∈ Ioc a b ↔ a < b := by simp only [mem_Ioc, and_true, le_rfl]
 
-theorem left_not_mem_Ioc : a ∉ Ioc a b := fun h => lt_irrefl _ (mem_Ioc.1 h).1
+theorem left_notMem_Ioc : a ∉ Ioc a b := fun h => lt_irrefl _ (mem_Ioc.1 h).1
 
-theorem left_not_mem_Ioo : a ∉ Ioo a b := fun h => lt_irrefl _ (mem_Ioo.1 h).1
+@[deprecated (since := "2025-05-23")] alias left_not_mem_Ioc := left_notMem_Ioc
 
-theorem right_not_mem_Ico : b ∉ Ico a b := fun h => lt_irrefl _ (mem_Ico.1 h).2
+theorem left_notMem_Ioo : a ∉ Ioo a b := fun h => lt_irrefl _ (mem_Ioo.1 h).1
 
-theorem right_not_mem_Ioo : b ∉ Ioo a b := fun h => lt_irrefl _ (mem_Ioo.1 h).2
+@[deprecated (since := "2025-05-23")] alias left_not_mem_Ioo := left_notMem_Ioo
+
+theorem right_notMem_Ico : b ∉ Ico a b := fun h => lt_irrefl _ (mem_Ico.1 h).2
+
+@[deprecated (since := "2025-05-23")] alias right_not_mem_Ico := right_notMem_Ico
+
+theorem right_notMem_Ioo : b ∉ Ioo a b := fun h => lt_irrefl _ (mem_Ioo.1 h).2
+
+@[deprecated (since := "2025-05-23")] alias right_not_mem_Ioo := right_notMem_Ioo
 
 @[gcongr]
 theorem Icc_subset_Icc (ha : a₂ ≤ a₁) (hb : b₁ ≤ b₂) : Icc a₁ b₁ ⊆ Icc a₂ b₂ := by
@@ -241,7 +251,16 @@ theorem Icc_ssubset_Icc_right (hI : a₂ ≤ b₂) (ha : a₂ ≤ a₁) (hb : b�
 @[simp]
 theorem Ioc_disjoint_Ioc_of_le {d : α} (hbc : b ≤ c) : Disjoint (Ioc a b) (Ioc c d) :=
   disjoint_left.2 fun _ h1 h2 ↦ not_and_of_not_left _
-    ((mem_Ioc.1 h1).2.trans hbc).not_lt (mem_Ioc.1 h2)
+    ((mem_Ioc.1 h1).2.trans hbc).not_gt (mem_Ioc.1 h2)
+
+lemma _root_.not_lt_of_denselyOrdered_of_locallyFinite [DenselyOrdered α] (a b : α) :
+    ¬ a < b := by
+  intro h
+  induction hs : Finset.Icc a b using Finset.strongInduction generalizing b with | H i ih
+  subst hs
+  obtain ⟨c, hac, hcb⟩ := exists_between h
+  refine ih _ ?_ c hac rfl
+  exact Finset.Icc_ssubset_Icc_right (hac.trans hcb).le le_rfl hcb
 
 variable (a)
 
@@ -265,7 +284,7 @@ section Filter
 
 theorem Ico_filter_lt_of_le_left [DecidablePred (· < c)] (hca : c ≤ a) :
     {x ∈ Ico a b | x < c} = ∅ :=
-  filter_false_of_mem fun _ hx => (hca.trans (mem_Ico.1 hx).1).not_lt
+  filter_false_of_mem fun _ hx => (hca.trans (mem_Ico.1 hx).1).not_gt
 
 theorem Ico_filter_lt_of_right_le [DecidablePred (· < c)] (hbc : b ≤ c) :
     {x ∈ Ico a b | x < c} = Ico a b :=
@@ -283,7 +302,7 @@ theorem Ico_filter_le_of_le_left {a b c : α} [DecidablePred (c ≤ ·)] (hca : 
 
 theorem Ico_filter_le_of_right_le {a b : α} [DecidablePred (b ≤ ·)] :
     {x ∈ Ico a b | b ≤ x} = ∅ :=
-  filter_false_of_mem fun _ hx => (mem_Ico.1 hx).2.not_le
+  filter_false_of_mem fun _ hx => (mem_Ico.1 hx).2.not_ge
 
 theorem Ico_filter_le_of_left_le {a b c : α} [DecidablePred (c ≤ ·)] (hac : a ≤ c) :
     {x ∈ Ico a b | c ≤ x} = Ico c b := by
@@ -457,14 +476,12 @@ theorem Ioo_subset_Iic_self : Ioo a b ⊆ Iic b :=
   Ioo_subset_Ioc_self.trans Ioc_subset_Iic_self
 
 theorem Iic_disjoint_Ioc (h : a ≤ b) : Disjoint (Iic a) (Ioc b c) :=
-  disjoint_left.2 fun _ hax hbcx ↦ (mem_Iic.1 hax).not_lt <| lt_of_le_of_lt h (mem_Ioc.1 hbcx).1
+  disjoint_left.2 fun _ hax hbcx ↦ (mem_Iic.1 hax).not_gt <| lt_of_le_of_lt h (mem_Ioc.1 hbcx).1
 
 /-- An equivalence between `Finset.Iic a` and `Set.Iic a`. -/
 def _root_.Equiv.IicFinsetSet (a : α) : Iic a ≃ Set.Iic a where
   toFun b := ⟨b.1, coe_Iic a ▸ mem_coe.2 b.2⟩
   invFun b := ⟨b.1, by rw [← mem_coe, coe_Iic a]; exact b.2⟩
-  left_inv := fun _ ↦ rfl
-  right_inv := fun _ ↦ rfl
 
 end LocallyFiniteOrderBot
 
@@ -533,7 +550,7 @@ end LocallyFiniteOrder
 variable [LocallyFiniteOrderTop α] [LocallyFiniteOrderBot α]
 
 theorem disjoint_Ioi_Iio (a : α) : Disjoint (Ioi a) (Iio a) :=
-  disjoint_left.2 fun _ hab hba => (mem_Ioi.1 hab).not_lt <| mem_Iio.1 hba
+  disjoint_left.2 fun _ hab hba => (mem_Ioi.1 hab).not_gt <| mem_Iio.1 hba
 
 end Preorder
 
@@ -549,7 +566,7 @@ theorem Icc_eq_singleton_iff : Icc a b = {c} ↔ a = c ∧ b = c := by
   rw [← coe_eq_singleton, coe_Icc, Set.Icc_eq_singleton_iff]
 
 theorem Ico_disjoint_Ico_consecutive (a b c : α) : Disjoint (Ico a b) (Ico b c) :=
-  disjoint_left.2 fun _ hab hbc => (mem_Ico.mp hab).2.not_le (mem_Ico.mp hbc).1
+  disjoint_left.2 fun _ hab hbc => (mem_Ico.mp hab).2.not_ge (mem_Ico.mp hbc).1
 
 @[simp]
 theorem Ici_top [OrderTop α] : Ici (⊤ : α) = {⊤} := Icc_eq_singleton_iff.2 ⟨rfl, rfl⟩
@@ -616,19 +633,19 @@ end DecidableEq
 -- Those lemmas are purposefully the other way around
 
 /-- `Finset.cons` version of `Finset.Ico_insert_right`. -/
-theorem Icc_eq_cons_Ico (h : a ≤ b) : Icc a b = (Ico a b).cons b right_not_mem_Ico := by
+theorem Icc_eq_cons_Ico (h : a ≤ b) : Icc a b = (Ico a b).cons b right_notMem_Ico := by
   classical rw [cons_eq_insert, Ico_insert_right h]
 
 /-- `Finset.cons` version of `Finset.Ioc_insert_left`. -/
-theorem Icc_eq_cons_Ioc (h : a ≤ b) : Icc a b = (Ioc a b).cons a left_not_mem_Ioc := by
+theorem Icc_eq_cons_Ioc (h : a ≤ b) : Icc a b = (Ioc a b).cons a left_notMem_Ioc := by
   classical rw [cons_eq_insert, Ioc_insert_left h]
 
 /-- `Finset.cons` version of `Finset.Ioo_insert_right`. -/
-theorem Ioc_eq_cons_Ioo (h : a < b) : Ioc a b = (Ioo a b).cons b right_not_mem_Ioo := by
+theorem Ioc_eq_cons_Ioo (h : a < b) : Ioc a b = (Ioo a b).cons b right_notMem_Ioo := by
   classical rw [cons_eq_insert, Ioo_insert_right h]
 
 /-- `Finset.cons` version of `Finset.Ioo_insert_left`. -/
-theorem Ico_eq_cons_Ioo (h : a < b) : Ico a b = (Ioo a b).cons a left_not_mem_Ioo := by
+theorem Ico_eq_cons_Ioo (h : a < b) : Ico a b = (Ioo a b).cons a left_notMem_Ioo := by
   classical rw [cons_eq_insert, Ioo_insert_left h]
 
 theorem Ico_filter_le_left {a b : α} [DecidablePred (· ≤ a)] (hab : a < b) :
@@ -735,11 +752,13 @@ theorem Ioi_insert [DecidableEq α] (a : α) : insert a (Ioi a) = Ici a := by
   ext
   simp_rw [Finset.mem_insert, mem_Ici, mem_Ioi, le_iff_lt_or_eq, or_comm, eq_comm]
 
-theorem not_mem_Ioi_self {b : α} : b ∉ Ioi b := fun h => lt_irrefl _ (mem_Ioi.1 h)
+theorem notMem_Ioi_self {b : α} : b ∉ Ioi b := fun h => lt_irrefl _ (mem_Ioi.1 h)
+
+@[deprecated (since := "2025-05-23")] alias not_mem_Ioi_self := notMem_Ioi_self
 
 -- Purposefully written the other way around
 /-- `Finset.cons` version of `Finset.Ioi_insert`. -/
-theorem Ici_eq_cons_Ioi (a : α) : Ici a = (Ioi a).cons a not_mem_Ioi_self := by
+theorem Ici_eq_cons_Ioi (a : α) : Ici a = (Ioi a).cons a notMem_Ioi_self := by
   classical rw [cons_eq_insert, Ioi_insert]
 
 theorem card_Ioi_eq_card_Ici_sub_one (a : α) : #(Ioi a) = #(Ici a) - 1 := by
@@ -761,11 +780,13 @@ theorem Iio_insert [DecidableEq α] (b : α) : insert b (Iio b) = Iic b := by
   ext
   simp_rw [Finset.mem_insert, mem_Iic, mem_Iio, le_iff_lt_or_eq, or_comm]
 
-theorem not_mem_Iio_self {b : α} : b ∉ Iio b := fun h => lt_irrefl _ (mem_Iio.1 h)
+theorem notMem_Iio_self {b : α} : b ∉ Iio b := fun h => lt_irrefl _ (mem_Iio.1 h)
+
+@[deprecated (since := "2025-05-23")] alias not_mem_Iio_self := notMem_Iio_self
 
 -- Purposefully written the other way around
 /-- `Finset.cons` version of `Finset.Iio_insert`. -/
-theorem Iic_eq_cons_Iio (b : α) : Iic b = (Iio b).cons b not_mem_Iio_self := by
+theorem Iic_eq_cons_Iio (b : α) : Iic b = (Iio b).cons b notMem_Iio_self := by
   classical rw [cons_eq_insert, Iio_insert]
 
 theorem card_Iio_eq_card_Iic_sub_one (a : α) : #(Iio a) = #(Iic a) - 1 := by
@@ -869,7 +890,7 @@ theorem Ioo_filter_lt (a b c : α) : {x ∈ Ioo a b | x < c} = Ioo a (min b c) :
 theorem Iio_filter_lt {α} [LinearOrder α] [LocallyFiniteOrderBot α] (a b : α) :
     {x ∈ Iio a | x < b} = Iio (min a b) := by
   ext
-  simp [and_assoc]
+  simp
 
 @[simp]
 theorem Ico_diff_Ico_left (a b c : α) : Ico a b \ Ico a c = Ico (max a c) b := by
@@ -1052,13 +1073,17 @@ theorem uIcc_eq_union : [[a, b]] = Icc a b ∪ Icc b a :=
 
 theorem mem_uIcc' : a ∈ [[b, c]] ↔ b ≤ a ∧ a ≤ c ∨ c ≤ a ∧ a ≤ b := by simp [uIcc_eq_union]
 
-theorem not_mem_uIcc_of_lt : c < a → c < b → c ∉ [[a, b]] := by
+theorem notMem_uIcc_of_lt : c < a → c < b → c ∉ [[a, b]] := by
   rw [mem_uIcc]
-  exact Set.not_mem_uIcc_of_lt
+  exact Set.notMem_uIcc_of_lt
 
-theorem not_mem_uIcc_of_gt : a < c → b < c → c ∉ [[a, b]] := by
+@[deprecated (since := "2025-05-23")] alias not_mem_uIcc_of_lt := notMem_uIcc_of_lt
+
+theorem notMem_uIcc_of_gt : a < c → b < c → c ∉ [[a, b]] := by
   rw [mem_uIcc]
-  exact Set.not_mem_uIcc_of_gt
+  exact Set.notMem_uIcc_of_gt
+
+@[deprecated (since := "2025-05-23")] alias not_mem_uIcc_of_gt := notMem_uIcc_of_gt
 
 theorem uIcc_subset_uIcc_iff_le :
     [[a₁, b₁]] ⊆ [[a₂, b₂]] ↔ min a₂ b₂ ≤ min a₁ b₁ ∧ max a₁ b₁ ≤ max a₂ b₂ :=
@@ -1079,13 +1104,12 @@ section Cover
 
 open Finset Relation
 
-set_option linter.unusedVariables false in -- `have` for wf induction triggers linter
 lemma transGen_wcovBy_of_le [Preorder α] [LocallyFiniteOrder α] {x y : α} (hxy : x ≤ y) :
     TransGen (· ⩿ ·) x y := by
   -- We proceed by well-founded induction on the cardinality of `Icc x y`.
   -- It's impossible for the cardinality to be zero since `x ≤ y`
   have : #(Ico x y) < #(Icc x y) := card_lt_card <|
-    ⟨Ico_subset_Icc_self, not_subset.mpr ⟨y, ⟨right_mem_Icc.mpr hxy, right_not_mem_Ico⟩⟩⟩
+    ⟨Ico_subset_Icc_self, not_subset.mpr ⟨y, ⟨right_mem_Icc.mpr hxy, right_notMem_Ico⟩⟩⟩
   by_cases hxy' : y ≤ x
   -- If `y ≤ x`, then `x ⩿ y`
   · exact .single <| wcovBy_of_le_of_le hxy hxy'
@@ -1093,13 +1117,13 @@ lemma transGen_wcovBy_of_le [Preorder α] [LocallyFiniteOrder α] {x y : α} (hx
   already. In that case, since `z` is maximal in `Ico x y`, then `z ⩿ y` and we can use the
   induction hypothesis to show that `Relation.TransGen (· ⩿ ·) x z`. -/
   · obtain ⟨z, hxz, hz⟩ :=
-      (Set.finite_Ico x y).exists_le_maximal <| Set.left_mem_Ico.2 <| hxy.lt_of_not_le hxy'
+      (Set.finite_Ico x y).exists_le_maximal <| Set.left_mem_Ico.2 <| hxy.lt_of_not_ge hxy'
     have z_card := calc
       #(Icc x z) ≤ #(Ico x y) := card_le_card <| Icc_subset_Ico_right hz.1.2
       _          < #(Icc x y) := this
     have h₁ := transGen_wcovBy_of_le hz.1.1
     have h₂ : z ⩿ y :=
-      ⟨hz.1.2.le, fun c hzc hcy ↦ hzc.not_le <| hz.2 ⟨hz.1.1.trans hzc.le, hcy⟩ hzc.le⟩
+      ⟨hz.1.2.le, fun c hzc hcy ↦ hzc.not_ge <| hz.2 ⟨hz.1.1.trans hzc.le, hcy⟩ hzc.le⟩
     exact .tail h₁ h₂
 termination_by #(Icc x y)
 
@@ -1116,7 +1140,6 @@ lemma le_iff_reflTransGen_covBy [PartialOrder α] [LocallyFiniteOrder α] {x y :
     x ≤ y ↔ ReflTransGen (· ⋖ ·) x y := by
   rw [le_iff_transGen_wcovBy, wcovBy_eq_reflGen_covBy, transGen_reflGen]
 
-set_option linter.unusedVariables false in -- `have` for wf induction triggers linter
 lemma transGen_covBy_of_lt [Preorder α] [LocallyFiniteOrder α] {x y : α} (hxy : x < y) :
     TransGen (· ⋖ ·) x y := by
   -- We proceed by well-founded induction on the cardinality of `Ico x y`.
@@ -1125,17 +1148,17 @@ lemma transGen_covBy_of_lt [Preorder α] [LocallyFiniteOrder α] {x y : α} (hxy
   -- `Ico x z` has cardinality strictly less than the cardinality of `Ico x y`
   obtain ⟨z, hxz, hz⟩ := (Set.finite_Ico x y).exists_le_maximal <| Set.left_mem_Ico.2 hxy
   have z_card : #(Ico x z) < #(Ico x y) := card_lt_card <| ssubset_iff_of_subset
-    (Ico_subset_Ico_right hz.1.2.le) |>.mpr ⟨z, mem_Ico.2 hz.1, right_not_mem_Ico⟩
+    (Ico_subset_Ico_right hz.1.2.le) |>.mpr ⟨z, mem_Ico.2 hz.1, right_notMem_Ico⟩
   /- Since `z` is maximal in `Ico x y`, `z ⋖ y`. -/
   have hzy : z ⋖ y :=
-    ⟨hz.1.2, fun c hc hcy ↦ hc.not_le <| hz.2 (⟨(hz.1.1.trans_lt hc).le, hcy⟩) hc.le⟩
+    ⟨hz.1.2, fun c hc hcy ↦ hc.not_ge <| hz.2 (⟨(hz.1.1.trans_lt hc).le, hcy⟩) hc.le⟩
   by_cases hxz : x < z
   /- when `x < z`, then we may use the induction hypothesis to get a chain
   `Relation.TransGen (· ⋖ ·) x z`, which we can extend with `Relation.TransGen.tail`. -/
   · exact .tail (transGen_covBy_of_lt hxz) hzy
   /- when `¬ x < z`, then actually `z ≤ x` (not because it's a linear order, but because
   `x ≤ z`), and since `z ⋖ y` we conclude that `x ⋖ y` , then `Relation.TransGen.single`. -/
-  · simp only [lt_iff_le_not_le, not_and, not_not] at hxz
+  · simp only [lt_iff_le_not_ge, not_and, not_not] at hxz
     exact .single (hzy.of_le_of_lt (hxz hz.1.1) hxy)
 termination_by #(Ico x y)
 

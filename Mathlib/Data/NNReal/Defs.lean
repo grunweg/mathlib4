@@ -30,7 +30,7 @@ a.k.a. the interval `[0, ∞)`. We also define the following operations and stru
   - `ConditionallyCompleteLinearOrderBot ℝ≥0`.
 
   These instances are derived from corresponding instances about the type `{x : α // 0 ≤ x}` in an
-  appropriate ordered field/ring/group/monoid `α`, see `Mathlib.Algebra.Order.Nonneg.OrderedRing`.
+  appropriate ordered field/ring/group/monoid `α`, see `Mathlib/Algebra/Order/Nonneg/Ring.lean`.
 
 * `Real.toNNReal x` is defined as `⟨max x 0, _⟩`, i.e. `↑(Real.toNNReal x) = x` when `0 ≤ x` and
   `↑(Real.toNNReal x) = 0` otherwise.
@@ -86,8 +86,21 @@ instance : IsOrderedRing ℝ≥0 :=
 instance : IsStrictOrderedRing ℝ≥0 :=
   Nonneg.isStrictOrderedRing
 
-noncomputable instance : LinearOrderedCommGroupWithZero ℝ≥0 :=
-  Nonneg.linearOrderedCommGroupWithZero
+noncomputable instance : LinearOrderedCommGroupWithZero ℝ≥0 where
+  /- Both `LinearOrderedCommGroupWithZero` and `Semifield` inherit from `CommGroupWithZero`.
+  However, if we project both of them into a `GroupWithZero` and try to unify them
+  at `reducible_and_instances` transparency, then we unfold `instSemifield` into `Nonneg.semifield`
+  which also causes an unfolding of `NNReal` to `{x // 0 ≤ x}`. Those two are (intentionally!)
+  not defeq at `reducible_and_instances`, even though the instances on them are.
+
+  So we either need to copy all the `Nonneg` instances and redefine them specifically for `NNReal`,
+  or we need to avoid the unfold in the unification. The latter has a smaller impact.
+  -/
+  __ := instSemifield.toCommGroupWithZero.toGroupWithZero
+  __ := Nonneg.linearOrderedCommGroupWithZero
+
+example {p q : ℝ≥0} (h1p : 0 < p) (h2p : p ≤ q) : q⁻¹ ≤ p⁻¹ := by
+  with_reducible_and_instances exact inv_anti₀ h1p h2p
 
 /-- Coercion `ℝ≥0 → ℝ`. -/
 @[coe] def toReal : ℝ≥0 → ℝ := Subtype.val
@@ -511,7 +524,7 @@ theorem toNNReal_one : Real.toNNReal 1 = 1 := NNReal.eq <| coe_toNNReal _ zero_l
 
 @[simp]
 theorem toNNReal_pos {r : ℝ} : 0 < Real.toNNReal r ↔ 0 < r := by
-  simp [← NNReal.coe_lt_coe, lt_irrefl]
+  simp [← NNReal.coe_lt_coe]
 
 @[simp]
 theorem toNNReal_eq_zero {r : ℝ} : Real.toNNReal r = 0 ↔ r ≤ 0 := by
@@ -568,7 +581,7 @@ lemma ofNat_lt_toNNReal {r : ℝ} {n : ℕ} [n.AtLeastTwo] :
 
 @[simp]
 theorem toNNReal_eq_toNNReal_iff {r p : ℝ} (hr : 0 ≤ r) (hp : 0 ≤ p) :
-    toNNReal r = toNNReal p ↔ r = p := by simp [← coe_inj, coe_toNNReal, hr, hp]
+    toNNReal r = toNNReal p ↔ r = p := by simp [← coe_inj, hr, hp]
 
 @[simp]
 theorem toNNReal_lt_toNNReal_iff' {r p : ℝ} : Real.toNNReal r < Real.toNNReal p ↔ r < p ∧ 0 < p :=
@@ -589,7 +602,7 @@ lemma toNNReal_le_toNNReal_iff' {r p : ℝ} : r.toNNReal ≤ p.toNNReal ↔ r �
   simp_rw [← not_lt, toNNReal_lt_toNNReal_iff', not_and_or]
 
 lemma toNNReal_le_toNNReal_iff_of_pos {r p : ℝ} (hr : 0 < r) : r.toNNReal ≤ p.toNNReal ↔ r ≤ p := by
-  simp [toNNReal_le_toNNReal_iff', hr.not_le]
+  simp [toNNReal_le_toNNReal_iff', hr.not_ge]
 
 @[simp]
 lemma one_le_toNNReal {r : ℝ} : 1 ≤ r.toNNReal ↔ 1 ≤ r := by
@@ -600,7 +613,7 @@ lemma toNNReal_lt_one {r : ℝ} : r.toNNReal < 1 ↔ r < 1 := by simp only [← 
 
 @[simp]
 lemma natCastle_toNNReal' {n : ℕ} {r : ℝ} : ↑n ≤ r.toNNReal ↔ n ≤ r ∨ n = 0 := by
-  simpa [n.cast_nonneg.le_iff_eq] using toNNReal_le_toNNReal_iff' (r := n)
+  simpa [n.cast_nonneg.ge_iff_eq'] using toNNReal_le_toNNReal_iff' (r := n)
 
 @[simp]
 lemma toNNReal_lt_natCast' {n : ℕ} {r : ℝ} : r.toNNReal < n ↔ r < n ∧ n ≠ 0 := by
@@ -642,8 +655,8 @@ theorem le_toNNReal_iff_coe_le {r : ℝ≥0} {p : ℝ} (hp : 0 ≤ p) : r ≤ Re
   rw [← NNReal.coe_le_coe, Real.coe_toNNReal p hp]
 
 theorem le_toNNReal_iff_coe_le' {r : ℝ≥0} {p : ℝ} (hr : 0 < r) : r ≤ Real.toNNReal p ↔ ↑r ≤ p :=
-  (le_or_lt 0 p).elim le_toNNReal_iff_coe_le fun hp => by
-    simp only [(hp.trans_le r.coe_nonneg).not_le, toNNReal_eq_zero.2 hp.le, hr.not_le]
+  (le_or_gt 0 p).elim le_toNNReal_iff_coe_le fun hp => by
+    simp only [(hp.trans_le r.coe_nonneg).not_ge, toNNReal_eq_zero.2 hp.le, hr.not_ge]
 
 theorem toNNReal_lt_iff_lt_coe {r : ℝ} {p : ℝ≥0} (ha : 0 ≤ r) : Real.toNNReal r < p ↔ r < ↑p := by
   rw [← NNReal.coe_lt_coe, Real.coe_toNNReal r ha]
@@ -704,7 +717,7 @@ section Sub
 
 In this section we provide a few lemmas about subtraction that do not fit well into any other
 typeclass. For lemmas about subtraction and addition see lemmas about `OrderedSub` in the file
-`Mathlib.Algebra.Order.Sub.Basic`. See also `mul_tsub` and `tsub_mul`.
+`Mathlib/Algebra/Order/Sub/Basic.lean`. See also `mul_tsub` and `tsub_mul`.
 -/
 
 theorem sub_def {r p : ℝ≥0} : r - p = Real.toNNReal (r - p) :=
@@ -932,8 +945,6 @@ end Real
 
 section StrictMono
 
-open NNReal
-
 variable {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
 
 /-- If `Γ₀ˣ` is nontrivial and `f : Γ₀ →*₀ ℝ≥0` is strictly monotone, then for any positive
@@ -971,7 +982,7 @@ unsafe instance : Repr ℝ≥0 where
 
 namespace Mathlib.Meta.Positivity
 
-open Lean Meta Qq Function
+open Lean Meta Qq
 
 private alias ⟨_, nnreal_coe_pos⟩ := coe_pos
 
