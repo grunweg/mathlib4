@@ -81,6 +81,13 @@ if __name__ == '__main__':
         data = json.load(fi)
     all_api_calls_succeeded = True
     for (number, user_handle) in data.items():
-        all_api_calls_succeeded = all_api_calls_succeeded and call(number, user_handle)
+        pass#all_api_calls_succeeded = all_api_calls_succeeded and call(number, user_handle)
+
+    to_ping = [
+        27292, 27284, 26489, 26368, 26347, 25856, 26287, 25795, 25225, 24528,
+    ]
+    for number in to_ping:
+        all_api_calls_succeeded = all_api_calls_succeeded and ping_queueboard_update(number)
+
     if not all_api_calls_succeeded:
         sys.exit(1)
