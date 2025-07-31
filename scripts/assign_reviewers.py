@@ -24,7 +24,7 @@ def call(number: int, handle: str) -> bool:
     arguments_DO_NOT_PRINT = [
         "--fail-with-body", "--location", "--request", "POST",
         '--header', 'Accept: application/vnd.github+json',
-        '--header', "authorization: Bearer {ASSIGN_REVIEWERS_TOKEN}",
+        '--header', f"authorization: Bearer {ASSIGN_REVIEWERS_TOKEN}",
         '--header', "X-GitHub-Api-Version: 2022-11-28",
         url, '--data', f'{{"assignees":["{handle}"]}}'
     ]
@@ -48,7 +48,7 @@ def ping_queueboard_update(number: int) -> bool:
         "--request", "POST",
         '--header', 'Content-Type: application/json',
         '--header', 'Accept: application/vnd.github+json',
-        '--header', "Authorization: token {ASSIGN_REVIEWERS_TOKEN}",
+        '--header', f"Authorization: token {ASSIGN_REVIEWERS_TOKEN}",
         '--header', "X-GitHub-Api-Version: 2022-11-28",
         '--data', f'{{"event_type": "mathlib_ping", "client_payload": {{"pr_number": "{number}" }} }}',
         url
