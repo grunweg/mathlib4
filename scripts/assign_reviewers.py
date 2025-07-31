@@ -82,7 +82,9 @@ if __name__ == '__main__':
     all_api_calls_succeeded = True
     for (number, user_handle) in data.items():
         pass#all_api_calls_succeeded = all_api_calls_succeeded and call(number, user_handle)
-
+    if not all_api_calls_succeeded:
+        sys.exit(1)
+    print(f"assigned {len(data)} PRs successfully: {data.keys()}")
     to_ping = [
         25453, 25500, 25970, 26189,
         26192, 26201, 26300, 26403, 26597, 26693, 26841,
