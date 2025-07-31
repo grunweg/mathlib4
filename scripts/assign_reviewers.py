@@ -37,6 +37,31 @@ def call(number: int, handle: str) -> bool:
         return False
     return True
 
+# Ping the queueboard webhook to trigger a re-download of PR |number|'s data.
+# Caution: at the moment, care is necessary to call this at the right moment
+# (otherwise, this will invalidate the queueboard CI jobs). Only call manually when the time is right.
+def ping_queueboard_update(number: int) -> bool:
+    print(f"pinging a queueboard data re-download of PR {number}")
+    url = "https://api.github.com/repos/leanprover-community/queueboard/dispatches"
+    arguments_DO_NOT_PRINT = [
+        # XXX: --location is not passed
+        "--request", "POST",
+        '--header', 'Content-Type: application/json',
+        '--header', 'Accept: application/vnd.github+json',
+        '--header', "Authorization: token {ASSIGN_REVIEWERS_TOKEN}",
+        '--header', "X-GitHub-Api-Version: 2022-11-28",
+        '--data', f'{{"event_type": "mathlib_ping", "client_payload": {{"pr_number": "{number}" }} }}',
+        url
+    ]
+    out = subprocess.run(["curl"] + arguments_DO_NOT_PRINT, capture_output=True, encoding="utf-8")
+    print("output from calling CURL:\n" + out.stdout)
+    if out.stderr:
+        print("standard error output is:\n" + out.stderr)
+    if out.returncode != 0:
+        print(f"error: curl failed to ping a data re-download for PR {number}")
+        return False
+    return True
+
 if __name__ == '__main__':
     # Download the assignments file using curl
     url = "https://leanprover-community.github.io/queueboard/automatic_assignments.json"
