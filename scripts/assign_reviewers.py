@@ -84,12 +84,17 @@ if __name__ == '__main__':
         pass#all_api_calls_succeeded = all_api_calls_succeeded and call(number, user_handle)
 
     to_ping = [
-        # insert PRs here
+        25453, 25500, 25970, 26189,
+        26192, 26201, 26300, 26403, 26597, 26693, 26841,
+        26885, 26941, 27024, 27066, 27257, 27304, 27380,
     ]
+    import time
     for number in to_ping:
         all_api_calls_succeeded = all_api_calls_succeeded and ping_queueboard_update(number)
-        # TODO: sleep for 10 or 12 seconds between subsequent calls!
-        # (or pass multiple PRs to the script!)
+        # Sleep between calls to allow the CI job to complete: otherwise, I'll get a push race
+        # and the re-download was for naught.
+        # (Or make that workflow more robust/allow passing several PRs, etc.)
+        time.sleep(11)
     # XXX: can there be a quick job which just updates aggregate data and the webpage?
     # (or would that also take ages?)
 
