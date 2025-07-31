@@ -84,10 +84,14 @@ if __name__ == '__main__':
         pass#all_api_calls_succeeded = all_api_calls_succeeded and call(number, user_handle)
 
     to_ping = [
-        27292, 27284, 26489, 26368, 26347, 25856, 26287, 25795, 25225, 24528,
+        # insert PRs here
     ]
     for number in to_ping:
         all_api_calls_succeeded = all_api_calls_succeeded and ping_queueboard_update(number)
+        # TODO: sleep for 10 or 12 seconds between subsequent calls!
+        # (or pass multiple PRs to the script!)
+    # XXX: can there be a quick job which just updates aggregate data and the webpage?
+    # (or would that also take ages?)
 
     if not all_api_calls_succeeded:
         sys.exit(1)
