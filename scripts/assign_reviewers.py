@@ -29,7 +29,8 @@ def call(number: int, handle: str) -> bool:
         url, '--data', f'{{"assignees":["{handle}"]}}'
     ]
     out = subprocess.run(["curl"] + arguments_DO_NOT_PRINT, capture_output=True, encoding="utf-8")
-    print("output from calling CURL:\n" + out.stdout)
+    if out.stdout:
+        print("output from calling CURL:\n" + out.stdout)
     if out.stderr:
         print("standard error output is:\n" + out.stderr)
     if out.returncode != 0:
@@ -86,9 +87,7 @@ if __name__ == '__main__':
         sys.exit(1)
     print(f"assigned {len(data)} PRs successfully: {data.keys()}")
     to_ping = [
-        25453, 25500, 25970, 26189,
-        26192, 26201, 26300, 26403, 26597, 26693, 26841,
-        26885, 26941, 27024, 27066, 27257, 27304, 27380,
+        26941, 26885,
     ]
     import time
     for number in to_ping:
