@@ -392,8 +392,6 @@ open Filter
 
 variable [PseudoMetrizableSpace ε]
 
-variable [PseudoMetrizableSpace ε]
-
 theorem integrable_iff_integrableAtFilter_cocompact :
     Integrable f μ ↔ (IntegrableAtFilter f (cocompact X) μ ∧ LocallyIntegrable f μ) := by
   refine ⟨fun hf ↦ ⟨hf.integrableAtFilter _, hf.locallyIntegrable⟩, fun ⟨⟨s, hsc, hs⟩, hloc⟩ ↦ ?_⟩
@@ -411,23 +409,20 @@ theorem integrable_iff_integrableAtFilter_atBot_atTop
     have aux := (IntegrableAtFilter.sup_iff.mpr h.1)
     exact (IntegrableAtFilter.sup_iff.mpr h.1).filter_mono cocompact_le_atBot_atTop
 
-theorem integrable_iff_integrableAtFilter_atBot
-    [PseudoMetrizableSpace ε] [LinearOrder X] [OrderTop X] [CompactIccSpace X] :
+theorem integrable_iff_integrableAtFilter_atBot [LinearOrder X] [OrderTop X] [CompactIccSpace X] :
     Integrable f μ ↔ IntegrableAtFilter f atBot μ ∧ LocallyIntegrable f μ := by
   constructor
   · exact fun hf ↦ ⟨hf.integrableAtFilter _, hf.locallyIntegrable⟩
   · refine fun h ↦ integrable_iff_integrableAtFilter_cocompact.mpr ⟨?_, h.2⟩
     exact h.1.filter_mono cocompact_le_atBot
 
-theorem integrable_iff_integrableAtFilter_atTop
-    [PseudoMetrizableSpace ε] [LinearOrder X] [OrderBot X] [CompactIccSpace X] :
+theorem integrable_iff_integrableAtFilter_atTop [LinearOrder X] [OrderBot X] [CompactIccSpace X] :
     Integrable f μ ↔ IntegrableAtFilter f atTop μ ∧ LocallyIntegrable f μ :=
   integrable_iff_integrableAtFilter_atBot (X := Xᵒᵈ)
 
 variable {a : X}
 
-theorem integrableOn_Iic_iff_integrableAtFilter_atBot
-    [PseudoMetrizableSpace ε] [LinearOrder X] [CompactIccSpace X] :
+theorem integrableOn_Iic_iff_integrableAtFilter_atBot [LinearOrder X] [CompactIccSpace X] :
     IntegrableOn f (Iic a) μ ↔ IntegrableAtFilter f atBot μ ∧ LocallyIntegrableOn f (Iic a) μ := by
   refine ⟨fun h ↦ ⟨⟨Iic a, Iic_mem_atBot a, h⟩, h.locallyIntegrableOn⟩, fun ⟨⟨s, hsl, hs⟩, h⟩ ↦ ?_⟩
   haveI : Nonempty X := Nonempty.intro a
@@ -435,13 +430,12 @@ theorem integrableOn_Iic_iff_integrableAtFilter_atBot
   refine (integrableOn_union.mpr ⟨hs.mono ha' le_rfl, ?_⟩).mono Iic_subset_Iic_union_Icc le_rfl
   exact h.integrableOn_compact_subset Icc_subset_Iic_self isCompact_Icc
 
-theorem integrableOn_Ici_iff_integrableAtFilter_atTop
-    [PseudoMetrizableSpace ε] [LinearOrder X] [CompactIccSpace X] :
+theorem integrableOn_Ici_iff_integrableAtFilter_atTop [LinearOrder X] [CompactIccSpace X] :
     IntegrableOn f (Ici a) μ ↔ IntegrableAtFilter f atTop μ ∧ LocallyIntegrableOn f (Ici a) μ :=
   integrableOn_Iic_iff_integrableAtFilter_atBot (X := Xᵒᵈ)
 
 theorem integrableOn_Iio_iff_integrableAtFilter_atBot_nhdsWithin
-    [PseudoMetrizableSpace ε] [LinearOrder X] [CompactIccSpace X] [NoMinOrder X] [OrderTopology X] :
+    [LinearOrder X] [CompactIccSpace X] [NoMinOrder X] [OrderTopology X] :
     IntegrableOn f (Iio a) μ ↔ IntegrableAtFilter f atBot μ ∧
     IntegrableAtFilter f (𝓝[<] a) μ ∧ LocallyIntegrableOn f (Iio a) μ := by
   constructor
@@ -454,7 +448,7 @@ theorem integrableOn_Iio_iff_integrableAtFilter_atBot_nhdsWithin
       ⟨hbot, hlocal.mono_set (Iic_subset_Iio.mpr hs'_mono)⟩
 
 theorem integrableOn_Ioi_iff_integrableAtFilter_atTop_nhdsWithin
-    [PseudoMetrizableSpace ε] [LinearOrder X] [CompactIccSpace X] [NoMaxOrder X] [OrderTopology X] :
+    [LinearOrder X] [CompactIccSpace X] [NoMaxOrder X] [OrderTopology X] :
     IntegrableOn f (Ioi a) μ ↔ IntegrableAtFilter f atTop μ ∧
     IntegrableAtFilter f (𝓝[>] a) μ ∧ LocallyIntegrableOn f (Ioi a) μ :=
   integrableOn_Iio_iff_integrableAtFilter_atBot_nhdsWithin (X := Xᵒᵈ)
@@ -484,8 +478,8 @@ theorem ContinuousOn.locallyIntegrableOn [IsLocallyFiniteMeasure μ]
 
 variable [IsFiniteMeasureOnCompacts μ]
 
---variable {f g : X → E}
-variable [PseudoMetrizableSpace ε]
+variable {f g : X → E}
+--variable [PseudoMetrizableSpace ε]
 
 /-- A function `f` continuous on a compact set `K` is integrable on this set with respect to any
 locally finite measure. -/
@@ -533,7 +527,7 @@ theorem Continuous.integrable_of_hasCompactSupport
     [PseudoMetrizableSpace ε''] {f : X → ε''} (hf : Continuous f) (hcf : HasCompactSupport f) :
     Integrable f μ :=
   (integrableOn_iff_integrable_of_support_subset (subset_tsupport f)).mp <|
-    hf.continuousOn.integrableOn_compact' hcf (isClosed_tsupport _).measurableSet
+    sorry -- was hf.continuousOn.integrableOn_compact' hcf (isClosed_tsupport _).measurableSet
 
 end borel
 
@@ -554,12 +548,12 @@ theorem MonotoneOn.memLp_top [Preorder ε] [Bornology ε] (hmono : MonotoneOn f 
   have : IsBounded (f '' s) := sorry
     -- TODO: does a pseudometrisable space also suffice? that would work here...
     -- Metric.isBounded_of_bddAbove_of_bddBelow habove hbelow
-  rcases isBounded_iff_forall_norm_le.mp this with ⟨C, hC⟩
+  sorry /- was: rcases isBounded_iff_forall_norm_le.mp this with ⟨C, hC⟩
   have A : MemLp (fun _ => C) ⊤ (μ.restrict s) := memLp_top_const _
   apply MemLp.mono A (aemeasurable_restrict_of_monotoneOn h's hmono).aestronglyMeasurable
   apply (ae_restrict_iff' h's).mpr
   apply ae_of_all _ fun y hy ↦ ?_
-  exact (hC _ (mem_image_of_mem f hy)).trans (le_abs_self _)
+  exact (hC _ (mem_image_of_mem f hy)).trans (le_abs_self _) -/
 
 @[deprecated (since := "2025-02-21")]
 alias MonotoneOn.memℒp_top := MonotoneOn.memLp_top
@@ -587,7 +581,7 @@ alias MonotoneOn.memℒp_isCompact := MonotoneOn.memLp_isCompact
 theorem AntitoneOn.memLp_top [Preorder ε''] [Bornology ε''] {f : X → ε''} (hanti : AntitoneOn f s)
     {a b : X} (ha : IsLeast s a) (hb : IsGreatest s b) (h's : MeasurableSet s) :
     MemLp f ∞ (μ.restrict s) :=
-  MonotoneOn.memLp_top (ε := ε''ᵒᵈ) hanti ha hb h's
+  sorry -- orderDual instance MonotoneOn.memLp_top (ε := ε''ᵒᵈ) hanti ha hb h's
 
 @[deprecated (since := "2025-02-21")]
 alias AntitoneOn.memℒp_top := AntitoneOn.memLp_top
@@ -596,14 +590,14 @@ theorem AntitoneOn.memLp_of_measure_ne_top [Preorder ε''] [Bornology ε'']
     {f : X → ε''} (hanti : AntitoneOn f s)
     {a b : X} (ha : IsLeast s a) (hb : IsGreatest s b) (hs : μ s ≠ ∞) (h's : MeasurableSet s) :
     MemLp f p (μ.restrict s) :=
-  MonotoneOn.memLp_of_measure_ne_top (ε'' := ε''ᵒᵈ) hanti ha hb hs h's
+  sorry -- orderDual instance MonotoneOn.memLp_of_measure_ne_top (ε'' := ε''ᵒᵈ) hanti ha hb hs h's
 
 @[deprecated (since := "2025-02-21")]
 alias AntitoneOn.memℒp_of_measure_ne_top := AntitoneOn.memLp_of_measure_ne_top
 
 theorem AntitoneOn.memLp_isCompact [Preorder ε''] [Bornology ε''] [IsFiniteMeasureOnCompacts μ]
     {f : X → ε''} (hanti : AntitoneOn f s) (hs : IsCompact s) : MemLp f p (μ.restrict s) :=
-  MonotoneOn.memLp_isCompact (ε'' := ε''ᵒᵈ) hs hanti
+  sorry -- orderDual instance MonotoneOn.memLp_isCompact (ε'' := ε''ᵒᵈ) hs hanti
 
 @[deprecated (since := "2025-02-21")]
 alias AntitoneOn.memℒp_isCompact := AntitoneOn.memLp_isCompact
@@ -614,7 +608,8 @@ theorem MonotoneOn.integrableOn_of_measure_ne_top [Preorder ε''] [Bornology ε'
   memLp_one_iff_integrable.1 (hmono.memLp_of_measure_ne_top ha hb hs h's)
 
 theorem MonotoneOn.integrableOn_isCompact [Preorder ε''] [Bornology ε''] {f : X → ε''}
-    [IsFiniteMeasureOnCompacts μ] (hs : IsCompact s) (hmono : MonotoneOn f s) : IntegrableOn f s μ :=
+    [IsFiniteMeasureOnCompacts μ] (hs : IsCompact s) (hmono : MonotoneOn f s) :
+    IntegrableOn f s μ :=
   memLp_one_iff_integrable.1 (hmono.memLp_isCompact hs)
 
 theorem AntitoneOn.integrableOn_of_measure_ne_top [Preorder ε''] [Bornology ε''] {f : X → ε''}
@@ -641,7 +636,7 @@ theorem Monotone.locallyIntegrable [Preorder ε''] [Bornology ε''] {f : X → �
 
 theorem Antitone.locallyIntegrable [Preorder ε''] [Bornology ε''] {f : X → ε''} (hanti : Antitone f)
     [IsLocallyFiniteMeasure μ] : LocallyIntegrable f μ :=
-  hanti.dual_right.locallyIntegrable
+  sorry -- hanti.dual_right.locallyIntegrable
 
 end Monotone
 

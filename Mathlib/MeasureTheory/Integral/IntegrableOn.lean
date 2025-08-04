@@ -72,14 +72,16 @@ namespace MeasureTheory
 
 section NormedAddCommGroup
 
-theorem HasFiniteIntegral.restrict_of_bounded_enorm [ENorm ε] {f : α → ε} {s : Set α}
-    {μ : Measure α} {C} (hC : C ≠ ∞) (hs : μ s < ∞) (hf : ∀ᵐ x ∂μ.restrict s, ‖f x‖ₑ ≤ C) :
+variable [NormedAddCommGroup E] {f g : α → ε} {s t : Set α} {μ ν : Measure α}
+
+theorem HasFiniteIntegral.restrict_of_bounded_enorm [ENorm ε] {C : ℝ≥0∞}
+    (hC : ‖C‖ₑ ≠ ∞) (hs : μ s < ∞) (hf : ∀ᵐ x ∂μ.restrict s, ‖f x‖ₑ ≤ C) :
     HasFiniteIntegral f (μ.restrict s) :=
   haveI : IsFiniteMeasure (μ.restrict s) := ⟨by rwa [Measure.restrict_apply_univ]⟩
-  hasFiniteIntegral_of_bounded_enorm hf hC
+  .of_bounded_enorm hC hf
 
-theorem HasFiniteIntegral.restrict_of_bounded [NormedAddCommGroup E] {f : α → E} {s : Set α}
-    {μ : Measure α} {C} (hs : μ s < ∞) (hf : ∀ᵐ x ∂μ.restrict s, ‖f x‖ ≤ C) :
+theorem HasFiniteIntegral.restrict_of_bounded {f : α → E} {C : ℝ}
+    (hs : μ s < ∞) (hf : ∀ᵐ x ∂μ.restrict s, ‖f x‖ ≤ C) :
     HasFiniteIntegral f (μ.restrict s) :=
   haveI : IsFiniteMeasure (μ.restrict s) := ⟨by rwa [Measure.restrict_apply_univ]⟩
   .of_bounded hf
@@ -87,14 +89,7 @@ theorem HasFiniteIntegral.restrict_of_bounded [NormedAddCommGroup E] {f : α →
 @[deprecated (since := "2025-07-26")]
 alias hasFiniteIntegral_restrict_of_bounded := HasFiniteIntegral.restrict_of_bounded
 
-variable [NormedAddCommGroup E] {f g : α → ε} {s t : Set α} {μ ν : Measure α}
-  [TopologicalSpace ε] [ContinuousENorm ε]
-
-theorem HasFiniteIntegral.restrict_of_bounded_enorm {C : ℝ≥0∞} (hC : ‖C‖ₑ ≠ ∞ := by finiteness)
-    (hs : μ s ≠ ∞ := by finiteness) (hf : ∀ᵐ x ∂μ.restrict s, ‖f x‖ₑ ≤ C) :
-    HasFiniteIntegral f (μ.restrict s) :=
-  haveI : IsFiniteMeasure (μ.restrict s) := ⟨by rw [Measure.restrict_apply_univ]; exact hs.lt_top⟩
-  .of_bounded_enorm hC hf
+variable [TopologicalSpace ε] [ContinuousENorm ε]
 
 /-- A function is `IntegrableOn` a set `s` if it is almost everywhere strongly measurable on `s`
 and if the integral of its pointwise norm over `s` is less than infinity. -/
@@ -550,7 +545,7 @@ theorem Measure.FiniteAtFilter.integrableAtFilter_enorm {f : α → ε} {l : Fil
   rcases (hfm.eventually.and (hμ.eventually.and hC)).exists_measurable_mem_of_smallSets with
     ⟨s, hsl, hsm, hfm, hμ, hC⟩
   -- TODO: this doesn't suffice; need the bound C to be finite (which hf does not imply)
-  refine ⟨s, hsl, ⟨hfm, hasFiniteIntegral_restrict_of_bounded_enorm sorry hμ (C := C) ?_⟩⟩
+  refine ⟨s, hsl, ⟨hfm, .restrict_of_bounded_enorm sorry hμ (C := C) ?_⟩⟩
   rw [ae_restrict_eq hsm, eventually_inf_principal]
   exact Eventually.of_forall hC
 
