@@ -53,8 +53,8 @@ theorem LocallyIntegrableOn.enorm (hf : LocallyIntegrableOn f s μ) :
 
 theorem LocallyIntegrableOn.norm {f : X → E} (hf : LocallyIntegrableOn f s μ) :
     LocallyIntegrableOn (fun x => ‖f x‖) s μ := fun t ht =>
-  let ⟨U, hU_nhds, hU_int⟩ := hf t ht
-  ⟨U, hU_nhds, hU_int.norm⟩
+  let ⟨U, hU_nhd, hU_int⟩ := hf t ht
+  ⟨U, hU_nhd, hU_int.norm⟩
 
 theorem LocallyIntegrableOn.mono_enorm (hf : LocallyIntegrableOn f s μ) {g : X → ε'}
     (hg : AEStronglyMeasurable g μ) (h : ∀ᵐ x ∂μ, ‖g x‖ₑ ≤ ‖f x‖ₑ) :
@@ -169,7 +169,7 @@ protected theorem LocallyIntegrableOn.neg {f : X → E} (hf : LocallyIntegrableO
 
 end LocallyIntegrableOn
 
-/-- A function `f : X → E` is *locally integrable* if it is integrable on a neighborhood of every
+/-- A function `f : X → ε` is *locally integrable* if it is integrable on a neighborhood of every
 point. In particular, it is integrable on all compact sets,
 see `LocallyIntegrable.integrableOn_isCompact`. -/
 def LocallyIntegrable (f : X → ε) (μ : Measure X := by volume_tac) : Prop :=
@@ -310,7 +310,7 @@ theorem LocallyIntegrable.indicator {f : X → ε''} (hf : LocallyIntegrable f �
   rcases hf x with ⟨U, hU, h'U⟩
   exact ⟨U, hU, h'U.indicator hs⟩
 
-theorem locallyIntegrable_map_homeomorph [BorelSpace X] [BorelSpace Y] (e : X ≃ₜ Y) {f : Y → E}
+theorem locallyIntegrable_map_homeomorph [BorelSpace X] [BorelSpace Y] (e : X ≃ₜ Y) {f : Y → ε''}
     {μ : Measure X} : LocallyIntegrable f (Measure.map e μ) ↔ LocallyIntegrable (f ∘ e) μ := by
   refine ⟨fun h x => ?_, fun h x => ?_⟩
   · rcases h (e x) with ⟨U, hU, h'U⟩
@@ -390,7 +390,11 @@ theorem LocallyIntegrable.integrable_smul_right_of_hasCompactSupport
 
 open Filter
 
-theorem integrable_iff_integrableAtFilter_cocompact [PseudoMetrizableSpace ε] :
+variable [PseudoMetrizableSpace ε]
+
+variable [PseudoMetrizableSpace ε]
+
+theorem integrable_iff_integrableAtFilter_cocompact :
     Integrable f μ ↔ (IntegrableAtFilter f (cocompact X) μ ∧ LocallyIntegrable f μ) := by
   refine ⟨fun hf ↦ ⟨hf.integrableAtFilter _, hf.locallyIntegrable⟩, fun ⟨⟨s, hsc, hs⟩, hloc⟩ ↦ ?_⟩
   obtain ⟨t, htc, ht⟩ := mem_cocompact'.mp hsc
