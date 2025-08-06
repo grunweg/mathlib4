@@ -82,6 +82,7 @@ titlesPathsAndRegexes=(
   "adaptation notes"               ":^Mathlib/Tactic/AdaptationNote.lean :^Mathlib/Tactic/Linter"
                                             "^[· ]*#adaptation_note"
   "disabled simpNF lints"          "*"      "nolint simpNF"
+  "Empty doc-strings"              ":^MathlibTest" "set_option linter.style.docString.empty"
   "erw"                            "*"      "erw \["
   "maxHeartBeats modifications"    ":^MathlibTest" "^ *set_option .*maxHeartbeats.* [0-9][0-9]*"
   "CommRing (Fin n) instances"     "*"      "^open Fin.CommRing "
