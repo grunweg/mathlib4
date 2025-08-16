@@ -162,15 +162,24 @@ theorem prodMap {f : M → N} {g : M' → N'} {x' : M'}
     IsImmersionAt (F × F') (I.prod I') (J.prod J') n (Prod.map f g) (x, x') :=
   sorry
 
-theorem continuousWithinAt (h : IsImmersionAt F I I' n f x) :
-    ContinuousWithinAt f h.domChart.source x := by
-  -- TODO: follows from the local description...
-  -- use the subset hypothesis on the ranges!
-  sorry
+-- better name? worth a separate lemma? move to `PartialHomeomorph.lean`
+omit [ChartedSpace H M] in
+theorem PartialHomeomorph.extend_target'' {e : PartialHomeomorph M H} :
+    (e.extend I) '' e.source = (e.extend I).target := by
+  rw [e.extend_coe, image_comp, e.image_source_eq_target, ← e.extend_target']
+
+private theorem continuousOn (h : IsImmersionAt F I I' n f x) :
+    ContinuousOn f h.domChart.source := by
+  have mapsto : MapsTo f h.domChart.source h.codChart.source :=
+    fun x hx ↦ by apply h.map_source_subset_source; use x
+  rw [← h.domChart.continuousOn_writtenInExtend_iff le_rfl mapsto (I' := I') (I := I),
+    PartialHomeomorph.extend_target'']
+  have : ContinuousOn (h.equiv ∘ fun x ↦ (x, 0)) (h.domChart.extend I).target := by fun_prop
+  exact this.congr h.writtenInCharts
 
 /-- A `C^k` immersion at `x` is continuous at `x`. -/
 theorem continuousAt (h : IsImmersionAt F I I' n f x) : ContinuousAt f x :=
-  h.continuousWithinAt.continuousAt (h.domChart.open_source.mem_nhds (mem_domChart_source h))
+  h.continuousOn.continuousAt (h.domChart.open_source.mem_nhds (mem_domChart_source h))
 
 variable [IsManifold I n M] [IsManifold I' n M'] [IsManifold J n N]
 
