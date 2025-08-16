@@ -7,6 +7,7 @@ import Mathlib.Geometry.Manifold.ContMDiff.Defs
 import Mathlib.Geometry.Manifold.MFDeriv.Defs
 import Mathlib.Geometry.Manifold.MSplits
 import Mathlib.Geometry.Manifold.IsManifold.InteriorBoundary
+import Mathlib.Geometry.Manifold.ContMDiff.Atlas
 
 /-! # Smooth immersions and embeddings
 
@@ -182,6 +183,26 @@ theorem continuousAt (h : IsImmersionAt F I I' n f x) : ContinuousAt f x :=
   h.continuousOn.continuousAt (h.domChart.open_source.mem_nhds (mem_domChart_source h))
 
 variable [IsManifold I n M] [IsManifold I' n M'] [IsManifold J n N]
+
+private theorem contMDiffOn (h : IsImmersionAt F I I' n f x) : ContMDiffOn I I' n f h.domChart.source := by
+  have mapsto : MapsTo f h.domChart.source h.codChart.source :=
+    fun x hx ↦ by apply h.map_source_subset_source; use x
+  rw [← contMDiffOn_writtenInExtend_iff h.domChart_mem_maximalAtlas
+    h.codChart_mem_maximalAtlas le_rfl mapsto,
+    PartialHomeomorph.extend_target'']
+  have : ContMDiff 𝓘(𝕜, E) 𝓘(𝕜, E') n (h.equiv ∘ fun x ↦ (x, 0)) := by
+    have : ContMDiff (𝓘(𝕜, E).prod 𝓘(𝕜, F)) 𝓘(𝕜, E') n h.equiv := sorry
+    apply this.comp
+    rw [@contMDiff_prod_iff]
+    constructor
+    · have : (Prod.fst ∘ fun x ↦ (x, 0) : E → E) = (fun _ ↦ 0 : E → E) := sorry
+      #check ContMDiff.congr
+
+
+    sorry
+  exact this.contMDiffOn.congr h.writtenInCharts
+
+#exit
 
 /-- A `C^k` immersion at `x` is `C^k` at `x`. -/
 -- continuity follows since we're in a chart, on an open set;
