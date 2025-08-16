@@ -73,7 +73,7 @@ def IsImmersionAt (f : M → M') (x : M) : Prop :=
     x ∈ domChart.source ∧ f x ∈ codChart.source ∧
     domChart ∈ IsManifold.maximalAtlas I n M ∧
     codChart ∈ IsManifold.maximalAtlas I' n M' ∧
-    (equiv ∘ (·, 0)) '' (domChart.extend I).target ⊆ (codChart.extend I').target ∧
+    f '' domChart.source ⊆ codChart.source ∧
     EqOn ((codChart.extend I') ∘ f ∘ (domChart.extend I).symm) (equiv ∘ (·, 0))
       (domChart.extend I).target
 
@@ -104,14 +104,35 @@ lemma codChart_mem_maximalAtlas (h : IsImmersionAt F I I' n f x) :
     h.codChart ∈ IsManifold.maximalAtlas I' n M' :=
   (Classical.choose_spec ((Classical.choose_spec (Classical.choose_spec h)))).2.2.2.1
 
-lemma map_target_subset_target (h : IsImmersionAt F I I' n f x) :
-    (h.equiv ∘ (·, 0)) '' (h.domChart.extend I).target ⊆ (h.codChart.extend I').target :=
+lemma map_source_subset_source (h : IsImmersionAt F I I' n f x) :
+    f '' h.domChart.source ⊆ h.codChart.source :=
   (Classical.choose_spec ((Classical.choose_spec (Classical.choose_spec h)))).2.2.2.2.1
 
 lemma writtenInCharts (h : IsImmersionAt F I I' n f x) :
     EqOn ((h.codChart.extend I') ∘ f ∘ (h.domChart.extend I).symm) (h.equiv ∘ (·, 0))
       (h.domChart.extend I).target :=
   (Classical.choose_spec ((Classical.choose_spec (Classical.choose_spec h)))).2.2.2.2.2
+
+-- TODO: golf this proof!
+lemma map_target_subset_target (h : IsImmersionAt F I I' n f x) :
+    (h.equiv ∘ (·, 0)) '' (h.domChart.extend I).target ⊆ (h.codChart.extend I').target := by
+  have : (h.domChart.extend I).target = (h.domChart.extend I) '' (h.domChart.extend I).source := by
+    rw [PartialEquiv.image_source_eq_target]
+  rw [this, PartialHomeomorph.extend_source]
+  set Ψ := h.codChart.extend I'
+  set Φ := h.domChart.extend I
+  suffices (Ψ ∘ f ∘ Φ.symm) '' (Φ '' h.domChart.source) ⊆ Ψ.target by
+    have aux : h.domChart.source = Φ.source := h.domChart.extend_source.symm
+    rw [aux, PartialEquiv.image_source_eq_target] at this ⊢
+    rwa [h.writtenInCharts.image_eq] at this
+  calc
+   _ = (Ψ ∘ f ∘ ↑Φ.symm ∘ Φ) '' h.domChart.source := by rw [← image_comp]; congr
+   _ = (Ψ ∘ f) '' ((Φ.symm ∘ Φ) '' h.domChart.source) := by simp [← image_comp]
+   _ = (Ψ ∘ f) '' h.domChart.source := by rw [h.domChart.extend_left_inv' fun ⦃a⦄ a ↦ a]
+   _ = Ψ '' (f '' h.domChart.source) := by rw [image_comp]
+   _ ⊆ Ψ '' h.codChart.source := by gcongr; exact h.map_source_subset_source
+   _ = Ψ '' Ψ.source := by rw [PartialHomeomorph.extend_source]
+   _ ⊆ _ := Ψ.map_source''
 
 /-- If `f` is an immersion at `x` and `g = f` on some neighbourhood of `x`,
 then `g` is an immersion at `x`. -/
@@ -121,8 +142,10 @@ lemma congr_of_eventuallyEq {x : M} (h : IsImmersionAt F I I' n f x) (h' : f =�
   -- TODO: need to shrink h.domChart until its source is contained in s
   use h.equiv, h.domChart, h.codChart
   refine ⟨mem_domChart_source h, ?_, h.domChart_mem_maximalAtlas, h.codChart_mem_maximalAtlas,
-      h.map_target_subset_target, ?_⟩
+      ?_, ?_⟩
   · exact hfg (mem_of_mem_nhds hxs) ▸ mem_codChart_source h
+  · have := h.map_source_subset_source
+    sorry -- apply EqOn.image_eq; will only work after h.domChart was shrunk
   · have missing : EqOn ((h.codChart.extend I') ∘ g ∘ (h.domChart.extend I).symm)
         ((h.codChart.extend I') ∘ f ∘ (h.domChart.extend I).symm) (h.domChart.extend I).target := by
       -- after shrinking, this will be true
