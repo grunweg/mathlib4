@@ -184,50 +184,29 @@ theorem continuousAt (h : IsImmersionAt F I I' n f x) : ContinuousAt f x :=
 
 variable [IsManifold I n M] [IsManifold I' n M'] [IsManifold J n N]
 
-private theorem contMDiffOn (h : IsImmersionAt F I I' n f x) : ContMDiffOn I I' n f h.domChart.source := by
+private theorem contMDiffOn (h : IsImmersionAt F I I' n f x) :
+    ContMDiffOn I I' n f h.domChart.source := by
   have mapsto : MapsTo f h.domChart.source h.codChart.source :=
     fun x hx ↦ by apply h.map_source_subset_source; use x
   rw [← contMDiffOn_writtenInExtend_iff h.domChart_mem_maximalAtlas
     h.codChart_mem_maximalAtlas le_rfl mapsto,
     PartialHomeomorph.extend_target'']
   have : ContMDiff 𝓘(𝕜, E) 𝓘(𝕜, E') n (h.equiv ∘ fun x ↦ (x, 0)) := by
-    have : ContMDiff (𝓘(𝕜, E).prod 𝓘(𝕜, F)) 𝓘(𝕜, E') n h.equiv := sorry
+    have : ContDiff 𝕜 n h.equiv := ContinuousLinearEquiv.contDiff h.equiv
+    have : ContMDiff (𝓘(𝕜, E).prod 𝓘(𝕜, F)) 𝓘(𝕜, E') n h.equiv := by
+      -- rw [contMDiff_iff_contDiff] doesn't work, because the first model is a product!
+      sorry
     apply this.comp
-    rw [@contMDiff_prod_iff]
-    constructor
-    · have : (Prod.fst ∘ fun x ↦ (x, 0) : E → E) = (fun _ ↦ 0 : E → E) := sorry
-      #check ContMDiff.congr
-
-
-    sorry
+    rw [contMDiff_prod_iff]
+    exact ⟨contMDiff_id.congr fun x ↦ by simp,
+      contMDiff_const (c := (0 : F)) |>.congr (fun x ↦ by simp)⟩
   exact this.contMDiffOn.congr h.writtenInCharts
-
-#exit
 
 /-- A `C^k` immersion at `x` is `C^k` at `x`. -/
 -- continuity follows since we're in a chart, on an open set;
 -- smoothness follows since domChart and codChart are compatible with the maximal atlas
-theorem contMDiffAt (h : IsImmersionAt F I I' n f x) : ContMDiffAt I I' n f x := by
-  suffices ContMDiffWithinAt I I' n f h.domChart.source x from
-    this.contMDiffAt <| h.domChart.open_source.mem_nhds (mem_domChart_source h)
-  rw [contMDiffWithinAt_iff_of_mem_maximalAtlas (e := h.domChart) (e' := h.codChart)]
-  · refine ⟨h.continuousWithinAt, ?_⟩
-    have aux := h.writtenInCharts
-    have : ContDiffWithinAt 𝕜 n ((h.codChart.extend I') ∘ f ∘ ↑(h.domChart.extend I).symm)
-        (h.domChart.extend I).target ((h.domChart.extend I) x) := by
-      -- apply a congr lemma, and prove this for the inclusion
-      sorry
-    apply this.mono
-    -- is this true? in any case, want the lemma below
-    -- have aux2 : (h.domChart.extend I).symm ⁻¹' h.domChart.source =
-    --   (h.domChart.extend I).target := sorry
-    simp only [mfld_simps, inter_comm]
-    gcongr
-    sorry -- is this true? need to think!
-  · exact h.domChart_mem_maximalAtlas
-  · exact codChart_mem_maximalAtlas h
-  · exact mem_domChart_source h
-  · exact mem_codChart_source h
+theorem contMDiffAt (h : IsImmersionAt F I I' n f x) : ContMDiffAt I I' n f x :=
+  h.contMDiffOn.contMDiffAt (h.domChart.open_source.mem_nhds (mem_domChart_source h))
 
 -- These are required to argue that `Splits` composes.
 variable [CompleteSpace E'] [CompleteSpace E] [CompleteSpace F]
