@@ -35,6 +35,10 @@ finite-dimensional definition: we cannot prove the implication yet.
 * If `f: M → M'` is a map between finite-dimensional manifolds, `mfderiv I I' f x` being injective
   implies `f` is an immersion at `x`.
 
+## References
+
+* [Roig, X and Domingues, X (1992). _Title_. North Holland something.][roigdomingues2012]
+
 -/
 
 open scoped Manifold Topology ContDiff
@@ -114,6 +118,18 @@ lemma writtenInCharts (h : IsImmersionAt F I I' n f x) :
       (h.domChart.extend I).target :=
   (Classical.choose_spec ((Classical.choose_spec (Classical.choose_spec h)))).2.2.2.2.2
 
+/-- Roig and Domingues [roigdomingues1992] only require this condition on the local charts:
+in our setting, this is *slightly* weaker than `map_source_subset_source`: the latter implies
+that `h.codChart.extend I' ∘ f` maps `h.domChart.source` to
+`(h.codChart.extend I').target = (h.codChart.extend I) '' h.codChart.source`,
+but that does *not* imply `f` maps `h.domChart.source` to `h.codChartSource`;
+a priori `f` could map some point `f ∘ h.domChart.extend I x ∉ h.codChart.source` into the target.
+Note that this difference only occurs because of our design using junk values;
+this is not a mathematically meaningful difference.`
+
+At the same time, this condition is fairly weak: it is implied, for instance, by `f` being
+continuous at `x`, which is easy to acertain in practice.
+-/
 -- TODO: golf this proof!
 lemma map_target_subset_target (h : IsImmersionAt F I I' n f x) :
     (h.equiv ∘ (·, 0)) '' (h.domChart.extend I).target ⊆ (h.codChart.extend I').target := by
