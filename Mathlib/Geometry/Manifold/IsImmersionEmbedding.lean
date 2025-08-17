@@ -86,6 +86,31 @@ namespace IsImmersionAt
 
 variable {f g : M → M'} {x : M}
 
+/-- If `f` is continuous at `x`, the condition about the source of the slice charts is automatic. -/
+def mk_of_continuousAt (f : M → M') (x : M) (hf : ContinuousAt f x)
+  (equiv : (E × F) ≃L[𝕜] E')
+  (domChart : PartialHomeomorph M H)
+  (codChart : PartialHomeomorph M' H')
+  (hx: x ∈ domChart.source) (hfx : f x ∈ codChart.source)
+  (hdomChart: domChart ∈ IsManifold.maximalAtlas I n M)
+  (hcodChart : codChart ∈ IsManifold.maximalAtlas I' n M')
+  (hwrittenInExtend: EqOn ((codChart.extend I') ∘ f ∘ (domChart.extend I).symm) (equiv ∘ (·, 0))
+    (domChart.extend I).target) : IsImmersionAt F I I' n f x := by
+  obtain ⟨s, hs, hsopen, hxs⟩ := mem_nhds_iff.mp <|
+    hf.preimage_mem_nhds (codChart.open_source.mem_nhds hfx)
+  have : f '' (domChart.restr s).source ⊆ codChart.source := by
+    refine Subset.trans ?_ (image_subset_iff.mpr hs)
+    gcongr
+    rw [domChart.restr_source, interior_eq_iff_isOpen.mpr hsopen]
+    exact inter_subset_right
+  have hmono : ((domChart.restr s).extend I).target ⊆ (domChart.extend I).target := by
+    have {a b c : Set E} : a ∩ (b ∩ c) ⊆ b := by intro; aesop
+    simpa using this
+  exact ⟨equiv, domChart.restr s, codChart,
+    by rw [domChart.restr_source, interior_eq_iff_isOpen.mpr hsopen]; exact mem_inter hx hxs, hfx,
+    restr_mem_maximalAtlas (G := contDiffGroupoid n I) hdomChart hsopen, hcodChart, this,
+    hwrittenInExtend.mono hmono⟩
+
 noncomputable def equiv (h : IsImmersionAt F I I' n f x) : (E × F) ≃L[𝕜] E' :=
   Classical.choose h
 
@@ -128,7 +153,7 @@ Note that this difference only occurs because of our design using junk values;
 this is not a mathematically meaningful difference.`
 
 At the same time, this condition is fairly weak: it is implied, for instance, by `f` being
-continuous at `x`, which is easy to acertain in practice.
+continuous at `x` (see `mk_of_continuousAt`), which is easy to acertain in practice.
 -/
 -- TODO: golf this proof!
 lemma map_target_subset_target (h : IsImmersionAt F I I' n f x) :
