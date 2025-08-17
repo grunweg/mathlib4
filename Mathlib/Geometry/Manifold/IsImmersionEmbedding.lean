@@ -67,10 +67,10 @@ variable {M : Type*} [TopologicalSpace M] [ChartedSpace H M]
 variable (F I I' n) in
 /-- `f : M → N` is a `C^k` immersion at `x` if there are charts `φ` and `ψ` of `M` and `N`
 around `x` and `f x`, respectively such that in these charts, `f` looks like `u ↦ (u, 0)`.
-Additionally, we demand that `φ.target` be mapped into `ψ.target` by this map.
+Additionally, we demand that `f` map `φ.source` into `ψ.source`.
 
-NB. We don't know the particular atlas used for `M` and `M'`, so asking for `φ` and `ψ` to be in the
-`atlas` would be too optimistic: lying in the `maximalAtlas` is sufficient.
+NB. We don't know the particular atlasses used for `M` and `N`, so asking for `φ` and `ψ` to be
+in the `atlas` would be too optimistic: lying in the `maximalAtlas` is sufficient.
 -/
 def IsImmersionAt (f : M → M') (x : M) : Prop :=
   ∃ equiv : (E × F) ≃L[𝕜] E',
@@ -86,16 +86,19 @@ namespace IsImmersionAt
 
 variable {f g : M → M'} {x : M}
 
-/-- If `f` is continuous at `x`, the condition about the source of the slice charts is automatic. -/
+/-- `f : M → N` is a `C^k` immersion at `x` if there are charts `φ` and `ψ` of `M` and `N`
+around `x` and `f x`, respectively such that in these charts, `f` looks like `u ↦ (u, 0)`.
+This version does not assume that `f` maps `φ.source` to `ψ.source`,
+but that `f` is continuous at `x`. -/
 def mk_of_continuousAt (f : M → M') (x : M) (hf : ContinuousAt f x)
-  (equiv : (E × F) ≃L[𝕜] E')
-  (domChart : PartialHomeomorph M H)
-  (codChart : PartialHomeomorph M' H')
-  (hx: x ∈ domChart.source) (hfx : f x ∈ codChart.source)
-  (hdomChart: domChart ∈ IsManifold.maximalAtlas I n M)
-  (hcodChart : codChart ∈ IsManifold.maximalAtlas I' n M')
-  (hwrittenInExtend: EqOn ((codChart.extend I') ∘ f ∘ (domChart.extend I).symm) (equiv ∘ (·, 0))
-    (domChart.extend I).target) : IsImmersionAt F I I' n f x := by
+    (equiv : (E × F) ≃L[𝕜] E')
+    (domChart : PartialHomeomorph M H)
+    (codChart : PartialHomeomorph M' H')
+    (hx: x ∈ domChart.source) (hfx : f x ∈ codChart.source)
+    (hdomChart: domChart ∈ IsManifold.maximalAtlas I n M)
+    (hcodChart : codChart ∈ IsManifold.maximalAtlas I' n M')
+    (hwrittenInExtend: EqOn ((codChart.extend I') ∘ f ∘ (domChart.extend I).symm) (equiv ∘ (·, 0))
+      (domChart.extend I).target) : IsImmersionAt F I I' n f x := by
   obtain ⟨s, hs, hsopen, hxs⟩ := mem_nhds_iff.mp <|
     hf.preimage_mem_nhds (codChart.open_source.mem_nhds hfx)
   have : f '' (domChart.restr s).source ⊆ codChart.source := by
