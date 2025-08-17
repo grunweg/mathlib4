@@ -104,7 +104,7 @@ def mk_of_continuousAt (f : M → M') (x : M) (hf : ContinuousAt f x)
   have : f '' (domChart.restr s).source ⊆ codChart.source := by
     refine Subset.trans ?_ (image_subset_iff.mpr hs)
     gcongr
-    rw [domChart.restr_source, interior_eq_iff_isOpen.mpr hsopen]
+    rw [domChart.restr_source' _ hsopen]
     exact inter_subset_right
   have hmono : ((domChart.restr s).extend I).target ⊆ (domChart.extend I).target := by
     have {a b c : Set E} : a ∩ (b ∩ c) ⊆ b := by intro; aesop
@@ -183,19 +183,34 @@ lemma map_target_subset_target (h : IsImmersionAt F I I' n f x) :
 then `g` is an immersion at `x`. -/
 lemma congr_of_eventuallyEq {x : M} (h : IsImmersionAt F I I' n f x) (h' : f =ᶠ[nhds x] g) :
     IsImmersionAt F I I' n g x := by
-  choose s hxs hfg using h'.exists_mem
-  -- TODO: need to shrink h.domChart until its source is contained in s
-  use h.equiv, h.domChart, h.codChart
-  refine ⟨mem_domChart_source h, ?_, h.domChart_mem_maximalAtlas, h.codChart_mem_maximalAtlas,
-      ?_, ?_⟩
-  · exact hfg (mem_of_mem_nhds hxs) ▸ mem_codChart_source h
+  obtain ⟨s', hxs', hfg⟩ := h'.exists_mem
+  obtain ⟨s, hss', hs, hxs⟩ := mem_nhds_iff.mp hxs'
+  refine ⟨h.equiv, h.domChart.restr s, h.codChart, ?_, ?_, ?_, h.codChart_mem_maximalAtlas, ?_, ?_⟩
+  · simpa using ⟨mem_domChart_source h, by rwa [interior_eq_iff_isOpen.mpr hs]⟩
+  · exact hfg (mem_of_mem_nhds hxs') ▸ mem_codChart_source h
+  · exact restr_mem_maximalAtlas _ h.domChart_mem_maximalAtlas hs
   · have := h.map_source_subset_source
-    sorry -- apply EqOn.image_eq; will only work after h.domChart was shrunk
-  · have missing : EqOn ((h.codChart.extend I') ∘ g ∘ (h.domChart.extend I).symm)
-        ((h.codChart.extend I') ∘ f ∘ (h.domChart.extend I).symm) (h.domChart.extend I).target := by
-      -- after shrinking, this will be true
-      sorry
-    exact EqOn.trans missing h.writtenInCharts
+    trans f '' (h.domChart.restr s).source
+    · have : (h.domChart.restr s).source ⊆ s' :=
+        Subset.trans (by simp [interior_eq_iff_isOpen.mpr hs]) hss'
+      exact (hfg.mono this).image_eq.symm.le
+    · exact Subset.trans (image_mono (by simp)) this
+  · have : f '' (h.domChart.restr s).source ⊆ h.codChart.source := by
+      refine Subset.trans (image_mono ?_) h.map_source_subset_source
+      rw [h.domChart.restr_source' _ hs]
+      exact inter_subset_left
+    have hmono : ((h.domChart.restr s).extend I).target ⊆ (h.domChart.extend I).target := by
+      have {a b c : Set E} : a ∩ (b ∩ c) ⊆ b := by intro; aesop
+      simpa using this
+    apply EqOn.trans ?_ (h.writtenInCharts.mono hmono)
+    intro x hx
+    set Φ := (h.domChart.restr s).extend I
+    have aux : Φ.source ⊆ s := by
+      simpa only [Φ, PartialHomeomorph.extend_source, PartialHomeomorph.restr_source,
+        interior_eq_iff_isOpen.mpr hs] using inter_subset_right
+    have : (f ∘ Φ.symm) x = (g ∘ Φ.symm) x := hfg <| hss' <| aux (PartialEquiv.map_target _ hx)
+    rw [Function.comp_apply, ← this]
+    simp [Φ]
 
 -- XXX: this result follows from the MSplitAt results immediately: but does it hold without
 -- completeness as well? (If so, a separate proof could be worth it.)
