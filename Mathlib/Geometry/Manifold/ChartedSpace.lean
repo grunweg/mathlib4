@@ -1219,12 +1219,22 @@ theorem PartialHomeomorph.lemming_aux {e e' : PartialHomeomorph M H}
 
 -- TODO: give better name and move to PartialHomeomorph!
 omit [ChartedSpace H M] in
-lemma PartialHomeomorph.eqOnSource_foo (e : PartialHomeomorph M H) {s s' : Set M}
-    (hss' : e.source ∩ interior s = e.source ∩ interior s') : e.restr s ≈ e.restr s' := by
+lemma PartialHomeomorph.eqOnSource_foo (e : PartialHomeomorph M H)
+    {s s' : Set M} (hss' : e.source ∩ interior s = e.source ∩ interior s') :
+    e.restr s ≈ e.restr s' := by
   constructor
   · simpa [e.restr_source]
   · simp
     exact fun ⦃x⦄ ↦ congrFun rfl
+
+-- TODO: give better name and move to PartialHomeomorph!
+-- XXX: is this lemma worth having?
+omit [ChartedSpace H M] in
+lemma PartialHomeomorph.eqOnSource_foo' (e : PartialHomeomorph M H) {s s' : Set M}
+    (hs : IsOpen s) (hs' : IsOpen s') (hss' : e.source ∩ s = e.source ∩ s') :
+    e.restr s ≈ e.restr s' := by
+  apply e.eqOnSource_foo
+  rwa [interior_eq_iff_isOpen.mpr hs, interior_eq_iff_isOpen.mpr hs']
 
 omit [ChartedSpace H M] in
 lemma PartialHomeomorph.restr_eqOnSource (e : PartialHomeomorph M H) {s : Set M}
@@ -1233,6 +1243,7 @@ lemma PartialHomeomorph.restr_eqOnSource (e : PartialHomeomorph M H) {s : Set M}
   simp [interior_inter, interior_eq_iff_isOpen.mpr e.open_source]
 
 -- TODO: give better name and move to PartialHomeomorph!
+-- TODO: is this true at all? if so, prove and get rid of `restr_mem_maximalAtlas_aux`
 omit [ChartedSpace H M] in
 theorem PartialHomeomorph.lemming {e e' : PartialHomeomorph M H}
     {s : Set M} (hs : IsOpen s) :
@@ -1282,6 +1293,73 @@ theorem PartialHomeomorph.lemming {e e' : PartialHomeomorph M H}
       -- do I want to have e '' s or e' '' s here?
       -- the latter is easy, the former I haven't thought about
 
+theorem restr_mem_maximalAtlas_aux1 [ClosedUnderRestriction G] {e : PartialHomeomorph M H}
+    (he : e ∈ G.maximalAtlas M) {s : Set M} (hs : IsOpen s) (hs' : s ⊆ e.source)
+    (e' : PartialHomeomorph M H) (he' : e' ∈ atlas H M) : (e.restr s).symm ≫ₕ e' ∈ G := by
+  have hs'' : IsOpen (e '' s) := by
+    rw [← inter_eq_self_of_subset_right hs', ← restr_source' e s hs]
+    convert (e.restr s).open_target
+    rw [← image_source_eq_target]
+    simp
+  apply G.mem_of_eqOnSource (closedUnderRestriction' (he e' he').1 hs'')
+  calc _
+    _ ≈ (e.symm ≫ₕ e').restr (e '' s) := lemming_aux hs (H := H) (e := e) (e' := e') hs'' hs'
+    _ ≈ _ := PartialHomeomorph.eqOnSource_foo _ (by simp)
+
+theorem restr_mem_maximalAtlas_aux2 [ClosedUnderRestriction G] {e : PartialHomeomorph M H}
+    (he : e ∈ G.maximalAtlas M) {s : Set M} (hs : IsOpen s)
+    (e' : PartialHomeomorph M H) (he' : e' ∈ atlas H M) (hs' : s ⊆ e'.source) :
+    (e'.restr s).symm ≫ₕ e ∈ G := by
+  have hs'' : IsOpen (e' '' s) := by
+    rw [← inter_eq_self_of_subset_right hs', ← restr_source' e' s hs]
+    convert (e'.restr s).open_target
+    rw [← image_source_eq_target]
+    simp
+  apply G.mem_of_eqOnSource (closedUnderRestriction' (he e' he').2 hs'')
+  calc _
+    _ ≈ (e'.symm ≫ₕ e).restr (e' '' s) := lemming_aux hs (H := H) (e := e') (e' := e) hs'' hs'
+    _ ≈ _ := PartialHomeomorph.eqOnSource_foo _ (by simp)
+
+/-- If a structure groupoid `G` is closed under restriction, for any chart `e` in the maximal atlas,
+the restriction `e.restr` is also in the maximal atlas. -/
+theorem restr_mem_maximalAtlas_aux [ClosedUnderRestriction G]
+    {e: PartialHomeomorph M H} (he : e ∈ G.maximalAtlas M)
+    {s : Set M} (hs : IsOpen s) (hs' : s ⊆ e.source) :
+    e.restr s ∈ G.maximalAtlas M := by
+  intro e' he'
+  constructor
+  · have hs'' : IsOpen (e '' s) := by
+      rw [← inter_eq_self_of_subset_right hs', ← restr_source' e s hs]
+      convert (e.restr s).open_target
+      rw [← image_source_eq_target]
+      simp
+    apply G.mem_of_eqOnSource (closedUnderRestriction' (he e' he').1 hs'')
+    calc _
+      _ ≈ (e.symm ≫ₕ e').restr (e '' s) := lemming_aux hs (H := H) (e := e) (e' := e') hs'' hs'
+      _ ≈ _ := PartialHomeomorph.eqOnSource_foo _ (by simp)
+  · have hs'' : IsOpen (e '' s) := by sorry -- above
+    apply G.mem_of_eqOnSource (closedUnderRestriction' (he e' he').2 hs'')
+    calc _
+      _ ≈ (e'.symm ≫ₕ e).restr (e '' s) := by
+        -- TODO: want e' '' s here, so s ⊆ e'.source, can I have both?
+        sorry--lemming_aux hs (H := H) (e := e) (e' := e') hs'' hs'
+      _ ≈ _ := PartialHomeomorph.eqOnSource_foo _ (by simp)
+
+/-- If a structure groupoid `G` is closed under restriction, for any chart `e` in the maximal atlas,
+the restriction `e.restr` is also in the maximal atlas. -/
+theorem restr_mem_maximalAtlas [ClosedUnderRestriction G]
+    {e: PartialHomeomorph M H} (he : e ∈ G.maximalAtlas M)
+    {s : Set M} (hs : IsOpen s) :
+    e.restr s ∈ G.maximalAtlas M :=
+  have eq : e.restr s ≈ e.restr (s ∩ e.source) := by
+    refine eqOnSource_foo' e hs (hs.inter e.open_source) ?_
+    ext x
+    simp +contextual
+  G.mem_maximalAtlas_of_eqOnSource eq
+    (restr_mem_maximalAtlas_aux G he (hs.inter e.open_source) inter_subset_right)
+
+/- old proof attempt; does not work
+
 /-- If a structure groupoid `G` is closed under restriction, for any chart `e` in the maximal atlas,
 the restriction `e.restr` is also in the maximal atlas. -/
 theorem restr_mem_maximalAtlas [ClosedUnderRestriction G]
@@ -1309,7 +1387,7 @@ theorem restr_mem_maximalAtlas [ClosedUnderRestriction G]
           · sorry -- easy
           rw [interior_eq_iff_isOpen.mpr hs'better]
           sorry -- same issue as above!
-  · sorry -- similar to the first goal
+  · sorry -- similar to the first goal -/
 
 end MaximalAtlas
 
