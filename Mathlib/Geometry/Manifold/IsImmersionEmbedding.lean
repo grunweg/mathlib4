@@ -245,14 +245,12 @@ private theorem contMDiffOn (h : IsImmersionAt F I I' n f x) :
     h.codChart_mem_maximalAtlas le_rfl mapsto,
     ← PartialHomeomorph.extend_target'']
   have : ContMDiff 𝓘(𝕜, E) 𝓘(𝕜, E') n (h.equiv ∘ fun x ↦ (x, 0)) := by
-    have : ContDiff 𝕜 n h.equiv := ContinuousLinearEquiv.contDiff h.equiv
-    have : ContMDiff (𝓘(𝕜, E).prod 𝓘(𝕜, F)) 𝓘(𝕜, E') n h.equiv := by
-      -- rw [contMDiff_iff_contDiff] doesn't work, because the first model is a product!
-      sorry
+    have : ContMDiff (𝓘(𝕜, E × F)) 𝓘(𝕜, E') n h.equiv := by
+      rw [contMDiff_iff_contDiff]
+      exact h.equiv.contDiff
     apply this.comp
-    rw [contMDiff_prod_iff]
-    exact ⟨contMDiff_id.congr fun x ↦ by simp,
-      contMDiff_const (c := (0 : F)) |>.congr (fun x ↦ by simp)⟩
+    rw [contMDiff_iff_contDiff, contDiff_prod_iff]
+    exact ⟨contDiff_id, contDiff_const (c := (0 : F))⟩
   exact this.contMDiffOn.congr h.writtenInCharts
 
 /-- A `C^k` immersion at `x` is `C^k` at `x`. -/
