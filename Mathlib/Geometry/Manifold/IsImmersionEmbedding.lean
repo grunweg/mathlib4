@@ -222,18 +222,12 @@ theorem prodMap {f : M → N} {g : M' → N'} {x' : M'}
     IsImmersionAt (F × F') (I.prod I') (J.prod J') n (Prod.map f g) (x, x') :=
   sorry
 
--- better name? worth a separate lemma? move to `PartialHomeomorph.lean`
-omit [ChartedSpace H M] in
-theorem PartialHomeomorph.extend_target'' {e : PartialHomeomorph M H} :
-    (e.extend I) '' e.source = (e.extend I).target := by
-  rw [e.extend_coe, image_comp, e.image_source_eq_target, ← e.extend_target']
-
 private theorem continuousOn (h : IsImmersionAt F I I' n f x) :
     ContinuousOn f h.domChart.source := by
   have mapsto : MapsTo f h.domChart.source h.codChart.source :=
     fun x hx ↦ by apply h.map_source_subset_source; use x
-  rw [← h.domChart.continuousOn_writtenInExtend_iff le_rfl mapsto (I' := I') (I := I),
-    PartialHomeomorph.extend_target'']
+  rw [← h.domChart.continuousOn_writtenInExtend_iff le_rfl mapsto (I := I) (I' := I'),
+    ← PartialHomeomorph.extend_target'']
   have : ContinuousOn (h.equiv ∘ fun x ↦ (x, 0)) (h.domChart.extend I).target := by fun_prop
   exact this.congr h.writtenInCharts
 
@@ -249,7 +243,7 @@ private theorem contMDiffOn (h : IsImmersionAt F I I' n f x) :
     fun x hx ↦ by apply h.map_source_subset_source; use x
   rw [← contMDiffOn_writtenInExtend_iff h.domChart_mem_maximalAtlas
     h.codChart_mem_maximalAtlas le_rfl mapsto,
-    PartialHomeomorph.extend_target'']
+    ← PartialHomeomorph.extend_target'']
   have : ContMDiff 𝓘(𝕜, E) 𝓘(𝕜, E') n (h.equiv ∘ fun x ↦ (x, 0)) := by
     have : ContDiff 𝕜 n h.equiv := ContinuousLinearEquiv.contDiff h.equiv
     have : ContMDiff (𝓘(𝕜, E).prod 𝓘(𝕜, F)) 𝓘(𝕜, E') n h.equiv := by
