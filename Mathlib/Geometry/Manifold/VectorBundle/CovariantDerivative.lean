@@ -338,8 +338,8 @@ structure IsCovariantDerivativeOn
     (hx : x ∈ s := by trivial) :
     f X (σ + σ') x = f X σ x + f X σ' x
   leibniz (X : Π x : M, TangentSpace I x) {σ : Π x : M, V x} {g : M → 𝕜} {x}
-    (hσ : MDiffAt (T% σ) x) (hg : MDiffAt g x) (hx : x ∈ s := by trivial):
-    f X (g • σ) x = (g • f X σ) x + (bar _ <| mfderiv I 𝓘(𝕜) g x (X x)) • σ x
+    (hσ : MDiffAt (T% σ) x) (hg : MDiffAt g x) (hx : x ∈ s := by trivial) :
+    f X (g • σ) x = (g • f X σ) x + (bar 𝕜 <| mfderiv I 𝓘(𝕜) g x (X x)) • σ x
   smul_const_σ (X : Π x : M, TangentSpace I x) (σ : Π x : M, V x) (a : 𝕜) {x}
     (hx : x ∈ s := by trivial) : f X (a • σ) x = a • f X σ x
 

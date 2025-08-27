@@ -706,7 +706,6 @@ variable (b e) in
 lemma localExtensionOn_apply_self (hx : x ∈ e.baseSet) (v : V x) :
     ((localExtensionOn b e x v) x) = v := by
   simp [localExtensionOn, hx]
-  nth_rw 2 [← (b.localFrame_toBasis_at e hx).sum_repr v]
 
 omit [IsManifold I 0 M] in
 /-- A local extension has constant frame coefficients within its defining trivialisation. -/
