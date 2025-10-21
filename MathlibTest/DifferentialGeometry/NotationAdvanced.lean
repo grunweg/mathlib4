@@ -487,6 +487,34 @@ trace: [Elab.DiffGeo.MDiff] Finding a model for: ↑(Set.Icc x y)
 
 end interval
 
+/-! Tests for inferring a model with corners on Euclidean half-space -/
+section HalfSpace
+
+variable {f : EuclideanHalfSpace 2 → ℝ} {x : EuclideanHalfSpace 2} {n m : ℕ} [NeZero n] [NeZero m]
+  {g : EuclideanHalfSpace n → EuclideanHalfSpace m} {y : EuclideanHalfSpace n}
+
+/-- info: ContMDiff (𝓡∂ 2) 𝓘(ℝ, ℝ) 2 f : Prop -/
+#guard_msgs in
+#check CMDiff 2 f
+
+/-- info: MDifferentiableAt (𝓡∂ 2) 𝓘(ℝ, ℝ) f x : Prop -/
+#guard_msgs in
+#check MDiffAt f x
+
+/-- info: MDifferentiableAt (𝓡∂ n) (𝓡∂ m) g y : Prop -/
+#guard_msgs in
+#check MDiffAt g y
+
+/-- info: ContMDiff (𝓡∂ n) (𝓡∂ m) 37 g : Prop -/
+#guard_msgs in
+#check CMDiff 37 g
+
+-- Future, when products are implemented!
+-- #guard_msgs in
+-- #check CMDiff 37 (Prod.map f g)
+
+end HalfSpace
+
 section UpperHalfPlane
 
 open scoped UpperHalfPlane
