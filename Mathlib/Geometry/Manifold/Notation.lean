@@ -279,14 +279,14 @@ This implementation is not maximally robust yet.
 def findModel (e : Expr) (baseInfo : Option (Expr × Expr) := none) : TermElabM Expr := do
   trace[Elab.DiffGeo.MDiff] "Finding a model for: {e}"
   -- Roughly ordered by their frequency (descending).
-  if let some m ← tryStrategy m!"Manifold"         fromManifold       then return m
   if let some m ← tryStrategy m!"TotalSpace"       fromTotalSpace     then return m
   if let some m ← tryStrategy m!"TangentBundle"    fromTangentBundle  then return m
   if let some m ← tryStrategy m!"ContinuousLinearMap" fromCLM         then return m
-  -- These might be rare, but they are easy to match for.
   if let some m ← tryStrategy m!"RealInterval"     fromRealInterval   then return m
   if let some m ← tryStrategy m!"EuclideanSpace"   fromEuclideanSpace then return m
   if let some m ← tryStrategy m!"UpperHalfPlane"   fromUpperHalfPlane then return m
+  -- This one is probably the most common, but requires searching for ChartedSpace instances...
+  if let some m ← tryStrategy m!"Manifold"         fromManifold       then return m
   -- The following strategies also traverse the local instances resp. hypotheses.
   if let some m ← tryStrategy m!"NormedSpace"      fromNormedSpace    then return m
   if let some m ← tryStrategy m!"Sphere"           fromSphere         then return m
