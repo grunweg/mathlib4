@@ -170,14 +170,6 @@ error: failed to synthesize
 Hint: Additional diagnostic information may be available using the `set_option diagnostics true` command.
 ---
 trace: [Elab.DiffGeo.MDiff] Finding a model for: TotalSpace F (TangentSpace I)
-[Elab.DiffGeo.MDiff] ❌️ Manifold
-  [Elab.DiffGeo.MDiff] considering instance of type `ChartedSpace H M`
-  [Elab.DiffGeo.MDiff] considering instance of type `ChartedSpace H' M'`
-  [Elab.DiffGeo.MDiff] Failed with error:
-      Couldn't find a `ChartedSpace` structure on `TotalSpace F
-        (TangentSpace
-          I)` among local instances, and `TotalSpace F
-        (TangentSpace I)` is not the charted space of some type in the local context either.
 [Elab.DiffGeo.MDiff] ✅️ TotalSpace
   [Elab.DiffGeo.MDiff] ❌️ From base info
     [Elab.DiffGeo.MDiff] Failed with error:
@@ -187,29 +179,12 @@ trace: [Elab.DiffGeo.MDiff] Finding a model for: TotalSpace F (TangentSpace I)
     [Elab.DiffGeo.MDiff] Found model: `I.prod I.tangent`
   [Elab.DiffGeo.MDiff] Found model: `I.prod I.tangent`
 [Elab.DiffGeo.MDiff] Finding a model for: F
-[Elab.DiffGeo.MDiff] ❌️ Manifold
-  [Elab.DiffGeo.MDiff] considering instance of type `ChartedSpace H M`
-  [Elab.DiffGeo.MDiff] considering instance of type `ChartedSpace H' M'`
-  [Elab.DiffGeo.MDiff] Failed with error:
-      Couldn't find a `ChartedSpace` structure on `F` among local instances, and `F` is not the charted space of some type in the local context either.
 [Elab.DiffGeo.MDiff] ❌️ TotalSpace
   [Elab.DiffGeo.MDiff] Failed with error:
       `F` is not a `Bundle.TotalSpace`.
 [Elab.DiffGeo.MDiff] ❌️ TangentBundle
   [Elab.DiffGeo.MDiff] Failed with error:
       `F` is not a `TangentBundle`
-[Elab.DiffGeo.MDiff] ❌️ ContinuousLinearMap
-  [Elab.DiffGeo.MDiff] Failed with error:
-      `F` is not a space of continuous linear maps
-[Elab.DiffGeo.MDiff] ❌️ RealInterval
-  [Elab.DiffGeo.MDiff] Failed with error:
-      `F` is not a coercion of a set to a type
-[Elab.DiffGeo.MDiff] ❌️ EuclideanSpace
-  [Elab.DiffGeo.MDiff] Failed with error:
-      `F` is not a Euclidean space, half-space or quadrant
-[Elab.DiffGeo.MDiff] ❌️ UpperHalfPlane
-  [Elab.DiffGeo.MDiff] Failed with error:
-      `F` is not the complex upper half plane
 [Elab.DiffGeo.MDiff] ✅️ NormedSpace
   [Elab.DiffGeo.MDiff] `F` is a normed space over the field `𝕜`
   [Elab.DiffGeo.MDiff] Found model: `𝓘(𝕜, F)`
@@ -284,11 +259,29 @@ variable {f : M → E'' →SL[id'] E'''} in
 error: Could not find a model with corners for `E'' →SL[id'] E'''`
 ---
 trace: [Elab.DiffGeo.MDiff] Finding a model for: M
+[Elab.DiffGeo.MDiff] ❌️ TotalSpace
+  [Elab.DiffGeo.MDiff] Failed with error:
+      `M` is not a `Bundle.TotalSpace`.
+[Elab.DiffGeo.MDiff] ❌️ TangentBundle
+  [Elab.DiffGeo.MDiff] Failed with error:
+      `M` is not a `TangentBundle`
+[Elab.DiffGeo.MDiff] ❌️ NormedSpace
+  [Elab.DiffGeo.MDiff] Failed with error:
+      Couldn't find a `NormedSpace` structure on `M` among local instances.
 [Elab.DiffGeo.MDiff] ✅️ Manifold
   [Elab.DiffGeo.MDiff] considering instance of type `ChartedSpace H M`
   [Elab.DiffGeo.MDiff] `M` is a charted space over `H` via `inst✝²²`
   [Elab.DiffGeo.MDiff] Found model: `I`
 [Elab.DiffGeo.MDiff] Finding a model for: E'' →SL[id'] E'''
+[Elab.DiffGeo.MDiff] ❌️ TotalSpace
+  [Elab.DiffGeo.MDiff] Failed with error:
+      `E'' →SL[id'] E'''` is not a `Bundle.TotalSpace`.
+[Elab.DiffGeo.MDiff] ❌️ TangentBundle
+  [Elab.DiffGeo.MDiff] Failed with error:
+      `E'' →SL[id'] E'''` is not a `TangentBundle`
+[Elab.DiffGeo.MDiff] ❌️ NormedSpace
+  [Elab.DiffGeo.MDiff] Failed with error:
+      Couldn't find a `NormedSpace` structure on `E'' →SL[id'] E'''` among local instances.
 [Elab.DiffGeo.MDiff] ❌️ Manifold
   [Elab.DiffGeo.MDiff] considering instance of type `ChartedSpace H M`
   [Elab.DiffGeo.MDiff] considering instance of type `ChartedSpace H' M'`
@@ -296,12 +289,6 @@ trace: [Elab.DiffGeo.MDiff] Finding a model for: M
       Couldn't find a `ChartedSpace` structure on `E'' →SL[id']
         E'''` among local instances, and `E'' →SL[id']
         E'''` is not the charted space of some type in the local context either.
-[Elab.DiffGeo.MDiff] ❌️ TotalSpace
-  [Elab.DiffGeo.MDiff] Failed with error:
-      `E'' →SL[id'] E'''` is not a `Bundle.TotalSpace`.
-[Elab.DiffGeo.MDiff] ❌️ TangentBundle
-  [Elab.DiffGeo.MDiff] Failed with error:
-      `E'' →SL[id'] E'''` is not a `TangentBundle`
 [Elab.DiffGeo.MDiff] ❌️ ContinuousLinearMap
   [Elab.DiffGeo.MDiff] Failed with error:
       Coefficients `ℝ` and `RealCopy` of `E'' →SL[id'] E'''` are not reducibly definitionally equal
@@ -314,15 +301,12 @@ trace: [Elab.DiffGeo.MDiff] Finding a model for: M
 [Elab.DiffGeo.MDiff] ❌️ UpperHalfPlane
   [Elab.DiffGeo.MDiff] Failed with error:
       `E'' →SL[id'] E'''` is not the complex upper half plane
-[Elab.DiffGeo.MDiff] ❌️ NormedSpace
-  [Elab.DiffGeo.MDiff] Failed with error:
-      Couldn't find a `NormedSpace` structure on `E'' →SL[id'] E'''` among local instances.
-[Elab.DiffGeo.MDiff] ❌️ Sphere
-  [Elab.DiffGeo.MDiff] Failed with error:
-      `E'' →SL[id'] E'''` is not a coercion of a set to a type
 [Elab.DiffGeo.MDiff] ❌️ Units of algebra
   [Elab.DiffGeo.MDiff] Failed with error:
       `E'' →SL[id'] E'''` is not the set of units of a normed algebra
+[Elab.DiffGeo.MDiff] ❌️ Sphere
+  [Elab.DiffGeo.MDiff] Failed with error:
+      `E'' →SL[id'] E'''` is not a coercion of a set to a type
 [Elab.DiffGeo.MDiff] ❌️ NormedField
   [Elab.DiffGeo.MDiff] Failed with error:
       failed to synthesize
@@ -467,6 +451,15 @@ set_option trace.Elab.DiffGeo.MDiff true in
 error: Could not find a model with corners for `↑(Set.Icc x y)`
 ---
 trace: [Elab.DiffGeo.MDiff] Finding a model for: ↑(Set.Icc x y)
+[Elab.DiffGeo.MDiff] ❌️ TotalSpace
+  [Elab.DiffGeo.MDiff] Failed with error:
+      `↑(Set.Icc x y)` is not a `Bundle.TotalSpace`.
+[Elab.DiffGeo.MDiff] ❌️ TangentBundle
+  [Elab.DiffGeo.MDiff] Failed with error:
+      `↑(Set.Icc x y)` is not a `TangentBundle`
+[Elab.DiffGeo.MDiff] ❌️ NormedSpace
+  [Elab.DiffGeo.MDiff] Failed with error:
+      Couldn't find a `NormedSpace` structure on `↑(Set.Icc x y)` among local instances.
 [Elab.DiffGeo.MDiff] ❌️ Manifold
   [Elab.DiffGeo.MDiff] considering instance of type `ChartedSpace H M`
   [Elab.DiffGeo.MDiff] considering instance of type `ChartedSpace H' M'`
@@ -475,12 +468,6 @@ trace: [Elab.DiffGeo.MDiff] Finding a model for: ↑(Set.Icc x y)
       Couldn't find a `ChartedSpace` structure on `↑(Set.Icc x
           y)` among local instances, and `↑(Set.Icc x
           y)` is not the charted space of some type in the local context either.
-[Elab.DiffGeo.MDiff] ❌️ TotalSpace
-  [Elab.DiffGeo.MDiff] Failed with error:
-      `↑(Set.Icc x y)` is not a `Bundle.TotalSpace`.
-[Elab.DiffGeo.MDiff] ❌️ TangentBundle
-  [Elab.DiffGeo.MDiff] Failed with error:
-      `↑(Set.Icc x y)` is not a `TangentBundle`
 [Elab.DiffGeo.MDiff] ❌️ ContinuousLinearMap
   [Elab.DiffGeo.MDiff] Failed with error:
       `↑(Set.Icc x y)` is not a space of continuous linear maps
@@ -493,15 +480,12 @@ trace: [Elab.DiffGeo.MDiff] Finding a model for: ↑(Set.Icc x y)
 [Elab.DiffGeo.MDiff] ❌️ UpperHalfPlane
   [Elab.DiffGeo.MDiff] Failed with error:
       `↑(Set.Icc x y)` is not the complex upper half plane
-[Elab.DiffGeo.MDiff] ❌️ NormedSpace
-  [Elab.DiffGeo.MDiff] Failed with error:
-      Couldn't find a `NormedSpace` structure on `↑(Set.Icc x y)` among local instances.
-[Elab.DiffGeo.MDiff] ❌️ Sphere
-  [Elab.DiffGeo.MDiff] Failed with error:
-      `Set.Icc x y` is not a sphere in a real normed space
 [Elab.DiffGeo.MDiff] ❌️ Units of algebra
   [Elab.DiffGeo.MDiff] Failed with error:
       `↑(Set.Icc x y)` is not the set of units of a normed algebra
+[Elab.DiffGeo.MDiff] ❌️ Sphere
+  [Elab.DiffGeo.MDiff] Failed with error:
+      `Set.Icc x y` is not a sphere in a real normed space
 [Elab.DiffGeo.MDiff] ❌️ NormedField
   [Elab.DiffGeo.MDiff] Failed with error:
       failed to synthesize
