@@ -282,12 +282,13 @@ def findModel (e : Expr) (baseInfo : Option (Expr × Expr) := none) : TermElabM 
   if let some m ← tryStrategy m!"TangentBundle"    fromTangentBundle  then return m
   if let some m ← tryStrategy m!"NormedSpace"      fromNormedSpace    then return m
   if let some m ← tryStrategy m!"Manifold"         fromManifold       then return m
-  if let some m ← tryStrategy m!"ContinuousLinearMap" fromCLM       then return m
+  if let some m ← tryStrategy m!"ContinuousLinearMap" fromCLM         then return m
   if let some m ← tryStrategy m!"RealInterval"     fromRealInterval   then return m
   if let some m ← tryStrategy m!"EuclideanSpace"   fromEuclideanSpace then return m
   if let some m ← tryStrategy m!"UpperHalfPlane"   fromUpperHalfPlane then return m
   if let some m ← tryStrategy m!"Units of algebra" fromUnitsOfAlgebra then return m
-  if let some m ← tryStrategy m!"NormedField"    fromNormedField    then return m
+  if let some m ← tryStrategy m!"Sphere"           fromSphere         then return m
+  if let some m ← tryStrategy m!"NormedField"      fromNormedField    then return m
   throwError "Could not find a model with corners for `{e}`"
 where
   /- Note that errors thrown in the following are caught by `tryStrategy` and converted to trace
@@ -484,6 +485,32 @@ where
             throwError "{α}` is a space of continuous `{k}`-linear maps, but with domain `{V}` and \
               co-domain `{W}` being not definitionally equal"
     | _ => throwError "`{e}` is not the set of units of a normed algebra"
+  /-- Attempt to find a model with corners on a metric sphere in a real normed space -/
+  fromSphere : TermElabM Expr := do
+    match_expr e with
+    | Metric.sphere α _ _x _r =>
+      -- Attempt to find a real normed space instance on α.
+      let searchNormedSpace := ← findSomeLocalInstanceOf? ``NormedSpace fun inst type ↦ do
+          trace[Elab.DiffGeo.MDiff] "considering instance of type `{type}`"
+          match_expr type with
+          | NormedSpace k R _ _ =>
+            if ← withReducible (pureIsDefEq k q(ℝ)) then
+              if ← withReducible (pureIsDefEq R α) then
+                trace[Elab.DiffGeo.MDiff] "`{α}` is a real normed space via `{inst}`"
+                return some R
+              else
+                trace[Elab.DiffGeo.MDiff] "found a real normed space on `{R}`, which \
+                is not reducibly definitionally equal to `{α}`: continue the search"
+                return none
+            else
+              trace[Elab.DiffGeo.MDiff] "not a normed space on `{R}`, which is not a real \
+                normed space, continuing!"
+              return none
+          | _ => return none
+      -- match on that output, more later!
+      -- Do we need to check for the right Fact instance? Perhaps we can leave that to Lean :-)
+      throwError "TODO!"
+    | _ => throwError "`{e}` is not a sphere in a real normed space"
   /-- Attempt to find a model with corners from a normed field.
   We attempt to find a global instance here. -/
   fromNormedField : TermElabM Expr := do
@@ -491,6 +518,7 @@ where
     let iTerm : Term ← ``(𝓘($eT, $eT))
     Term.elabTerm iTerm none
 
+#exit
 /-- If the type of `e` is a non-dependent function between spaces `src` and `tgt`, try to find a
 model with corners on both `src` and `tgt`. If successful, return both models.
 
