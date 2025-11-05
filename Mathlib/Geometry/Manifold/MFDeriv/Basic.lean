@@ -581,6 +581,10 @@ theorem hasMFDerivWithinAt_univ :
     HasMFDerivWithinAt I I' f univ x f' ↔ HasMFDerivAt I I' f x f' := by
   simp only [HasMFDerivWithinAt, HasMFDerivAt, continuousWithinAt_univ, mfld_simps]
 
+@[simp, mfld_simps]
+lemma hasMFDerivWithinAt_empty : HasMFDerivWithinAt I I' f ∅ x f' := by
+  constructor <;> simp [ContinuousWithinAt]
+
 theorem hasMFDerivAt_unique (h₀ : HasMFDerivAt I I' f x f₀') (h₁ : HasMFDerivAt I I' f x f₁') :
     f₀' = f₁' := by
   rw [← hasMFDerivWithinAt_univ] at h₀ h₁

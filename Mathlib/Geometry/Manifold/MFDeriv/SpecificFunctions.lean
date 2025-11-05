@@ -467,7 +467,111 @@ theorem mdifferentiable_prod_module_iff (f : M → F₁ × F₂) :
 
 section prodMap
 
-variable {f : M → M'} {g : N → N'} {r : Set N} {y : N}
+variable {f : M → M'} {g : N → N'} {r : Set N} {p : M × N}
+
+attribute [fun_prop] ContinuousAt.prodMap -- not necessary here, but probably a good idea anyway
+
+lemma HasMFDerivWithinAt.prodMap {u : Set (M × N)}
+    {f' : TangentSpace I p.1 →L[𝕜] TangentSpace I' (f p.1)}
+    {g' : TangentSpace J p.2 →L[𝕜] TangentSpace J' (g p.2)}
+    (hf : HasMFDerivWithinAt I I' f (Prod.fst '' u) p.1 f')
+    (hg : HasMFDerivWithinAt J J' g (Prod.snd '' u) p.2 g') :
+    HasMFDerivWithinAt (I.prod J) (I'.prod J') (Prod.map f g) u p (f'.prodMap g') := by
+  have := hf.1; have := hg.1
+  refine ⟨hf.1.prodMap hg.1 |>.mono (by grind), ?_⟩
+  rw [writtenInExtChart_prod]
+  have : Prod.fst '' range (I.prod J) = range I := by
+    rw [modelWithCorners_prod_coe, range_prodMap]
+    exact fst_image_prod (range I) ⟨extChartAt J p.2 p.2, by simp⟩
+  have aux : ((extChartAt I p.1).symm.prod (extChartAt J p.2).symm) ⁻¹' u =
+      ((extChartAt I p.1).symm ⁻¹' (Prod.fst '' u)) ×ˢ ((extChartAt J p.2).symm ⁻¹' (Prod.snd '' u)) := by
+    ext
+    simp
+    sorry
+  apply HasFDerivWithinAt.prodMap
+  · apply hf.2.mono--convert hf.2
+    rw [image_inter] -- completely wrong move"""
+    rw [extChartAt_prod, PartialEquiv.prod_symm]
+    rw [aux] -- unsure if this is true!
+    rw [fst_image_prod]
+    rw [this]
+    sorry -- easy
+
+    sorry
+    -- have : Nonempty G := sorry
+    -- intro x hx
+    -- constructor; swap
+    -- · have := hx.2
+    --   rw [modelWithCorners_prod_coe, range_prodMap] at this
+    --   simp_all
+
+
+    -- simp
+    -- congr
+    -- ·
+    --   ext x
+    --   simp
+    --   constructor
+    --   · intro ⟨x, hx⟩
+    --     use (chartAt G p.2).symm (J.symm x)
+    --   · intro ⟨x', hx'⟩
+    --     let x'' := J <| (chartAt G p.2) x'
+    --     use x''
+    --     convert hx'
+    --     simp [x'']
+    --     refine OpenPartialHomeomorph.left_inv (chartAt G p.2) ?_
+    --     sorry
+    --   rw [PartialEquiv.prod_coe]
+    --   beta_reduce
+    --   dsimp
+    --   simp only [extChartAt, OpenPartialHomeomorph.extend, PartialEquiv.prod_symm,
+    --     PartialEquiv.prod_coe, PartialEquiv.coe_trans_symm, OpenPartialHomeomorph.coe_coe_symm,
+    --     ModelWithCorners.toPartialEquiv_coe_symm, Function.comp_apply]
+    --   rw [image_prod]
+    --   simp
+    --   sorry -- hard one
+    -- · rw [modelWithCorners_prod_coe, range_prodMap]
+    --   ext; simp
+
+  sorry
+
+lemma HasMFDerivAt.prodMap
+    {f' : TangentSpace I p.1 →L[𝕜] TangentSpace I' (f p.1)}
+    {g' : TangentSpace J p.2 →L[𝕜] TangentSpace J' (g p.2)}
+    (hf : HasMFDerivAt I I' f p.1 f') (hg : HasMFDerivAt J J' g p.2 g') :
+    HasMFDerivAt (I.prod J) (I'.prod J') (Prod.map f g) p (f'.prodMap g') := by
+  rw [← hasMFDerivWithinAt_univ] at hf hg ⊢
+  have : Nonempty M := ⟨p.1⟩
+  have : Nonempty N := ⟨p.2⟩
+  apply HasMFDerivWithinAt.prodMap
+  · convert hf; simp
+  · convert hg; simp
+
+lemma mfderiv_prodMap
+    (hf : MDifferentiableAt I I' f p.1) (hg : MDifferentiableAt J J' g p.2) :
+    mfderiv (I.prod J) (I'.prod J') (Prod.map f g) p
+      = (mfderiv I I' f p.1).prodMap (mfderiv J J' g p.2) :=
+  hf.hasMFDerivAt.prodMap hg.hasMFDerivAt |>.mfderiv
+
+lemma mfderivWithin_prodMap
+    (hs : UniqueMDiffWithinAt I s p.1) (hr : UniqueMDiffWithinAt J r p.2)
+    (hf : MDifferentiableWithinAt I I' f s p.1) (hg : MDifferentiableWithinAt J J' g r p.2) :
+    mfderivWithin (I.prod J) (I'.prod J') (Prod.map f g) (s ×ˢ r) p
+    = (mfderivWithin I I' f s p.1).prodMap (mfderivWithin J J' g r p.2) := by
+  apply HasMFDerivWithinAt.mfderivWithin ?_ (hs.prod hr)
+  apply HasMFDerivWithinAt.prodMap
+  · by_cases h: r.Nonempty; swap
+    · push_neg at h -- FIXME: use by_cases!
+      simp [h]
+    rw [fst_image_prod _ h]
+    apply hf.hasMFDerivWithinAt
+  · by_cases h: s.Nonempty; swap
+    · push_neg at h -- use by_cases!
+      simp [h]
+    rw [snd_image_prod h]
+    apply hg.hasMFDerivWithinAt
+
+#exit
 
 /-- The product map of two `C^n` functions within a set at a point is `C^n`
 within the product set at the product point. -/
