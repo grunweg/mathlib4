@@ -5,6 +5,7 @@ Authors: Sébastien Gouëzel, Floris van Doorn
 -/
 import Mathlib.Analysis.Calculus.FDeriv.Mul
 import Mathlib.Geometry.Manifold.MFDeriv.FDeriv
+import Mathlib.Tactic.ByCases
 
 /-!
 # Differentiability of specific functions
@@ -560,19 +561,14 @@ lemma mfderivWithin_prodMap
     = (mfderivWithin I I' f s p.1).prodMap (mfderivWithin J J' g r p.2) := by
   apply HasMFDerivWithinAt.mfderivWithin ?_ (hs.prod hr)
   apply HasMFDerivWithinAt.prodMap
-  · by_cases h: r.Nonempty; swap
-    · push_neg at h -- FIXME: use by_cases!
-      simp [h]
+  · by_cases! h: r.Nonempty; swap; · simp [h]
     rw [fst_image_prod _ h]
     apply hf.hasMFDerivWithinAt
-  · by_cases h: s.Nonempty; swap
-    · push_neg at h -- use by_cases!
-      simp [h]
+  · by_cases! h: s.Nonempty; swap; · simp [h]
     rw [snd_image_prod h]
     apply hg.hasMFDerivWithinAt
 
 #exit
-
 /-- The product map of two `C^n` functions within a set at a point is `C^n`
 within the product set at the product point. -/
 theorem MDifferentiableWithinAt.prodMap' {p : M × N} (hf : MDifferentiableWithinAt I I' f s p.1)
