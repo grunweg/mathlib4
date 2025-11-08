@@ -468,10 +468,11 @@ theorem mdifferentiable_prod_module_iff (f : M → F₁ × F₂) :
 
 section prodMap
 
-variable {f : M → M'} {g : N → N'} {r : Set N} {p : M × N}
+variable {f : M → M'} {g : N → N'} {r : Set N} {y : N} {p : M × N}
 
 attribute [fun_prop] ContinuousAt.prodMap -- not necessary here, but probably a good idea anyway
 
+-- Wait, did I just prove the same lemma twice, myself?
 lemma HasMFDerivWithinAt.prodMap {u : Set (M × N)}
     {f' : TangentSpace I p.1 →L[𝕜] TangentSpace I' (f p.1)}
     {g' : TangentSpace J p.2 →L[𝕜] TangentSpace J' (g p.2)}
@@ -483,7 +484,7 @@ lemma HasMFDerivWithinAt.prodMap {u : Set (M × N)}
     exact fst_image_prod (range I) ⟨extChartAt J p.2 p.2, by simp⟩
   have hrange2 : Prod.snd '' range (I.prod J) = range J := by
     rw [modelWithCorners_prod_coe, range_prodMap]
-    apply snd_image_prod ⟨extChartAt I p.1 p.1, by simp⟩
+    exact snd_image_prod ⟨extChartAt I p.1 p.1, by simp⟩ (range J)
   have aux : ((extChartAt I p.1).symm.prod (extChartAt J p.2).symm) ⁻¹' u ⊆
       ((extChartAt I p.1).symm ⁻¹' (Prod.fst '' u)) ×ˢ
         ((extChartAt J p.2).symm ⁻¹' (Prod.snd '' u)) := by
