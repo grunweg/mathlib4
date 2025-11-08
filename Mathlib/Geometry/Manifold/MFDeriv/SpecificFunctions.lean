@@ -789,7 +789,29 @@ theorem mfderiv_sumInr :
 variable (g) in
 @[simp, mfld_simps]
 theorem mfderivWithin_sumMap_at_inl (hf : MDifferentiableWithinAt I J f s q) :
-    mfderivWithin I J (Sum.map f g) (Sum.inl '' s) (Sum.inl q) = mfderivWithin I J f s q := sorry
+    mfderivWithin I J (Sum.map f g) (Sum.inl '' s) (Sum.inl q) = mfderivWithin I J f s q := by
+  symm
+  let A := mfderivWithin I J f s q |>.comp (ContinuousLinearMap.id 𝕜 (TangentSpace I q))
+  let B := (ContinuousLinearMap.id 𝕜 (TangentSpace J (f q))).comp <| mfderivWithin I J f s q
+
+  let D := mfderivWithin J J (@Sum.inl N P) (f '' s) (f q)
+  -- defeq abuse of base points!
+  let D' : TangentSpace J (f q) →L[𝕜] TangentSpace J (f q) := mfderivWithin J J (@Sum.inl N P) (f '' s) (f q)
+  #check (Sum.map f g)
+  #check @Prod.fst N P
+  --#check (@Sum.inl M N) ∘ (Sum.map f g)
+  calc mfderivWithin I J f s q
+    _ = B := sorry
+    _ = D'.comp (mfderivWithin I J f s q) := sorry
+    _ = mfderivWithin I J ((@Sum.inl N P) ∘ f) s q := sorry
+    -- does not type check!
+    --_ = mfderivWithin I J ((Sum.map f g) ∘ Prod.fst) s q := sorry
+    _ = _ := sorry
+  --mfderivWithin I J (Sum.f g)
+
+  --sorry
+
+#exit
 
 variable (f) in
 @[simp, mfld_simps]
@@ -799,7 +821,18 @@ theorem mfderivWithin_sumMap_at_inr {t : Set M'} (hg : MDifferentiableWithinAt I
 variable (g) in
 @[simp, mfld_simps]
 theorem mfderiv_sumMap_at_inl (hf : MDifferentiableAt I J f q) :
-    mfderiv I J (Sum.map f g) (Sum.inl q) = mfderiv I J f q := sorry
+    mfderiv I J (Sum.map f g) (Sum.inl q) = mfderiv I J f q := by
+  sorry -- not obviously a corollary of the above, as univ : M ⊕ M' is larger than inl '' univ...
+  -- simp_rw [← mfderivWithin_univ]
+  -- have aux := mfderivWithin_sumMap_at_inl (f := f) (g := g) (I := I) (J := J) (q := q) (s := univ) --(q := q)--(hf.mdifferentiableWithinAt (s := univ))
+  -- have a : MDifferentiableWithinAt I J f univ q := hf.mdifferentiableWithinAt
+  -- rw [← aux a]
+  -- congr
+  -- symm
+  -- simp
+  -- rw [@range_eq_univ]
+  -- rw [mdifferentiableWithinAt_univ] at hf
+  -- sorry
 
 variable (f) in
 @[simp, mfld_simps]
