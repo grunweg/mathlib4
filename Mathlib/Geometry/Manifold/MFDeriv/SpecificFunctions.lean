@@ -749,7 +749,7 @@ theorem hasMFDerivWithinAt_inl :
     (by simp [writtenInExtChartAt, extChartAt, x₀])
 
 theorem hasMFDerivAt_inl :
-    HasMFDerivAt I I (@Sum.inl M M') q (ContinuousLinearMap.id 𝕜 (TangentSpace I p)) := by
+    HasMFDerivAt I I (@Sum.inl M M') q (ContinuousLinearMap.id 𝕜 (TangentSpace I q)) := by
   simpa [HasMFDerivAt, hasMFDerivWithinAt_univ] using hasMFDerivWithinAt_inl (s := Set.univ)
 
 theorem hasMFDerivWithinAt_inr {t : Set M'} :
@@ -763,19 +763,19 @@ theorem hasMFDerivWithinAt_inr {t : Set M'} :
     (by simp [writtenInExtChartAt, extChartAt, x₀])
 
 theorem hasMFDerivAt_inr :
-    HasMFDerivAt I I (@Sum.inr M M') q' (ContinuousLinearMap.id 𝕜 (TangentSpace I p)) := by
+    HasMFDerivAt I I (@Sum.inr M M') q' (.id 𝕜 (TangentSpace I q)) := by
   simpa [HasMFDerivAt, hasMFDerivWithinAt_univ] using hasMFDerivWithinAt_inr (t := Set.univ)
 
 theorem mfderivWithin_sumInl (hU : UniqueMDiffWithinAt I s q) :
-    mfderivWithin I I (@Sum.inl M M') s q = ContinuousLinearMap.id 𝕜 (TangentSpace I p) :=
+    mfderivWithin I I (@Sum.inl M M') s q = .id 𝕜 (TangentSpace I q) :=
   (hasMFDerivWithinAt_inl).mfderivWithin hU
 
 theorem mfderiv_sumInl :
-    mfderiv I I (@Sum.inl M M') q = ContinuousLinearMap.id 𝕜 (TangentSpace I p) := by
+    mfderiv I I (@Sum.inl M M') q = .id 𝕜 (TangentSpace I q) := by
   simpa [mfderivWithin_univ] using (mfderivWithin_sumInl (uniqueMDiffWithinAt_univ I))
 
 theorem mfderivWithin_sumInr {t : Set M'} (hU : UniqueMDiffWithinAt I t q') :
-    mfderivWithin I I (@Sum.inr M M') t q' = ContinuousLinearMap.id 𝕜 (TangentSpace I q') :=
+    mfderivWithin I I (@Sum.inr M M') t q' = .id 𝕜 (TangentSpace I q') :=
   (hasMFDerivWithinAt_inr).mfderivWithin hU
 
 theorem mfderiv_sumInr :
