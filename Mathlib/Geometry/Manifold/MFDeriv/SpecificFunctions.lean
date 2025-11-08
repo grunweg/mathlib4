@@ -711,7 +711,8 @@ theorem mfderiv_sumSwap :
     mfderiv I I (@Sum.swap M M') p = ContinuousLinearMap.id 𝕜 (TangentSpace I p) := by
   simpa [mfderivWithin_univ] using (mfderivWithin_sumSwap (uniqueMDiffWithinAt_univ I))
 
-variable {f : M → N} (g : M' → N') {q : M} {q' : M'}
+variable {P : Type*} [TopologicalSpace P] [ChartedSpace G P]
+variable {f : M → N} {g : M' → P} {q : M} {q' : M'}
 
 lemma writtenInExtChartAt_sumInl_eventuallyEq_id :
     (writtenInExtChartAt I I q (@Sum.inl M M')) =ᶠ[𝓝[Set.range I] (extChartAt I q) q] id := by
@@ -781,6 +782,31 @@ theorem mfderiv_sumInr :
     mfderiv I I (@Sum.inr M M') q' = ContinuousLinearMap.id 𝕜 (TangentSpace I q') := by
   simpa [mfderivWithin_univ] using (mfderivWithin_sumInr (uniqueMDiffWithinAt_univ I))
 
+-- These are the eventual sorries that would be nice to have.
+-- Use Sum.map f g ∘ Sum.inl = Sum.inl ∘ f, etc.
+-- I'm happy to prove these myself, or leave them to you!
+-- Of course, bonus points for proving `HasMFDeriv(Within)At` versions for these first.
+variable (g) in
+@[simp, mfld_simps]
+theorem mfderivWithin_sumMap_at_inl (hf : MDifferentiableWithinAt I J f s q) :
+    mfderivWithin I J (Sum.map f g) (Sum.inl '' s) (Sum.inl q) = mfderivWithin I J f s q := sorry
+
+variable (f) in
+@[simp, mfld_simps]
+theorem mfderivWithin_sumMap_at_inr {t : Set M'} (hg : MDifferentiableWithinAt I J g t q') :
+    mfderivWithin I J (Sum.map f g) (Sum.inr '' t) (Sum.inr q') = mfderivWithin I J g t q' := sorry
+
+variable (g) in
+@[simp, mfld_simps]
+theorem mfderiv_sumMap_at_inl (hf : MDifferentiableAt I J f q) :
+    mfderiv I J (Sum.map f g) (Sum.inl q) = mfderiv I J f q := sorry
+
+variable (f) in
+@[simp, mfld_simps]
+theorem mfderiv_sumMap_at_inr (hg : MDifferentiableAt I J g q') :
+    mfderiv I J (Sum.map f g) (Sum.inr q') = mfderiv I J g q' := sorry
+
+#exit
 end disjointUnion
 
 section Arithmetic
