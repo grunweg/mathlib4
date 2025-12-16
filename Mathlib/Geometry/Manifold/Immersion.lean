@@ -212,6 +212,20 @@ lemma mk_of_continuousAt {f : M → N} {x : M} (hf : ContinuousAt f x) (equiv : 
   exact LiftSourceTargetPropertyAt.mk_of_continuousAt hf isLocalSourceTargetProperty_immersionAtProp
     _ _ hx hfx hdomChart hcodChart ⟨equiv, hwrittenInExtend⟩
 
+-- Being a C⁰ immersion follows from being continuous at a point.
+-- TODO: is this fully true in infinite dimensions?
+lemma mkzero {f : M → N} {x : M} (hf : ContinuousAt f x) (equiv : (E × F) ≃L[𝕜] E'') :
+    IsImmersionAtOfComplement F I J 0 f x := by
+  rw [IsImmersionAtOfComplement_def]
+  apply LiftSourceTargetPropertyAt.mk_of_continuousAt hf isLocalSourceTargetProperty_immersionAtProp
+    (chartAt H x) (chartAt G (f x)) (mem_chart_source H x) (mem_chart_source G (f x))
+  · exact IsManifold.chart_mem_maximalAtlas x
+  · exact IsManifold.chart_mem_maximalAtlas (f x)
+  -- real mccoy: choose ψ to make this true?
+
+  sorry
+#exit
+
 /-- A choice of chart on the domain `M` of an immersion `f` at `x`:
 w.r.t. this chart and the data `h.codChart` and `h.equiv`,
 `f` will look like an inclusion `u ↦ (u, 0)` in these extended charts.
