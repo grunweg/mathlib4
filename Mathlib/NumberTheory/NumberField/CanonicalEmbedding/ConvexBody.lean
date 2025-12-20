@@ -459,11 +459,15 @@ theorem volume_fundamentalDomain_fractionalIdealLatticeBasis :
       ext1; simp only [Basis.coe_reindex, Function.comp_apply, fractionalIdealLatticeBasis_apply]]
     rw [mixedEmbedding.det_basisOfFractionalIdeal_eq_norm]
 
-theorem minkowskiBound_lt_top : minkowskiBound K I < ⊤ := by
+@[aesop (rule_sets := [finiteness]) safe apply]
+theorem minkowskiBound_ne_top : minkowskiBound K I ≠ ⊤ := by
   classical
-  -- FIXME: Make `finiteness` work here
-  exact ENNReal.mul_lt_top (fundamentalDomain_isBounded _).measure_lt_top <|
-    ENNReal.pow_lt_top ENNReal.ofNat_lt_top
+  have := fundamentalDomain_isBounded (fractionalIdealLatticeBasis K I)
+    |>.measure_lt_top (μ := volume)
+  unfold minkowskiBound
+  finiteness
+
+theorem minkowskiBound_lt_top : minkowskiBound K I < ⊤ := by finiteness
 
 theorem minkowskiBound_pos : 0 < minkowskiBound K I :=
   -- TODO: The `NormedAddCommGroup (mixedSpace K)` instance should not need any decidability.
