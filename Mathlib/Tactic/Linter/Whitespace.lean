@@ -378,16 +378,16 @@ abbrev Correspondence := Std.HashMap String.Pos.Raw PPref
 def atomOrIdentEndPos {m} [Monad m] [MonadLog m] [AddMessageContext m] [MonadOptions m]
     (verbose? : Bool) (k : Array SyntaxNodeKind) (orig pp : Substring.Raw) :
     m String.Pos.Raw := do
-  let ppDropOrig := readWhile orig pp
+  let ppDropOrig := readWhile (orig.toSlice?.getD "") (pp.toSlice?.getD "")
   if verbose? then
-    if ppDropOrig == pp && (!ppDropOrig.isEmpty) then
+    if ppDropOrig == pp.toString && (!ppDropOrig.isEmpty) then
       -- TODO: this warns about every library note, which is too noisy: thus, disabled.
       if !(k.contains `hygieneInfo && !k.contains `choice) && False then
         logWarning m!"No change at{indentD m!"'{ppDropOrig}'"}\n{k.map MessageData.ofConstName}\n\n\
         Maybe because the `SyntaxNodeKind`s contain:\n\
         hygieneInfo: {k.contains `hygieneInfo}\n\
         choice: {k.contains `choice}"
-  pure ppDropOrig.startPos
+  pure ppDropOrig.startPos.offset
 
 partial
 def generateCorrespondence {m} [Monad m] [MonadLog m] [AddMessageContext m] [MonadOptions m]
@@ -444,7 +444,7 @@ def mkRangeError (ks : Array SyntaxNodeKind) (orig pp : Substring.Raw) :
   let ppNext := pp.take 1
   -- The next pp-character is a space
   if ppNext.trim.isEmpty then
-    if onlineComment orig then
+    if onlineComment (orig.toSlice?.getD "") then
       return none
     if origWs.isEmpty then
       return some (⟨orig.startPos, orig.next orig.startPos⟩, "add space in the source", "")
