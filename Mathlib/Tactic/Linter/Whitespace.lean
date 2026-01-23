@@ -136,9 +136,9 @@ def _root_.Lean.Syntax.eraseLeadTrailSpaces : Syntax → Syntax
 
 /-- Answers whether a `Substring` starts with a space (` `), contains possibly more spaces,
 until there is either `/ -` (without the space between `/` and `-`) or `--`. -/
-def onlineComment (s : Substring.Raw) : Bool :=
-  (s.take 1).toString == " " &&
-    #[ "/-", "--"].contains ((s.dropWhile (· == ' ')).take 2).toString
+def onlineComment (s : String.Slice) : Bool :=
+  (s.take 1) == " " &&
+    #["/-".toSlice, "--"].contains ((s.dropWhile (· == ' ')).take 2)
 
 open Mathlib.Tactic.Superscript
 
@@ -171,18 +171,18 @@ The main goal is to figure out what is the trailing whitespace substring
 (usually either empty `""` or a single space `" "`).
 -/
 partial
-def readWhile (s t : Substring.Raw) : Substring.Raw :=
+def readWhile (s t : String.Slice) : String.Slice :=
   if s.isEmpty || t.isEmpty then t else
   let s1 := s.take 1
   let t1 := t.take 1
   if s1 == t1 then
     readWhile (s.drop 1) (t.drop 1)
   else
-    if t1.trim.isEmpty then
-      readWhile s t.trimLeft
+    if t1.trimAscii.isEmpty then
+      readWhile s t.trimAsciiStart
     else
-    if s1.trim.isEmpty then
-      readWhile s.trimLeft t
+    if s1.trimAscii.isEmpty then
+      readWhile s.trimAsciiStart t
     else
     if #["«", "»"].contains t1.toString then
       readWhile s (t.drop 1)
@@ -206,19 +206,19 @@ def readWhile (s t : Substring.Raw) : Substring.Raw :=
       t
 
 #eval show Lean.Elab.Term.TermElabM _ from do
-  let s := "/- alsdkj la l    asklj  ew ljr  wer-/".toRawSubstring
-  let t := "/- alsdkj la l asklj ew ljr    wer-/ theorem".toRawSubstring
+  let s := "/- alsdkj la l    asklj  ew ljr  wer-/".toSlice
+  let t := "/- alsdkj la l asklj ew ljr    wer-/ theorem".toSlice
   guard <| (readWhile s t).toString == " theorem"
-  let t := "/- alsdkj la l asklj ew ljr    wer-/theorem".toRawSubstring
+  let t := "/- alsdkj la l asklj ew ljr    wer-/theorem".toSlice
   guard <| (readWhile s t).toString == "theorem"
 
 #eval show Lean.Elab.Term.TermElabM _ from do
-  let s := "example".toRawSubstring
-  let t := "example := 0".toRawSubstring
+  let s := "example".toSlice
+  let t := "example := 0".toSlice
   guard <| (readWhile s t).toString == " := 0"
-  let t := ":= 0".toRawSubstring
-  guard <| (readWhile (" :=".toRawSubstring) t).toString == " 0"
-  guard <| (readWhile (" := ".toRawSubstring) t).toString == "0"
+  let t := ":= 0".toSlice
+  guard <| (readWhile (" :=".toSlice) t).toString == " 0"
+  guard <| (readWhile (" := ".toSlice) t).toString == "0"
 
 /--
 A structure combining the various exceptions to the `whitespace` linter.
