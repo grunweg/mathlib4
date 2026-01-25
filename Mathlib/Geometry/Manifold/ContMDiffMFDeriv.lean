@@ -273,7 +273,7 @@ variable [Is : IsManifold I 1 M] [I's : IsManifold I' 1 M']
 is `C^m` when `m+1 ≤ n`. -/
 theorem ContMDiffOn.contMDiffOn_tangentMapWithin
     (hf : CMDiff[s] n f) (hmn : m + 1 ≤ n) (hs : UniqueMDiffOn I s) :
-    CMDiff[(π E (TangentSpace I) ⁻¹' s)] m (tangentMapWithin I I' f s) := by
+    CMDiff[(π E (TangentSpace I) ⁻¹' s)] m (tangentMap[s] f) := by
   intro x₀ hx₀
   let s' : Set (TangentBundle I M) := (π E (TangentSpace I) ⁻¹' s)
   let b₁ : TangentBundle I M → M := fun p ↦ p.1
@@ -298,21 +298,21 @@ theorem ContMDiffOn.contMDiffOn_tangentMapWithin
 derivative is continuous there. -/
 theorem ContMDiffOn.continuousOn_tangentMapWithin (hf : CMDiff[s] n f) (hmn : 1 ≤ n)
     (hs : UniqueMDiffOn I s) :
-    ContinuousOn (tangentMapWithin I I' f s) (π E (TangentSpace I) ⁻¹' s) := by
-  have : CMDiff[π E (TangentSpace I) ⁻¹' s] 0 (tangentMapWithin I I' f s) :=
+    ContinuousOn (tangentMap[s] f) (π E (TangentSpace I) ⁻¹' s) := by
+  have : CMDiff[π E (TangentSpace I) ⁻¹' s] 0 (tangentMap[s] f) :=
     hf.contMDiffOn_tangentMapWithin hmn hs
   exact this.continuousOn
 
 /-- If a function is `C^n`, then its bundled derivative is `C^m` when `m+1 ≤ n`. -/
 theorem ContMDiff.contMDiff_tangentMap (hf : CMDiff n f) (hmn : m + 1 ≤ n) :
-    CMDiff m (tangentMap I I' f) := by
+    CMDiff m (tangentMap% f) := by
   rw [← contMDiffOn_univ] at hf ⊢
   convert hf.contMDiffOn_tangentMapWithin hmn uniqueMDiffOn_univ
   rw [tangentMapWithin_univ]
 
 /-- If a function is `C^n`, with `1 ≤ n`, then its bundled derivative is continuous. -/
 theorem ContMDiff.continuous_tangentMap (hf : CMDiff n f) (hmn : 1 ≤ n) :
-    Continuous (tangentMap I I' f) := by
+    Continuous (tangentMap% f) := by
   rw [← contMDiffOn_univ] at hf
   rw [← continuousOn_univ]
   convert hf.continuousOn_tangentMapWithin hmn uniqueMDiffOn_univ
@@ -402,7 +402,7 @@ bundles. -/
 
 lemma equivTangentBundleProd_eq_tangentMap_prod_tangentMap :
     equivTangentBundleProd I M I' M' = fun (p : TangentBundle (I.prod I') (M × M')) ↦
-      (tangentMap (I.prod I') I Prod.fst p, tangentMap (I.prod I') I' Prod.snd p) := by
+      (tangentMap% (@Prod.fst M M') p, tangentMap% (@Prod.snd M M') p) := by
   simp only [tangentMap_prodFst, tangentMap_prodSnd]; rfl
 
 variable [IsManifold I 1 M] [IsManifold I' 1 M']
