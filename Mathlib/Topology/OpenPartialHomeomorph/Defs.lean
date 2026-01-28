@@ -55,8 +55,8 @@ structure OpenPartialHomeomorph (X : Type*) (Y : Type*) [TopologicalSpace X]
   [TopologicalSpace Y] extends PartialEquiv X Y where
   open_source : IsOpen source
   open_target : IsOpen target
-  continuousOn_toFun : ContinuousOn toFun source
-  continuousOn_invFun : ContinuousOn invFun target
+  continuousOn_toFun : ContinuousOn toFun source := by fun_prop
+  continuousOn_invFun : ContinuousOn invFun target := by fun_prop
 
 @[deprecated (since := "2025-08-29")] alias PartialHomeomorph := OpenPartialHomeomorph
 
@@ -94,9 +94,11 @@ def Simps.symm_apply (e : OpenPartialHomeomorph X Y) : Y → X := e.symm
 
 initialize_simps_projections OpenPartialHomeomorph (toFun → apply, invFun → symm_apply)
 
+@[fun_prop]
 protected theorem continuousOn : ContinuousOn e e.source :=
   e.continuousOn_toFun
 
+@[fun_prop]
 theorem continuousOn_symm : ContinuousOn e.symm e.target :=
   e.continuousOn_invFun
 

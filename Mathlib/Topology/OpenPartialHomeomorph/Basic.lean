@@ -128,7 +128,6 @@ def ofContinuousOpenRestrict (e : PartialEquiv X Y) (hc : ContinuousOn e e.sourc
   toPartialEquiv := e
   open_source := hs
   open_target := by simpa only [range_restrict, e.image_source_eq_target] using ho.isOpen_range
-  continuousOn_toFun := hc
   continuousOn_invFun := e.image_source_eq_target ▸ ho.continuousOn_image_of_leftInvOn e.leftInvOn
 
 @[simp]
