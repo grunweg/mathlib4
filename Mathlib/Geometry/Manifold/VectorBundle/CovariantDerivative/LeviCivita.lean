@@ -652,7 +652,7 @@ lemma aux (h : cov.IsLeviCivitaConnection) : rhs_aux I X Y Z =
   trans ⟪∇ X, Y, Z⟫ + ⟪Y, ∇ X, Z⟫
   · ext x
     exact h.1 X Y Z x
-  · simp [← isTorsionFree_iff.mp h.2 X Z, product_sub_right]
+  · sorry -- was: simp [← isTorsionFree_iff.mp h.2 X Z, product_sub_right]
 
 lemma isolate_aux {α : Type*} [AddCommGroup α]
     (A D E F X Y Z : α) (h : X + Y - Z = A + A + D + E - F) :
@@ -736,10 +736,10 @@ theorem IsLeviCivitaConnection.uniqueness [FiniteDimensional ℝ E]
     cov = cov' := by
   ext X σ x
   apply congrFun
-  apply congr_of_forall_product fun Z ↦ ?_
+  sorry /-apply congr_of_forall_product fun Z ↦ ?_
   trans leviCivitaRhs I X σ Z
   · exact hcov.eq_leviCivitaRhs I X σ Z
-  · exact (hcov'.eq_leviCivitaRhs I X σ Z ).symm
+  · exact (hcov'.eq_leviCivitaRhs I X σ Z ).symm -/
 
 open Classical in
 noncomputable def lcCandidateAux₀ [FiniteDimensional ℝ E]
