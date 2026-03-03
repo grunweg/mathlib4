@@ -831,18 +831,22 @@ lemma isCovariantDerivativeOn_lcCandidateAux [FiniteDimensional ℝ E] :
     congr! 1
     simp only [lcCandidateAux₀]
     rw [← mk2TensorAt_add]
-    congr 1
-    ext1 X --Z --_x
-    ext1 Z
-    by_cases hX : MDiffAt (T% X) x; swap
-    · simp [hX]
-    by_cases hZ : MDiffAt (T% Z) x; swap
-    · simp [hZ]
-    simp only [hX, hZ, ↓reduceDIte, dite_eq_ite, Pi.add_apply]
+    --rw [mk2TensorAt_apply]
+    apply mk2TensorAt_congr'
+    intro X X' x₀ hX hX'
+    by_cases hX'' : MDiffAt (T% X) x; swap
+    · simp [hX'']
+    by_cases hX''' : MDiffAt (T% X') x; swap
+    · simp [hX''']
+    simp only [hX'', hX''', ↓reduceDIte, dite_eq_ite, Pi.add_apply]
     simp only [↓reduceIte]
-    refine leviCivitaRhs_addY_apply I ?_ ?_ ?_ ?_
-    sorry
+    -- we're not using hX'' and hX''', but need hY and hY' at a different point!
+    refine leviCivitaRhs_addY_apply I hX ?_ ?_ hX'
+    · sorry
+    · sorry
   leibniz := sorry
+
+#exit
 
 end
 
