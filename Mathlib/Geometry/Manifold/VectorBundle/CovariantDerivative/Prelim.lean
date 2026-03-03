@@ -596,6 +596,22 @@ theorem mk2TensorAt_add
   ext
   simp [mk2TensorAt, IsBilinearMap.toContinuousLinearMap, IsBilinearMap.toLinearMap]
 
+lemma mk2TensorAt_congr
+    (φ : (Π x : M, V x) → (Π x : M, V x) → (Π x, V' x)) {x}
+    (σ_smul : ∀ {f : M → ℝ}, ∀ {σ τ}, MDiffAt f x → MDiffAt (T% σ) x →
+      φ (f • σ) τ x = f x • φ σ τ x)
+    (σ_add : ∀ {σ σ' τ}, MDiffAt (T% σ) x → MDiffAt (T% σ') x →
+      φ (σ + σ') τ x = φ σ τ x + φ σ' τ x)
+    (τ_smul : ∀ {f : M → ℝ}, ∀ {σ τ}, MDiffAt f x → MDiffAt (T% τ) x →
+        φ σ (f • τ) x = f x • φ σ τ x)
+    (τ_add : ∀ {σ τ τ'}, MDiffAt (T% τ) x → MDiffAt (T% τ') x →
+        φ σ (τ + τ') x = φ σ τ x + φ σ τ' x)
+    {X X' : (Π x : M, V x)} {Y Y' : (Π x : M, V x)} (hXX' : X x = X' x) (hYY' : Y x = Y' x) :
+    mk2TensorAt I F F' φ σ_smul σ_add τ_smul τ_add (X x) (Y x) =
+      mk2TensorAt I F F' φ σ_smul σ_add τ_smul τ_add (X' x) (Y' x) := by
+  simp [mk2TensorAt]
+  congr
+
 end tensoriality
 
 section trivilization_topology
