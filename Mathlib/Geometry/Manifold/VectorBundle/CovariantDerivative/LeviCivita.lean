@@ -645,7 +645,7 @@ lemma aux (h : cov.IsLeviCivitaConnection) : rhs_aux I X Y Z =
   trans ⟪∇ X, Y, Z⟫ + ⟪Y, ∇ X, Z⟫
   · ext x
     exact h.1 X Y Z x
-  · simp [← isTorsionFree_iff.mp h.2 X Z, product_sub_right]
+  · sorry -- was: simp [← isTorsionFree_iff.mp h.2 X Z, product_sub_right]
 
 lemma isolate_aux {α : Type*} [AddCommGroup α]
     (A D E F X Y Z : α) (h : X + Y - Z = A + A + D + E - F) :
@@ -729,10 +729,12 @@ theorem IsLeviCivitaConnection.uniqueness [FiniteDimensional ℝ E]
     cov = cov' := by
   ext X σ x
   apply congrFun
-  apply congr_of_forall_product fun Z ↦ ?_
-  trans leviCivitaRhs I X σ Z
-  · exact hcov.eq_leviCivitaRhs I X σ Z
-  · exact (hcov'.eq_leviCivitaRhs I X σ Z ).symm
+  -- need to think: is the lemma below the one I really want?
+  --apply congr_of_forall_product (M := M) (I := I) (X := fun x ↦ (cov X σ) x)--fun Z ↦ ?_
+  --trans leviCivitaRhs I X σ Z
+  --· exact hcov.eq_leviCivitaRhs I X σ Z
+  --· exact (hcov'.eq_leviCivitaRhs I X σ Z ).symm
+  sorry
 
 /-- Auxiliary definition towards defining the Levi-Civita connection on `M`:
 given a trivialisation `e` and a choice `o` of linear order on the standard basis of `E`,
@@ -759,30 +761,48 @@ noncomputable def lcCandidateAux' [FiniteDimensional ℝ E]
 noncomputable def lcCandidateAux [FiniteDimensional ℝ E]
     (e : Trivialization E (TotalSpace.proj : TangentBundle I M → M)) [MemTrivializationAtlas e]
     (o : LinearOrder ↑(Basis.ofVectorSpaceIndex ℝ E))
-    (Y : (x : M) → TangentSpace I x) (x : M) :
+    (Y : (x : M) → TangentSpace I x) (hY : MDiff (T% Y)) {x : M} (hx : x ∈ e.baseSet) :
     TangentSpace I x →L[ℝ] TangentSpace I x :=
   have : FiniteDimensional ℝ (TangentSpace I x) := inferInstanceAs (FiniteDimensional ℝ E)
   LinearMap.toContinuousLinearMap <|
   { toFun X₀ := lcCandidateAux' I e o Y (_root_.extend I E X₀) x
     map_add' X₀ Y₀ := by
-      sorry
-      -- simp only [lcCandidateAux', hE, ↓reduceDIte]
-      -- simp only [← Finset.sum_add_distrib, ← add_smul]
-      -- congr; ext i
-      -- rw [leviCivitaRhs_addX_apply] <;> try assumption
-      -- let b := Basis.ofVectorSpace ℝ E
-      -- have : Nonempty ↑(Basis.ofVectorSpaceIndex ℝ E) := b.index_nonempty
-      -- exact mdifferentiableAt_orthonormalFrame_of_mem b e i hx
+      -- TODO: make `nontriviality` able to handle this!
+      by_cases hE : Subsingleton E
+      · have : Subsingleton (TangentSpace I x) := inferInstanceAs (Subsingleton E)
+        simpa [lcCandidateAux', hE] using Subsingleton.eq_zero _
+      have : Nontrivial E := not_subsingleton_iff_nontrivial.mp hE
+      let b := Basis.ofVectorSpace ℝ E
+      have : Nonempty ↑(Basis.ofVectorSpaceIndex ℝ E) := b.index_nonempty
+      -- WHY: uncommenting this line makes lean file on line 788 below
+      --have : LocallyFiniteOrderBot ↑(Basis.ofVectorSpaceIndex ℝ E) := inferInstance
+      simp only [lcCandidateAux', hE, ↓reduceDIte]
+      simp only [← Finset.sum_add_distrib, ← add_smul]
+      congr; ext i
+      rw [_root_.extend_add, leviCivitaRhs_addY_apply] <;> try assumption
+      · exact hY x
+      · exact mdifferentiable_extend ..
+      · exact mdifferentiable_extend ..
+      · exact mdifferentiableAt_orthonormalFrame_of_mem b e i hx
     map_smul' a X₀ := by
-      sorry
-      -- simp only [lcCandidateAux', hE, ↓reduceDIte]
-      -- rw [Finset.smul_sum]
-      -- congr; ext i
-      -- rw [leviCivitaRhs_smulX_apply] <;> try assumption
-      -- · simp [← smul_assoc]
-      -- · let b := Basis.ofVectorSpace ℝ E
-      --   have : Nonempty ↑(Basis.ofVectorSpaceIndex ℝ E) := b.index_nonempty
-      --   exact mdifferentiableAt_orthonormalFrame_of_mem b e i hx }
+      -- TODO: make `nontriviality` able to handle this!
+      by_cases hE : Subsingleton E
+      · have : Subsingleton (TangentSpace I x) := inferInstanceAs (Subsingleton E)
+        simp only [lcCandidateAux', hE, ↓reduceDIte, RingHom.id_apply]
+        exact Subsingleton.elim _ _
+      have : Nontrivial E := not_subsingleton_iff_nontrivial.mp hE
+      let b := Basis.ofVectorSpace ℝ E
+      have : Nonempty ↑(Basis.ofVectorSpaceIndex ℝ E) := b.index_nonempty
+      simp only [lcCandidateAux', hE, ↓reduceDIte]
+      rw [Finset.smul_sum]
+      congr; ext i
+      simp only [_root_.extend_smul]
+      erw [leviCivitaRhs_smulY_apply] <;> try assumption
+      · simp [← smul_assoc]
+      · apply mdifferentiableAt_const
+      · apply hY x
+      · exact mdifferentiable_extend ..
+      · exact mdifferentiableAt_orthonormalFrame_of_mem b e i hx
     }
 
 variable (M) in
@@ -791,9 +811,14 @@ variable (M) in
 the candidate definition for the Levi-Civita connection on `TM`. -/
 noncomputable def lcCandidate [FiniteDimensional ℝ E]
     (o : LinearOrder ↑(Basis.ofVectorSpaceIndex ℝ E)) :
-    (Π x : M, TangentSpace I x) → (Π x : M, TangentSpace I x →L[ℝ] TangentSpace I x) :=
+    (Π x : M, TangentSpace I x) → (Π x : M, TangentSpace I x →L[ℝ] TangentSpace I x) := by
   -- Use the preferred trivialisation at `x` to write down a candidate for the existence.
-  fun X x ↦ lcCandidateAux I (trivializationAt E (TangentSpace I : M → Type _) x) o X x
+  -- TODO: uses a junk value for non-differentiable functions!
+  intro X x--fun X x ↦ lcCandidateAux I (trivializationAt E (TangentSpace I : M → Type _) sorry) o X
+  by_cases hX : MDiff (T% X)
+  · exact lcCandidateAux I (trivializationAt E (TangentSpace I : M → Type _) x) o X hX
+      (FiberBundle.mem_baseSet_trivializationAt' x)
+  · exact ContinuousLinearMap.id ℝ _
 
 variable (X Y) in
 /-- The definition `lcCandidate` behaves well: for each compatible trivialisation `e`,
@@ -801,10 +826,15 @@ the candidate definition using `e` agrees with `lcCandidate` on `e.baseSet`. -/
 lemma lcCandidate_eq_lcCandidateAux [FiniteDimensional ℝ E]
     (e : Trivialization E (TotalSpace.proj : TangentBundle I M → M)) [MemTrivializationAtlas e]
     {o : LinearOrder ↑(Basis.ofVectorSpaceIndex ℝ E)} {x : M} (hx : x ∈ e.baseSet) :
-    lcCandidate I M o X x = lcCandidateAux I e o X x := by
+    lcCandidate I M o X x = lcCandidateAux I e o X sorry hx := by
   by_cases hE : Subsingleton E
   · simp [lcCandidate, lcCandidateAux, hE]
-  · simp only [lcCandidate, lcCandidateAux, hE, ↓reduceDIte]
+    have : Subsingleton (TangentSpace I x) := inferInstanceAs (Subsingleton E)
+    exact Subsingleton.elim ..
+  · by_cases hX : MDiff (T% X); swap
+    · simp only [lcCandidate, lcCandidateAux, hE, ↓reduceDIte, hX]
+      sorry
+    simp only [lcCandidate, lcCandidateAux, hE, ↓reduceDIte]
     -- Now, start the real proof.
     sorry
 
@@ -900,6 +930,7 @@ noncomputable def LeviCivitaConnection [FiniteDimensional ℝ E] :
     CovariantDerivative I E (TangentSpace I : M → Type _) :=
   LeviCivitaConnection_aux I M (Classical.choose (exists_wellOrder _))
 
+#exit
 -- TODO: move this section to `Torsion.lean`
 section
 
