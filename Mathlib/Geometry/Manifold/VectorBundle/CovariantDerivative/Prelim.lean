@@ -612,6 +612,36 @@ lemma mk2TensorAt_congr
   simp [mk2TensorAt]
   congr
 
+lemma mk2TensorAt_congr'
+    (φ : (Π x : M, V x) → (Π x : M, V x) → (Π x, V' x)) {x}
+    (φ_σ_smul : ∀ {f : M → ℝ}, ∀ {σ τ}, MDiffAt f x → MDiffAt (T% σ) x →
+      φ (f • σ) τ x = f x • φ σ τ x)
+    (φ_σ_add : ∀ {σ σ' τ}, MDiffAt (T% σ) x → MDiffAt (T% σ') x →
+      φ (σ + σ') τ x = φ σ τ x + φ σ' τ x)
+    (φ_τ_smul : ∀ {f : M → ℝ}, ∀ {σ τ}, MDiffAt f x → MDiffAt (T% τ) x →
+        φ σ (f • τ) x = f x • φ σ τ x)
+    (φ_τ_add : ∀ {σ τ τ'}, MDiffAt (T% τ) x → MDiffAt (T% τ') x →
+        φ σ (τ + τ') x = φ σ τ x + φ σ τ' x)
+    (ψ : (Π x : M, V x) → (Π x : M, V x) → (Π x, V' x))
+    (ψ_σ_smul : ∀ {f : M → ℝ}, ∀ {σ τ}, MDiffAt f x → MDiffAt (T% σ) x →
+      ψ (f • σ) τ x = f x • ψ σ τ x)
+    (ψ_σ_add : ∀ {σ σ' τ}, MDiffAt (T% σ) x → MDiffAt (T% σ') x →
+      ψ (σ + σ') τ x = ψ σ τ x + ψ σ' τ x)
+    (ψ_τ_smul : ∀ {f : M → ℝ}, ∀ {σ τ}, MDiffAt f x → MDiffAt (T% τ) x →
+        ψ σ (f • τ) x = f x • ψ σ τ x)
+    (ψ_τ_add : ∀ {σ τ τ'}, MDiffAt (T% τ) x → MDiffAt (T% τ') x →
+        ψ σ (τ + τ') x = ψ σ τ x + ψ σ τ' x)
+    -- Key condition: φ and ψ agree on differentiable sections (even point-wise)
+    (hφψ : ∀ {X : (Π x : M, V x)} {Y : (Π x : M, V x)}, ∀ {x},
+      MDiffAt (T% X) x → MDiffAt (T% Y) x → φ X Y x = ψ X Y x) :
+    mk2TensorAt I F F' φ φ_σ_smul φ_σ_add φ_τ_smul φ_τ_add =
+      mk2TensorAt I F F' ψ ψ_σ_smul ψ_σ_add ψ_τ_smul ψ_τ_add := by
+  simp [mk2TensorAt, IsBilinearMap.toContinuousLinearMap, LinearMap.toContinuousLinearMap]
+  congr -- just the fun field should suffice...
+  sorry--ext x x'
+  --congr with x''
+  --congr
+
 end tensoriality
 
 section trivilization_topology
