@@ -830,20 +830,41 @@ lemma isCovariantDerivativeOn_lcCandidateAux [FiniteDimensional ℝ E] :
     rw [← ContinuousLinearMap.comp_add]
     congr! 1
     simp only [lcCandidateAux₀]
-    rw [← mk2TensorAt_add]
-    congr 1
-    ext1 X --Z --_x
-    ext1 Z
-    by_cases hX : MDiffAt (T% X) x; swap
-    · simp [hX]
-    by_cases hZ : MDiffAt (T% Z) x; swap
-    · simp [hZ]
-    simp only [hX, hZ, ↓reduceDIte, dite_eq_ite, Pi.add_apply]
-    simp only [↓reduceIte]
-    refine leviCivitaRhs_addY_apply I ?_ ?_ ?_ ?_
+    ext X₀ Y₀
+    simp only [mk2TensorAt, IsBilinearMap.toContinuousLinearMap, IsBilinearMap.toLinearMap,
+      dite_eq_ite, LinearMap.coe_toContinuousLinearMap', IsLinearMap.mk'_apply, LinearMap.mk₂_apply,
+      ContinuousLinearMap.add_apply]
+    rw [if_pos, if_pos, if_pos, if_pos, if_pos, if_pos]
+    · apply leviCivitaRhs_addY_apply
+      · exact mdifferentiable_extend ..
+      · exact hY
+      · exact hY'
+      · exact mdifferentiable_extend ..
+    · exact mdifferentiable_extend ..
+    · exact mdifferentiable_extend ..
+    · exact mdifferentiable_extend ..
+    · exact mdifferentiable_extend ..
+    · exact mdifferentiable_extend ..
+    · exact mdifferentiable_extend ..
+  leibniz {σ g x} hσ hg _hx := by
+    unfold lcCandidateAux
+    rw [dif_pos hσ, dif_pos (hg.smul_section hσ)]
+    unfold lcCandidateAux₁
+    dsimp
+    --rw [← ContinuousLinearMap.comp_add]
+    --congr! 1
+    simp only [lcCandidateAux₀]
+    ext X₀ --Y₀
+    simp only [dite_eq_ite, ContinuousLinearMap.coe_comp', ContinuousLinearEquiv.coe_coe,
+      LinearIsometryEquiv.coe_symm_toContinuousLinearEquiv, comp_apply,
+      ContinuousLinearMap.add_apply, ContinuousLinearMap.coe_smul', Pi.smul_apply,
+      ContinuousLinearMap.toSpanSingleton_apply]
+    -- rw [mk2TensorAt_apply]
+    -- ext Y₀
+    -- rw [if_pos]
     sorry
-  leibniz := sorry
 
+#exit
 end
 
 variable [IsContMDiffRiemannianBundle I 1 E (fun (x : M) ↦ TangentSpace I x)]
