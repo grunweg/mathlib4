@@ -503,7 +503,8 @@ attempts to recurse on the structure of `e` to prove the goal.
 It will either close `goal` or fail. -/
 def positivity (goal : MVarId) : MetaM Unit := do
   let t : Q(Prop) ← withReducible goal.getType'
-  let p ← solve t
+  -- Introduce any variables inside ∀ quantifiers.
+  let p ← forallTelescope t (fun _vars ↦ solve)
   goal.assign p
 
 end Meta.Positivity
