@@ -638,6 +638,28 @@ example : 0 ≤ 3 := by positivity
 
 example : 0 ≤ 0 := by positivity
 
+-- let p ← forallTelescope t (fun _ ↦ solve) did the following:
+/- solve: called with t = LE.le.{0} Nat instLENat (OfNat.ofNat.{0} Nat 0 (instOfNatNat 0))
+--   (OfNat.ofNat.{0} Nat 3 (instOfNatNat 3))
+/--
+error: (kernel) declaration type mismatch, '_example' has type
+  0 ≤ 3
+but it is expected to have type
+  ∀ (i : ℕ), 0 ≤ 3
+-/ -/
+
+/-
+let p ← mapForallTelescope solve t does
+solve: called with t = Nat -> (LE.le.{0} Nat instLENat (OfNat.ofNat.{0} Nat 0 (instOfNatNat 0))
+  (OfNat.ofNat.{0} Nat 3 (instOfNatNat 3)))
+-/
+
+/-
+let p ← mapForallTelescope' (fun _vars ↦ solve) t does the same:
+let p ← mapForallTelescope' (fun _vars par ↦ solve par) t also
+solve: called with t = Nat -> (LE.le.{0} Nat instLENat (OfNat.ofNat.{0} Nat 0 (instOfNatNat 0))
+  (OfNat.ofNat.{0} Nat 3 (instOfNatNat 3)))
+-/
 example : ∀ i : ℕ, 0 ≤ 3 := by
   intro i
   positivity

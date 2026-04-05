@@ -505,7 +505,10 @@ It will either close `goal` or fail. -/
 def positivity (goal : MVarId) : MetaM Unit := do
   let t : Q(Prop) ← withReducible goal.getType'
   -- Introduce any variables inside ∀ quantifiers.
-  let p ← mapForallTelescope solve t
+  --let p ← mapForallTelescope' (fun _vars par ↦ solve par) t
+
+  -- can Lean.Meta.forallMetaTelescope do what I want?
+  let p ← forallTelescope t (fun _vars s ↦ solve s)
   goal.assign p
 
 end Meta.Positivity
