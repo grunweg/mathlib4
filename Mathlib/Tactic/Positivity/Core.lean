@@ -462,6 +462,7 @@ def proveNonneg (e : Expr) : MetaM Expr := do
 `0 [≤/</≠] e`, attempts to recurse on the structure of `t` to prove it. It returns a proof
 or fails. -/
 def solve (t : Q(Prop)) : MetaM Expr := do
+  dbg_trace s!"solve: called with t = {t}"
   let rest {u : Level} (α : Q(Type u)) z e (relDesired : OrderRel) : MetaM Expr := do
     let zα ← synthInstanceQ q(Zero $α)
     assumeInstancesCommute
@@ -504,7 +505,7 @@ It will either close `goal` or fail. -/
 def positivity (goal : MVarId) : MetaM Unit := do
   let t : Q(Prop) ← withReducible goal.getType'
   -- Introduce any variables inside ∀ quantifiers.
-  let p ← forallTelescope t (fun _vars ↦ solve)
+  let p ← mapForallTelescope solve t
   goal.assign p
 
 end Meta.Positivity

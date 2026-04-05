@@ -631,3 +631,13 @@ end Positivity
 end Meta
 
 end Mathlib
+
+example : 0 ≤ 0 := by positivity
+
+example : 0 ≤ 3 := by positivity
+
+example : 0 ≤ 0 := by positivity
+
+example : ∀ i : ℕ, 0 ≤ 3 := by
+  intro i
+  positivity
