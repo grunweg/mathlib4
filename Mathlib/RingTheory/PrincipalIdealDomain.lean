@@ -38,8 +38,7 @@ Theorems about PID's are in the `PrincipalIdealRing` namespace.
 
 -/
 
-@[expose] public section
-
+public section
 
 universe u v
 
@@ -175,7 +174,7 @@ variable (x y : R) [(Ideal.span {x, y}).IsPrincipal]
 /-- A choice of gcd of two elements in a Bézout domain.
 
 Note that the choice is usually not unique. -/
-noncomputable def gcd : R := Submodule.IsPrincipal.generator (Ideal.span {x, y})
+@[expose] noncomputable def gcd : R := Submodule.IsPrincipal.generator (Ideal.span {x, y})
 
 theorem span_gcd : Ideal.span {gcd x y} = Ideal.span {x, y} :=
   Ideal.span_singleton_generator _

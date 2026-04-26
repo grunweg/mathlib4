@@ -16,14 +16,14 @@ public import Mathlib.LinearAlgebra.Basis.VectorSpace
 This file contains the definitions `Complex.sqrt` and `RCLike.sqrt` and builds basic API.
 -/
 
-@[expose] public section
+public section
 
 variable {𝕜 : Type*} [RCLike 𝕜]
 
 open ComplexOrder
 
 /-- The square root of a complex number. -/
-noncomputable def Complex.sqrt (a : ℂ) : ℂ := a ^ (2⁻¹ : ℂ)
+@[expose] noncomputable def Complex.sqrt (a : ℂ) : ℂ := a ^ (2⁻¹ : ℂ)
 
 @[simp] theorem Complex.sqrt_zero : (0 : ℂ).sqrt = 0 := by simp [sqrt]
 @[simp] theorem Complex.sqrt_one : (1 : ℂ).sqrt = 1 := by simp [sqrt]
@@ -41,7 +41,7 @@ lemma sqrt_eq_exp {z : ℂ} (hz : z ≠ 0) : sqrt z = exp (log z / 2) := by
   simp [sqrt, cpow_def, hz, div_eq_mul_inv]
 
 /-- The square root on `RCLike`. -/
-noncomputable def RCLike.sqrt (a : 𝕜) : 𝕜 := map ℂ 𝕜 (map 𝕜 ℂ a).sqrt
+@[expose] noncomputable def RCLike.sqrt (a : 𝕜) : 𝕜 := map ℂ 𝕜 (map 𝕜 ℂ a).sqrt
 
 theorem RCLike.sqrt_eq_ite {a : 𝕜} :
     sqrt a = if h : im (I : 𝕜) = 1 then (complexRingEquiv h).symm (complexRingEquiv h a).sqrt
