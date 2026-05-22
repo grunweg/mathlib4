@@ -10,24 +10,6 @@ public import Mathlib.Geometry.Manifold.Diffeomorph
 public import Mathlib.Geometry.Manifold.Instances.Real
 public import Mathlib.Geometry.Manifold.PartitionOfUnity
 
-/-!
-# Whitney embedding theorem
-
-In this file we prove a version of the Whitney embedding theorem: for any compact real manifold `M`,
-for sufficiently large `n` there exists a smooth embedding `M → ℝ^n`.
-
-## TODO
-
-* Prove the weak Whitney embedding theorem: any `σ`-compact smooth `m`-dimensional manifold can be
-  embedded into `ℝ^(2m+1)`. This requires a version of Sard's theorem: for a locally Lipschitz
-  continuous map `f : ℝ^m → ℝ^n`, `m < n`, the range has Hausdorff dimension at most `m`, hence it
-  has measure zero.
-
-## Tags
-
-partition of unity, smooth bump function, whitney theorem
--/
-
 @[expose] public section
 
 universe uι uE uH uM
