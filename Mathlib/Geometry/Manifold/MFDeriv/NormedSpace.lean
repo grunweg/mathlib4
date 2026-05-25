@@ -698,3 +698,37 @@ lemma mvfderiv_zero {x : M} : d% (0 : M → F) x = 0 := by
   rw [← mvfderivWithin_univ]
   exact mvfderivWithin_zero (uniqueMDiffWithinAt_univ I)
 @[deprecated (since := "2026-05-17")] alias extDerivFun_zero := mvfderiv_zero
+
+variable {g : M → 𝕜}
+
+-- XXX: do not make simp; we may want to stay in d[s] land!
+lemma mvfderivWithin_apply : d[s] g x = mfderiv[s] g x := by
+  ext X
+  simp [mvfderivWithin, NormedSpace.fromTangentSpace]
+  rfl
+
+-- XXX: do not make simp; we may want to stay in d% land!
+lemma mvfderiv_apply : d% g x = mfderiv% g x := by
+  ext X
+  simp [mvfderiv, NormedSpace.fromTangentSpace]
+  rfl
+
+protected theorem MDifferentiableWithinAt.mvfderivWithin (h : MDiffAt[s] g x) :
+    d[s] g x =
+      fderivWithin 𝕜 (writtenInExtChartAt I 𝓘(𝕜) x g :) ((extChartAt I x).symm ⁻¹' s ∩ range I)
+        ((extChartAt I x) x) := by
+  rw [← h.mfderivWithin, mvfderivWithin_apply]
+
+protected theorem MDifferentiableAt.mvfderiv (h : MDiffAt g x) :
+    d% g x =
+      fderivWithin 𝕜 (writtenInExtChartAt I 𝓘(𝕜) x g :) (range I) ((extChartAt I x) x) := by
+  rw [← h.mfderiv, mvfderiv_apply]
+
+protected theorem HasMFDerivAt.mvfderiv {g' : TangentSpace I x →L[𝕜] 𝕜} (h : HasMFDerivAt% g x g') :
+    d% g x = g' :=
+  (hasMFDerivAt_unique h h.mdifferentiableAt.hasMFDerivAt).symm
+
+protected theorem HasMFDerivWithinAt.mvfderivWithin
+    {g' : TangentSpace I x →L[𝕜] 𝕜} (h : HasMFDerivAt[s] g x g') (hxs : UniqueMDiffWithinAt I s x) :
+    d[s] g x = g' := by
+  rw [← h.mfderivWithin hxs, mvfderivWithin_apply]
