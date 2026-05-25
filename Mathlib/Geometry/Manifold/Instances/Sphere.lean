@@ -13,7 +13,7 @@ public import Mathlib.Analysis.InnerProductSpace.Calculus
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Geometry.Manifold.Algebra.LieGroup
 public import Mathlib.Geometry.Manifold.Instances.Real
-public import Mathlib.Geometry.Manifold.MFDeriv.Basic
+public import Mathlib.Geometry.Manifold.MFDeriv.NormedSpace
 public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 public import Mathlib.Tactic.Module
 
@@ -486,9 +486,10 @@ Note that there is an abuse here of the defeq between `E` and the tangent space 
 In general this defeq is not canonical, but in this case (the tangent space of a vector space) it is
 canonical. -/
 theorem range_mfderiv_coe_sphere {n : ℕ} [Fact (finrank ℝ E = n + 1)] (v : sphere (0 : E) 1) :
-    (mfderiv (𝓡 n) 𝓘(ℝ, E) ((↑) : sphere (0 : E) 1 → E) v : TangentSpace (𝓡 n) v →L[ℝ] E).range =
-      (ℝ ∙ (v : E))ᗮ := by
-  rw [((contMDiff_coe_sphere v).mdifferentiableAt one_ne_zero).mfderiv]
+    (mvfderiv (𝓡 n) ((↑) : sphere (0 : E) 1 → E) v).range = (ℝ ∙ (v : E))ᗮ := by
+  have aux := (contMDiff_coe_sphere (n := n) v).mdifferentiableAt one_ne_zero
+  -- TODO: why doesn't `rw [aux.mvfderiv]` work?
+  rw [mvfderiv, ((contMDiff_coe_sphere v).mdifferentiableAt one_ne_zero).mfderiv]
   dsimp [chartAt]
   simp only [fderivWithin_univ, mfld_simps]
   let U := (OrthonormalBasis.fromOrthogonalSpanSingleton (𝕜 := ℝ) n
@@ -496,7 +497,10 @@ theorem range_mfderiv_coe_sphere {n : ℕ} [Fact (finrank ℝ E = n + 1)] (v : s
   suffices
       (fderiv ℝ ((stereoInvFunAux (-v : E) ∘ (↑)) ∘ U.symm) 0).range = (ℝ ∙ (v : E))ᗮ by
     convert! this using 4
-    apply stereographic'_neg
+    ext X
+    simp [NormedSpace.fromTangentSpace]
+    congr 1
+    sorry -- apply stereographic'_neg
   have :
     HasFDerivAt (stereoInvFunAux (-v : E) ∘ (Subtype.val : (ℝ ∙ (↑(-v) : E))ᗮ → E))
       (ℝ ∙ (↑(-v) : E))ᗮ.subtypeL (U.symm 0) := by
@@ -523,14 +527,15 @@ set_option backward.isDefEq.respectTransparency false in
 /-- Consider the differential of the inclusion of the sphere in `E` at the point `v` as a continuous
 linear map from `TangentSpace (𝓡 n) v` to `E`.  This map is injective. -/
 theorem mfderiv_coe_sphere_injective {n : ℕ} [Fact (finrank ℝ E = n + 1)] (v : sphere (0 : E) 1) :
-    Injective (mfderiv (𝓡 n) 𝓘(ℝ, E) ((↑) : sphere (0 : E) 1 → E) v) := by
-  rw [((contMDiff_coe_sphere v).mdifferentiableAt one_ne_zero).mfderiv]
+    Injective (mvfderiv (𝓡 n) ((↑) : sphere (0 : E) 1 → E) v) := by
+  -- TODO: rewrite by .mvfderiv instead
+  rw [mvfderiv, ((contMDiff_coe_sphere v).mdifferentiableAt one_ne_zero).mfderiv]
   simp only [chartAt, fderivWithin_univ, mfld_simps]
   let U := (OrthonormalBasis.fromOrthogonalSpanSingleton
       (𝕜 := ℝ) n (ne_zero_of_mem_unit_sphere (-v))).repr
   suffices Injective (fderiv ℝ ((stereoInvFunAux (-v : E) ∘ (↑)) ∘ U.symm) 0) by
     convert! this using 3
-    apply stereographic'_neg
+    sorry -- apply stereographic'_neg
   have : HasFDerivAt (stereoInvFunAux (-v : E) ∘ (Subtype.val : (ℝ ∙ (↑(-v) : E))ᗮ → E))
       (ℝ ∙ (↑(-v) : E))ᗮ.subtypeL (U.symm 0) := by
     convert! hasFDerivAt_stereoInvFunAux_comp_coe (-v : E)
