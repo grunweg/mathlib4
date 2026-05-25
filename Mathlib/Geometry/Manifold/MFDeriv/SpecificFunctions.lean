@@ -846,6 +846,8 @@ theorem MDifferentiableOn.const_smul (a : 𝕜) (hf : MDiff[s] f) : MDiff[s] (a 
 theorem MDifferentiable.const_smul (s : 𝕜) (hf : MDiff f) : MDiff (s • f) :=
   fun x ↦ (hf x).const_smul s
 
+-- Note: this silently abuses the defeq between tangent spaces and normed spaces.
+-- TODO: should this use `mvfderiv` instead?
 theorem const_smul_mfderiv (hf : MDiffAt f z) (s : 𝕜) : mfderiv% (s • f) z = s • mfderiv% f z :=
   (hf.hasMFDerivAt.const_smul s).mfderiv
 
