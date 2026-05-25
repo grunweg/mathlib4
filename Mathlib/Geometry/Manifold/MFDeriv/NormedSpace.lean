@@ -606,30 +606,33 @@ lemma mvfderivWithin_const (c : F) {x : M} : d[s] (fun _ : M ↦ c) x = 0 := by
 lemma mvfderivWithin_add {g g' : M → F} {x : M}
     (hg : MDiffAt[s] g x) (hg' : MDiffAt[s] g' x) (hs : UniqueMDiffWithinAt I s x) :
     d[s](g + g') x = d[s]g x + d[s]g' x := by
-  simp [mvfderivWithin, mfderivWithin_add hg hg' hs]
+  simp [mvfderivWithin, (hg.hasMFDerivWithinAt.add hg'.hasMFDerivWithinAt).mfderivWithin hs]
   rfl
 
 @[simp, to_fun mvfderivWithin_fun_sub]
 lemma mvfderivWithin_sub {g g' : M → F} {x : M}
     (hg : MDiffAt[s] g x) (hg' : MDiffAt[s] g' x) (hs : UniqueMDiffWithinAt I s x) :
     d[s](g - g') x = d[s]g x - d[s]g' x := by
-  simp [mvfderivWithin, mfderivWithin_sub hg hg' hs]
+  simp [mvfderivWithin, (hg.hasMFDerivWithinAt.sub hg'.hasMFDerivWithinAt).mfderivWithin hs]
   rfl
 
 @[simp, to_fun mvfderivWithin_fun_neg]
 lemma mvfderivWithin_neg {g : M → F} {x : M} (hs : UniqueMDiffWithinAt I s x) :
     d[s](-g) x = -d[s]g x := by
-  simp [mvfderivWithin, mfderivWithin_neg hs]
-  rfl
+  simp only [mvfderivWithin, mfderivWithin]
+  by_cases hg : MDiffAt[s] g x
+  · exact hg.hasMFDerivWithinAt.neg.mfderivWithin hs
+  · rw [if_neg hg]; rw [← mdifferentiableWithinAt_neg] at hg; simp [if_neg hg]
 
+-- TODO: also inline the helper lemma above?
 @[simp, to_fun mvfderivWithin_fun_smul]
 lemma mvfderivWithin_smul {a : M → 𝕜} (ha : MDiffAt[s] a x) {g : M → F} (hg : MDiffAt[s] g x)
     (hs : UniqueMDiffWithinAt I s x) :
-    d[s](a • g) x =
-      a x • d[s] g x + (d[s] a x).smulRight (g x) := by
+    d[s](a • g) x = a x • d[s] g x + (d[s] a x).smulRight (g x) := by
   ext v
   simp [mvfderivWithin, -Pi.smul_apply', fromTangentSpace_mfderivWithin_smul_apply ha hg hs]
 
+-- TODO: also inline the helper lemma above?
 @[simp, to_fun mvfderivWithin_fun_mul]
 lemma mvfderivWithin_mul {f g : M → 𝕜} {x : M} (hf : MDiffAt[s] f x) (hg : MDiffAt[s] g x)
     (hs : UniqueMDiffWithinAt I s x) :
@@ -653,39 +656,35 @@ lemma mvfderiv_const (c : F) {x : M} : d% (fun _ : M ↦ c) x = 0 := by
 @[simp, to_fun mvfderiv_fun_add]
 lemma mvfderiv_add {g g' : M → F} {x : M} (hg : MDiffAt g x) (hg' : MDiffAt g' x) :
     d% (g + g') x = d% g x + d% g' x := by
-  simp [mvfderiv, mfderiv_add hg hg']
-  rfl
+  rw [← mvfderivWithin_univ]
+  simp [mvfderivWithin_add hg hg' (uniqueMDiffWithinAt_univ I)]
 @[deprecated (since := "2026-05-17")] alias extDerivFun_add := mvfderiv_add
 
 @[simp, to_fun mvfderiv_fun_sub]
 lemma mvfderiv_sub {g g' : M → F} {x : M} (hg : MDiffAt g x) (hg' : MDiffAt g' x) :
     d% (g - g') x = d% g x - d% g' x := by
-  simp [mvfderiv, mfderiv_sub hg hg']
-  rfl
+  rw [← mvfderivWithin_univ]
+  simp [mvfderivWithin_sub hg hg' (uniqueMDiffWithinAt_univ I)]
 
 @[simp, to_fun mvfderiv_fun_neg]
 lemma mvfderiv_neg {g : M → F} {x : M} :
     d% (-g) x = -d% g x := by
-  simp [mvfderiv, mfderiv_neg]
-  rfl
+  rw [← mvfderivWithin_univ, mvfderivWithin_neg (uniqueMDiffWithinAt_univ I), mvfderivWithin_univ]
 
 @[simp, to_fun mvfderiv_fun_smul]
 lemma mvfderiv_smul {x : M} {a : M → 𝕜} (ha : MDiffAt a x) {g : M → F} (hg : MDiffAt g x) :
     d% (a • g) x = a x • d% g x + (d% a x).smulRight (g x) := by
-  ext v
-  simp [mvfderiv, -Pi.smul_apply', fromTangentSpace_mfderiv_smul_apply ha hg]
+  rw [← mvfderivWithin_univ, mvfderivWithin_smul ha hg (uniqueMDiffWithinAt_univ I)]
+  simp
 
 @[simp, to_fun mvfderiv_fun_mul]
 lemma mvfderiv_mul {f g : M → 𝕜} {x : M} (hf : MDiffAt f x) (hg : MDiffAt g x) :
     d% (f * g) x = f x • d% g x + (g x) • (d% f x) := by
-  ext v
-  simp only [mvfderiv, ← smul_eq_mul, mfderiv_smul hf hg]
-  simp [mul_comm _ (g x)]
+  rw [← mvfderivWithin_univ, mvfderivWithin_mul hf hg (uniqueMDiffWithinAt_univ I)]
+  simp
 
 @[simp]
 lemma mvfderiv_zero {x : M} : d% (0 : M → F) x = 0 := by
-  have : d% (0 : M → F) x + d% (0 : M → F) x = d% (0 : M → F) x := by
-    rw [← mvfderiv_add (by exact mdifferentiable_const ..) (by exact mdifferentiable_const ..)]
-    simp
-  simpa using this
+  rw [← mvfderivWithin_univ]
+  exact mvfderivWithin_zero (uniqueMDiffWithinAt_univ I)
 @[deprecated (since := "2026-05-17")] alias extDerivFun_zero := mvfderiv_zero
