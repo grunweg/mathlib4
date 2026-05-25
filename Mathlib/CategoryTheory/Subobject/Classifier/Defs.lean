@@ -391,6 +391,7 @@ namespace SubobjectRepresentableBy
 given `h : SubobjectRepresentableBy Ω`. -/
 def Ω₀ : Subobject Ω := h.homEquiv (𝟙 Ω)
 
+set_option linter.dupNamespace false in
 @[deprecated (since := "2026-03-06")]
 alias _root.CategoryTheory.Classifier.SubobjectRepresentableBy.Ω₀ := Ω₀
 @[deprecated (since := "2026-03-06")]
@@ -402,6 +403,7 @@ lemma homEquiv_eq {X : C} (f : X ⟶ Ω) :
     h.homEquiv f = (Subobject.pullback f).obj h.Ω₀ := by
   simpa using h.homEquiv_comp f (𝟙 _)
 
+set_option linter.dupNamespace false in
 @[deprecated (since := "2026-03-06")]
 alias _root.CategoryTheory.Classifier.SubobjectRepresentableBy.homEquiv_eq := homEquiv_eq
 @[deprecated (since := "2026-03-06")]
@@ -413,6 +415,7 @@ lemma pullback_homEquiv_symm_obj_Ω₀ {X : C} (x : Subobject X) :
     (Subobject.pullback (h.homEquiv.symm x)).obj h.Ω₀ = x := by
   rw [← homEquiv_eq, Equiv.apply_symm_apply]
 
+set_option linter.dupNamespace false in
 @[deprecated (since := "2026-03-06")]
 alias _root.CategoryTheory.Classifier.SubobjectRepresentableBy.pullback_homEquiv_symm_obj_Ω₀ :=
   pullback_homEquiv_symm_obj_Ω₀
@@ -427,6 +430,7 @@ variable {U X : C} (m : U ⟶ X) [Mono m]
 /-- `h.χ m` is the characteristic map of monomorphism `m` given by the bijection `h.homEquiv`. -/
 def χ : X ⟶ Ω := h.homEquiv.symm (Subobject.mk m)
 
+set_option linter.dupNamespace false in
 @[deprecated (since := "2026-03-06")]
 alias _root.CategoryTheory.Classifier.SubobjectRepresentableBy.χ := χ
 @[deprecated (since := "2026-03-06")]
@@ -439,6 +443,7 @@ noncomputable def iso : MonoOver.mk m ≅
   (Subobject.representativeIso (.mk m)).symm ≪≫ Subobject.representative.mapIso
     (eqToIso (h.pullback_homEquiv_symm_obj_Ω₀ (.mk m)).symm)
 
+set_option linter.dupNamespace false in
 @[deprecated (since := "2026-03-06")]
 alias _root.CategoryTheory.Classifier.SubobjectRepresentableBy.iso := iso
 @[deprecated (since := "2026-03-06")]
@@ -458,6 +463,7 @@ alias _root_.CategoryTheory.Classifier.SubobjectRepresentableBy.iso := iso
 noncomputable def π : U ⟶ Subobject.underlying.obj h.Ω₀ :=
   (h.iso m).hom.hom.left ≫ Subobject.pullbackπ (h.χ m) h.Ω₀
 
+set_option linter.dupNamespace false in
 @[deprecated (since := "2026-03-06")]
 alias _root.CategoryTheory.Classifier.SubobjectRepresentableBy.π := π
 @[deprecated (since := "2026-03-06")]
@@ -472,6 +478,7 @@ lemma iso_inv_left_π :
   convert! Category.id_comp _ using 2
   exact (MonoOver.forget _ ⋙ Over.forget _).congr_map (h.iso m).inv_hom_id
 
+set_option linter.dupNamespace false in
 @[deprecated (since := "2026-03-06")]
 alias _root.CategoryTheory.Classifier.SubobjectRepresentableBy.iso_inv_left_π := iso_inv_left_π
 @[deprecated (since := "2026-03-06")]
@@ -483,6 +490,7 @@ lemma iso_inv_hom_left_comp :
       ((Subobject.pullback (h.χ m)).obj h.Ω₀).arrow :=
   MonoOver.w (h.iso m).inv
 
+set_option linter.dupNamespace false in
 @[deprecated (since := "2026-03-06")]
 alias _root.CategoryTheory.Classifier.SubobjectRepresentableBy.iso_inv_hom_left_comp :=
   iso_inv_hom_left_comp
@@ -490,6 +498,7 @@ alias _root.CategoryTheory.Classifier.SubobjectRepresentableBy.iso_inv_hom_left_
 alias _root_.CategoryTheory.Classifier.SubobjectRepresentableBy.iso_inv_hom_left_comp :=
   iso_inv_hom_left_comp
 
+set_option linter.dupNamespace false in
 @[deprecated (since := "2025-12-18")]
 alias _root.CategoryTheory.Classifier.SubobjectRepresentableBy.iso_inv_left_comp :=
   iso_inv_hom_left_comp
@@ -502,6 +511,7 @@ lemma isPullback {U X : C} (m : U ⟶ X) [Mono m] :
     (Iso.refl _) (Iso.refl _)
   all_goals simp [MonoOver.forget]
 
+set_option linter.dupNamespace false in
 @[deprecated (since := "2026-03-06")]
 alias _root.CategoryTheory.Classifier.SubobjectRepresentableBy.isPullback := isPullback
 @[deprecated (since := "2026-03-06")]
@@ -514,6 +524,7 @@ lemma uniq {χ' : X ⟶ Ω} {π : U ⟶ h.Ω₀}
   simp only [χ, Equiv.apply_symm_apply, homEquiv_eq]
   simpa using Subobject.pullback_obj_mk sq.flip
 
+set_option linter.dupNamespace false in
 @[deprecated (since := "2026-03-06")]
 alias _root.CategoryTheory.Classifier.SubobjectRepresentableBy.uniq := uniq
 @[deprecated (since := "2026-03-06")]
@@ -531,6 +542,7 @@ noncomputable def isTerminalΩ₀ : IsTerminal (h.Ω₀ : C) :=
     rw [← cancel_mono h.Ω₀.arrow, h.uniq this,
       ← (h.isPullback (𝟙 X)).w, Category.id_comp])
 
+set_option linter.dupNamespace false in
 @[deprecated (since := "2026-03-06")]
 alias _root.CategoryTheory.Classifier.SubobjectRepresentableBy.isTerminalΩ₀ := isTerminalΩ₀
 @[deprecated (since := "2026-03-06")]
@@ -539,6 +551,7 @@ alias _root_.CategoryTheory.Classifier.SubobjectRepresentableBy.isTerminalΩ₀ 
 /-- The unique map to the terminal object. -/
 noncomputable def χ₀ (U : C) : U ⟶ h.Ω₀ := h.isTerminalΩ₀.from U
 
+set_option linter.dupNamespace false in
 @[deprecated (since := "2026-03-06")]
 alias _root.CategoryTheory.Classifier.SubobjectRepresentableBy.χ₀ := χ₀
 @[deprecated (since := "2026-03-06")]
@@ -547,6 +560,7 @@ alias _root_.CategoryTheory.Classifier.SubobjectRepresentableBy.χ₀ := χ₀
 include h in
 lemma hasTerminal : HasTerminal C := h.isTerminalΩ₀.hasTerminal
 
+set_option linter.dupNamespace false in
 @[deprecated (since := "2026-03-06")]
 alias _root.CategoryTheory.Classifier.SubobjectRepresentableBy.hasTerminal := hasTerminal
 @[deprecated (since := "2026-03-06")]
@@ -558,6 +572,7 @@ variable [HasTerminal C]
 noncomputable def isoΩ₀ : (h.Ω₀ : C) ≅ ⊤_ C :=
   h.isTerminalΩ₀.conePointUniqueUpToIso (limit.isLimit _)
 
+set_option linter.dupNamespace false in
 @[deprecated (since := "2026-03-06")]
 alias _root.CategoryTheory.Classifier.SubobjectRepresentableBy.isoΩ₀ := isoΩ₀
 @[deprecated (since := "2026-03-06")]
@@ -581,6 +596,7 @@ noncomputable def classifier : Subobject.Classifier C where
         (by simp) (h.isTerminalΩ₀.hom_ext _ _) (by simp) (by simp)
     exact h.uniq this
 
+set_option linter.dupNamespace false in
 @[deprecated (since := "2026-03-06")]
 alias _root.CategoryTheory.Classifier.SubobjectRepresentableBy.classifier := classifier
 @[deprecated (since := "2026-03-06")]
