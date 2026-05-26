@@ -460,6 +460,77 @@ end tests
 
 end Manifold
 
+section moved
+
+variable {z : M} {f g : M → E'} {f' g' : TangentSpace I z →L[𝕜] E'}
+
+theorem HasMFDerivWithinAt.add {s : Set M}
+    (hf : HasMFDerivAt[s] f z f') (hg : HasMFDerivAt[s] g z g') :
+    HasMFDerivAt[s] (f + g) z (f' + g') :=
+  ⟨hf.1.add hg.1, hf.2.add hg.2⟩
+
+theorem HasMFDerivAt.add (hf : HasMFDerivAt% f z f') (hg : HasMFDerivAt% g z g') :
+    HasMFDerivAt% (f + g) z (f' + g') :=
+  ⟨hf.1.add hg.1, hf.2.add hg.2⟩
+
+theorem MDifferentiableWithinAt.add {s : Set M} (hf : MDiffAt[s] f z) (hg : MDiffAt[s] g z) :
+    MDiffAt[s] (f + g) z :=
+  (hf.hasMFDerivWithinAt.add hg.hasMFDerivWithinAt).mdifferentiableWithinAt
+
+theorem MDifferentiableAt.add (hf : MDiffAt f z) (hg : MDiffAt g z) : MDiffAt (f + g) z :=
+  (hf.hasMFDerivAt.add hg.hasMFDerivAt).mdifferentiableAt
+
+theorem MDifferentiableOn.add {s : Set M} (hf : MDiff[s] f) (hg : MDiff[s] g) : MDiff[s] (f + g) :=
+  fun x hx ↦ (hf x hx).add (hg x hx)
+
+theorem MDifferentiable.add (hf : MDiff f) (hg : MDiff g) : MDiff (f + g) :=
+  fun x ↦ (hf x).add (hg x)
+
+-- Porting note: forcing types using `by exact`
+theorem mfderiv_add (hf : MDiffAt f z) (hg : MDiffAt g z) :
+    (mfderiv% (f + g) z : TangentSpace I z →L[𝕜] E') =
+      (by exact mfderiv% f z) + (by exact mfderiv% g z) :=
+  (hf.hasMFDerivAt.add hg.hasMFDerivAt).mfderiv
+
+theorem mfderivWithin_add (hf : MDiffAt[s] f z) (hg : MDiffAt[s] g z)
+    (hs : UniqueMDiffWithinAt I s z) :
+    (mfderiv[s] (f + g) z : TangentSpace I z →L[𝕜] E') =
+      (by exact mfderiv[s] f z) + (by exact mfderiv[s] g z) :=
+  (hf.hasMFDerivWithinAt.add hg.hasMFDerivWithinAt).mfderivWithin hs
+
+section sum
+variable {ι : Type} {t : Finset ι} {f : ι → M → E'} {f' : ι → TangentSpace I z →L[𝕜] E'}
+
+lemma HasMFDerivWithinAt.sum (hf : ∀ i ∈ t, HasMFDerivAt[s] (f i) z (f' i)) :
+    HasMFDerivAt[s] (∑ i ∈ t, f i) z (∑ i ∈ t, f' i) := by
+  classical
+  induction t using Finset.induction_on with
+  | empty => simpa using hasMFDerivWithinAt_const ..
+  | insert i s hi IH => grind [HasMFDerivWithinAt.add]
+
+lemma HasMFDerivAt.sum (hf : ∀ i ∈ t, HasMFDerivAt% (f i) z (f' i)) :
+    HasMFDerivAt% (∑ i ∈ t, f i) z (∑ i ∈ t, f' i) := by
+  simp_all only [← hasMFDerivWithinAt_univ]
+  exact HasMFDerivWithinAt.sum hf
+
+lemma MDifferentiableWithinAt.sum
+    (hf : ∀ i ∈ t, MDiffAt[s] (f i) z) : MDiffAt[s] (∑ i ∈ t, f i) z :=
+  (HasMFDerivWithinAt.sum fun i hi ↦ (hf i hi).hasMFDerivWithinAt).mdifferentiableWithinAt
+
+lemma MDifferentiableAt.sum (hf : ∀ i ∈ t, MDiffAt (f i) z) : MDiffAt (∑ i ∈ t, f i) z := by
+  simp_all only [← mdifferentiableWithinAt_univ]
+  exact .sum hf
+
+lemma MDifferentiableOn.sum (hf : ∀ i ∈ t, MDiff[s] (f i)) : MDiff[s] (∑ i ∈ t, f i) :=
+  fun z hz ↦ .sum fun i hi ↦ hf i hi z hz
+
+lemma MDifferentiable.sum (hf : ∀ i ∈ t, MDiff (f i)) : MDiff (∑ i ∈ t, f i) :=
+  fun z ↦ .sum fun i hi ↦ hf i hi z
+
+end sum
+
+end moved
+
 lemma mvfderiv_const (c : F) {x : M} : d% (fun _ : M ↦ c) x = 0 := by
   simp [mvfderiv, mfderiv_const]
 
