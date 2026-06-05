@@ -334,10 +334,12 @@ elab tk:"#find_deleted_files" nc:(ppSpace num)? pct:(ppSpace num)? bang:&"%"? : 
   let ref := .ofRange {tk.getRange?.get! with stop := tk.getPos?.get!}
   let dict ← mkRenamesDict (pct.getD (Syntax.mkNumLit "100")).getNat
   for fname in onlyPastFiles do
+    if fname.startsWith "MathlibTest" then continue
+    if fname.startsWith "Mathlib/Data" then continue
     let fnameStx := Syntax.mkStrLit fname
     let stx ← if let some newName := dict[fname]? then
       let newNameStx := Syntax.mkStrLit newName
-      `(command|#create_deprecated_module $fnameStx rename_to $newNameStx)
+      `(command|#create_deprecated_module $fnameStx rename_to $newNameStx write)
     else
       `(command|#create_deprecated_module $fnameStx)
     suggestions := suggestions.push {
@@ -346,12 +348,11 @@ elab tk:"#find_deleted_files" nc:(ppSpace num)? pct:(ppSpace num)? bang:&"%"? : 
   -- HACK: other missing renames!
   for fname in dict.keys do
     if fname.startsWith "MathlibTest" then continue
-    if fname.startsWith "Mathlib/Data/Matroid" then continue
-    if !fname.startsWith "Mathlib/Data" then continue
+    if fname.startsWith "Mathlib/Data" then continue
     if !onlyPastFiles.contains fname then
       let fnameStx := Syntax.mkStrLit fname
       let newNameStx := Syntax.mkStrLit dict[fname]!
-      let stx ← `(command|#create_deprecated_module $fnameStx rename_to $newNameStx)
+      let stx ← `(command|#create_deprecated_module $fnameStx rename_to $newNameStx write)
       suggestions := suggestions.push {
         suggestion := (⟨stx.raw.updateTrailing "hello".toRawSubstring⟩ : TSyntax `command)
       }
@@ -390,8 +391,7 @@ replaced by the suggestion, which means that you can click on multiple suggestio
 the deprecations later on.
 -/
 
-
-#find_deleted_files 1000 80%
+#find_deleted_files 2000 50%
 
 #exit
 /--
