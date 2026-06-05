@@ -56,7 +56,7 @@ def getHeader (fname fileContent : String) (keepTrailing : Bool) : IO String := 
   -- parser now attaches to the first token (see leanprover/lean4#12662).
   let some substring := imports.getSubstring? (withLeading := false) |
     throw <| .userError "No substring: we have a problem!"
-  return substring.toString
+  return "module\n\n" ++ substring.toString
 
 /--
 `getHeaderFromFileName fname keepTrailing` is similar to `getHeader`, except that it assumes that
@@ -172,6 +172,8 @@ def mkRenamesDict (percent : Nat := 100) : IO (Std.HashMap String String) := do
         s!"'{oldName}' was renamed to '{newName}' ({pct}), but the similarity {pctNat}% \
           is less than the expected threshold of {percent}%.\n\n
           We treat this file as a removal."
+      -- HACK!
+      --dict := dict.insert oldName.toString newName.toString
   return dict
 
 /--
@@ -236,7 +238,7 @@ def deprecateFilePath (fname : String) (rename comment : Option String) :
   let fileHeader := ← match rename with
     | some rename => do
       let modName := mkModName rename
-      pure s!"import {modName}"
+      pure s!"module\n\npublic import {modName}"
     | none => getHeader fname file false
   let deprecatedFile := s!"{fileHeader.trimAsciiEnd}\n\n{deprecation.pretty.trimAsciiEnd}\n"
   msgs := msgs.push <| .trace {cls := `Deprecation} m!"{fname}" #[m!"\n{deprecatedFile}"]
@@ -341,6 +343,18 @@ elab tk:"#find_deleted_files" nc:(ppSpace num)? pct:(ppSpace num)? bang:&"%"? : 
     suggestions := suggestions.push {
       suggestion := (⟨stx.raw.updateTrailing "hello".toRawSubstring⟩ : TSyntax `command)
     }
+  -- HACK: other missing renames!
+  for fname in dict.keys do
+    if fname.startsWith "MathlibTest" then continue
+    if fname.startsWith "Mathlib/Data/Matroid" then continue
+    if !fname.startsWith "Mathlib/Data" then continue
+    if !onlyPastFiles.contains fname then
+      let fnameStx := Syntax.mkStrLit fname
+      let newNameStx := Syntax.mkStrLit dict[fname]!
+      let stx ← `(command|#create_deprecated_module $fnameStx rename_to $newNameStx)
+      suggestions := suggestions.push {
+        suggestion := (⟨stx.raw.updateTrailing "hello".toRawSubstring⟩ : TSyntax `command)
+      }
   let suggestionsText :=
     if suggestions.size == 1 then ("the suggestion", "")
     else (s!"any of the {suggestions.size} suggestions", ", so you can click several of them")
@@ -376,8 +390,10 @@ replaced by the suggestion, which means that you can click on multiple suggestio
 the deprecations later on.
 -/
 
--- #find_deleted_files 0
 
+#find_deleted_files 1000 80%
+
+#exit
 /--
 info: import Std.Time.Format
 import Std.Time.Zoned
