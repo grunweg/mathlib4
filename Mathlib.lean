@@ -4099,12 +4099,16 @@ public import Mathlib.Data.Matrix.Basis
 public import Mathlib.Data.Matrix.Bilinear
 public import Mathlib.Data.Matrix.Block
 public import Mathlib.Data.Matrix.Cartan
+public import Mathlib.Data.Matrix.CharP
 public import Mathlib.Data.Matrix.ColumnRowPartitioned
 public import Mathlib.Data.Matrix.Composition
 public import Mathlib.Data.Matrix.DMatrix
 public import Mathlib.Data.Matrix.Diagonal
+public import Mathlib.Data.Matrix.DoublyStochastic
 public import Mathlib.Data.Matrix.DualNumber
+public import Mathlib.Data.Matrix.Hadamard
 public import Mathlib.Data.Matrix.Invertible
+public import Mathlib.Data.Matrix.Kronecker
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.Data.Matrix.PEquiv
 public import Mathlib.Data.Matrix.Reflection
@@ -4303,6 +4307,7 @@ public import Mathlib.Data.Real.ConjExponents
 public import Mathlib.Data.Real.ENatENNReal
 public import Mathlib.Data.Real.Embedding
 public import Mathlib.Data.Real.Hom
+public import Mathlib.Data.Real.Pi.Wallis
 public import Mathlib.Data.Real.Pointwise
 public import Mathlib.Data.Real.Sign
 public import Mathlib.Data.Real.Sqrt
