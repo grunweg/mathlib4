@@ -3803,9 +3803,14 @@ public import Mathlib.Data.Bundle
 public import Mathlib.Data.Char
 public import Mathlib.Data.Complex.Basic
 public import Mathlib.Data.Complex.BigOperators
+public import Mathlib.Data.Complex.Cardinality
+public import Mathlib.Data.Complex.Determinant
 public import Mathlib.Data.Complex.Exponential
 public import Mathlib.Data.Complex.FiniteDimensional
+public import Mathlib.Data.Complex.Module
+public import Mathlib.Data.Complex.Norm
 public import Mathlib.Data.Complex.Order
+public import Mathlib.Data.Complex.Orientation
 public import Mathlib.Data.Complex.Trigonometric
 public import Mathlib.Data.Countable.Basic
 public import Mathlib.Data.Countable.Defs
@@ -4108,7 +4113,9 @@ public import Mathlib.Data.Matrix.Cartan
 public import Mathlib.Data.Matrix.CharP
 public import Mathlib.Data.Matrix.ColumnRowPartitioned
 public import Mathlib.Data.Matrix.Composition
+public import Mathlib.Data.Matrix.ConjTranspose
 public import Mathlib.Data.Matrix.DMatrix
+public import Mathlib.Data.Matrix.Defs
 public import Mathlib.Data.Matrix.Diagonal
 public import Mathlib.Data.Matrix.DoublyStochastic
 public import Mathlib.Data.Matrix.DualNumber
@@ -4121,6 +4128,7 @@ public import Mathlib.Data.Matrix.PEquiv
 public import Mathlib.Data.Matrix.Rank
 public import Mathlib.Data.Matrix.Reflection
 public import Mathlib.Data.Matrix.RowCol
+public import Mathlib.Data.Matrix.Vec
 public import Mathlib.Data.Multiset.AddSub
 public import Mathlib.Data.Multiset.Antidiagonal
 public import Mathlib.Data.Multiset.Basic
@@ -4311,11 +4319,14 @@ public import Mathlib.Data.Rat.Sqrt
 public import Mathlib.Data.Rat.Star
 public import Mathlib.Data.Real.Archimedean
 public import Mathlib.Data.Real.Basic
+public import Mathlib.Data.Real.Cardinality
 public import Mathlib.Data.Real.CompleteField
 public import Mathlib.Data.Real.ConjExponents
 public import Mathlib.Data.Real.ENatENNReal
 public import Mathlib.Data.Real.Embedding
 public import Mathlib.Data.Real.Hom
+public import Mathlib.Data.Real.Hyperreal
+public import Mathlib.Data.Real.Irrational
 public import Mathlib.Data.Real.Pi.Bounds
 public import Mathlib.Data.Real.Pi.Irrational
 public import Mathlib.Data.Real.Pi.Leibniz
@@ -4358,6 +4369,7 @@ public import Mathlib.Data.Set.Finite.Range
 public import Mathlib.Data.Set.FiniteExhaustion
 public import Mathlib.Data.Set.Function
 public import Mathlib.Data.Set.Functor
+public import Mathlib.Data.Set.FunctorToTypes
 public import Mathlib.Data.Set.Image
 public import Mathlib.Data.Set.Inclusion
 public import Mathlib.Data.Set.Insert
