@@ -3801,6 +3801,9 @@ public import Mathlib.Data.Bundle
 public import Mathlib.Data.Char
 public import Mathlib.Data.Complex.Basic
 public import Mathlib.Data.Complex.BigOperators
+public import Mathlib.Data.Complex.Exponential
+public import Mathlib.Data.Complex.Order
+public import Mathlib.Data.Complex.Trigonometric
 public import Mathlib.Data.Countable.Basic
 public import Mathlib.Data.Countable.Defs
 public import Mathlib.Data.Countable.Small
@@ -4110,8 +4113,10 @@ public import Mathlib.Data.Matrix.Hadamard
 public import Mathlib.Data.Matrix.Invertible
 public import Mathlib.Data.Matrix.Kronecker
 public import Mathlib.Data.Matrix.Mul
+public import Mathlib.Data.Matrix.Notation
 public import Mathlib.Data.Matrix.PEquiv
 public import Mathlib.Data.Matrix.Reflection
+public import Mathlib.Data.Matrix.RowCol
 public import Mathlib.Data.Multiset.AddSub
 public import Mathlib.Data.Multiset.Antidiagonal
 public import Mathlib.Data.Multiset.Basic
