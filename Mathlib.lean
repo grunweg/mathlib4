@@ -3806,6 +3806,7 @@ public import Mathlib.Data.Complex.BigOperators
 public import Mathlib.Data.Complex.Cardinality
 public import Mathlib.Data.Complex.Determinant
 public import Mathlib.Data.Complex.Exponential
+public import Mathlib.Data.Complex.ExponentialBounds
 public import Mathlib.Data.Complex.FiniteDimensional
 public import Mathlib.Data.Complex.Module
 public import Mathlib.Data.Complex.Norm
@@ -4235,7 +4236,9 @@ public import Mathlib.Data.Nat.NthRoot.Defs
 public import Mathlib.Data.Nat.Order.Lemmas
 public import Mathlib.Data.Nat.PSub
 public import Mathlib.Data.Nat.Pairing
+public import Mathlib.Data.Nat.PartENat
 public import Mathlib.Data.Nat.Periodic
+public import Mathlib.Data.Nat.PowModTotient
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.Nat.Prime.Factorial
@@ -4345,6 +4348,7 @@ public import Mathlib.Data.Seq.Basic
 public import Mathlib.Data.Seq.Computation
 public import Mathlib.Data.Seq.Defs
 public import Mathlib.Data.Seq.Parallel
+public import Mathlib.Data.Seq.Seq
 public import Mathlib.Data.Set.Accumulate
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Data.Set.BoolIndicator
