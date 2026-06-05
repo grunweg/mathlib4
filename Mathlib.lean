@@ -2215,6 +2215,7 @@ public import Mathlib.Analysis.Normed.Operator.BanachSteinhaus
 public import Mathlib.Analysis.Normed.Operator.Basic
 public import Mathlib.Analysis.Normed.Operator.Bilinear
 public import Mathlib.Analysis.Normed.Operator.BoundedLinearMaps
+public import Mathlib.Analysis.Normed.Operator.Compact
 public import Mathlib.Analysis.Normed.Operator.Compact.Basic
 public import Mathlib.Analysis.Normed.Operator.Compact.FiniteDimension
 public import Mathlib.Analysis.Normed.Operator.Compact.FredholmAlternative
@@ -2256,6 +2257,7 @@ public import Mathlib.Analysis.Normed.Unbundled.SpectralNorm
 public import Mathlib.Analysis.NormedSpace.Alternating.Basic
 public import Mathlib.Analysis.NormedSpace.Alternating.Curry
 public import Mathlib.Analysis.NormedSpace.Alternating.Uncurry.Fin
+public import Mathlib.Analysis.NormedSpace.ConformalLinearMap
 public import Mathlib.Analysis.NormedSpace.Connected
 public import Mathlib.Analysis.NormedSpace.ENormedSpace
 public import Mathlib.Analysis.NormedSpace.Extr
@@ -4918,6 +4920,7 @@ public import Mathlib.LinearAlgebra.AffineSpace.Basis
 public import Mathlib.LinearAlgebra.AffineSpace.Centroid
 public import Mathlib.LinearAlgebra.AffineSpace.Ceva
 public import Mathlib.LinearAlgebra.AffineSpace.Combination
+public import Mathlib.LinearAlgebra.AffineSpace.ContinuousAffineEquiv
 public import Mathlib.LinearAlgebra.AffineSpace.Defs
 public import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 public import Mathlib.LinearAlgebra.AffineSpace.Independent
@@ -5227,6 +5230,7 @@ public import Mathlib.LinearAlgebra.SModEq.Basic
 public import Mathlib.LinearAlgebra.SModEq.Pointwise
 public import Mathlib.LinearAlgebra.SModEq.Pow
 public import Mathlib.LinearAlgebra.Semisimple
+public import Mathlib.LinearAlgebra.SesquilinearForm
 public import Mathlib.LinearAlgebra.SesquilinearForm.Basic
 public import Mathlib.LinearAlgebra.SesquilinearForm.Star
 public import Mathlib.LinearAlgebra.Span.Basic
@@ -5694,6 +5698,7 @@ public import Mathlib.NumberTheory.Cyclotomic.CyclotomicCharacter
 public import Mathlib.NumberTheory.Cyclotomic.Discriminant
 public import Mathlib.NumberTheory.Cyclotomic.Gal
 public import Mathlib.NumberTheory.Cyclotomic.PrimitiveRoots
+public import Mathlib.NumberTheory.Cyclotomic.Three
 public import Mathlib.NumberTheory.Dioph
 public import Mathlib.NumberTheory.DiophantineApproximation.Basic
 public import Mathlib.NumberTheory.DiophantineApproximation.ContinuedFractions
@@ -7291,6 +7296,7 @@ public import Mathlib.Tactic.Linarith.Parsing
 public import Mathlib.Tactic.Linarith.Preprocessing
 public import Mathlib.Tactic.Linarith.Verification
 public import Mathlib.Tactic.LinearCombination
+public import Mathlib.Tactic.LinearCombination'
 public import Mathlib.Tactic.LinearCombination.Lemmas
 public import Mathlib.Tactic.LinearCombinationPrime
 public import Mathlib.Tactic.Linter
@@ -7548,6 +7554,7 @@ public import Mathlib.Topology.Algebra.Module.Alternating.Basic
 public import Mathlib.Topology.Algebra.Module.Alternating.Topology
 public import Mathlib.Topology.Algebra.Module.Basic
 public import Mathlib.Topology.Algebra.Module.Cardinality
+public import Mathlib.Topology.Algebra.Module.CharacterSpace
 public import Mathlib.Topology.Algebra.Module.ClosedSubmodule
 public import Mathlib.Topology.Algebra.Module.Compact
 public import Mathlib.Topology.Algebra.Module.Complement
@@ -7584,6 +7591,7 @@ public import Mathlib.Topology.Algebra.Module.StrongTopology
 public import Mathlib.Topology.Algebra.Module.TopDualPairing
 public import Mathlib.Topology.Algebra.Module.TransferInstance
 public import Mathlib.Topology.Algebra.Module.UniformConvergence
+public import Mathlib.Topology.Algebra.Module.WeakBilin
 public import Mathlib.Topology.Algebra.Monoid
 public import Mathlib.Topology.Algebra.Monoid.AddChar
 public import Mathlib.Topology.Algebra.Monoid.Defs
