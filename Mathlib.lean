@@ -4307,6 +4307,9 @@ public import Mathlib.Data.Real.ConjExponents
 public import Mathlib.Data.Real.ENatENNReal
 public import Mathlib.Data.Real.Embedding
 public import Mathlib.Data.Real.Hom
+public import Mathlib.Data.Real.Pi.Bounds
+public import Mathlib.Data.Real.Pi.Irrational
+public import Mathlib.Data.Real.Pi.Leibniz
 public import Mathlib.Data.Real.Pi.Wallis
 public import Mathlib.Data.Real.Pointwise
 public import Mathlib.Data.Real.Sign
