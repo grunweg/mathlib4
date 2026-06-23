@@ -32,21 +32,7 @@ variable
   (cov : CovariantDerivative I E (TangentSpace I : M → Type _))
 
 set_option pp.mvars.anonymous false in
-/--
-error: Application type mismatch: The argument
-  cov
-has type
-  @CovariantDerivative ℝ DenselyNormedField.toNontriviallyNormedField E inst✝⁸ inst✝⁷ H inst✝⁵ I M
-    PseudoEMetricSpace.toUniformSpace.toTopologicalSpace inst✝³ E inst✝⁸ inst✝⁷ (TangentSpace I)
-    instTopologicalSpaceTangentBundle (instAddCommGroupTangentSpace I) (instModuleTangentSpace I)
-    (instTopologicalSpaceTangentSpace I) ⋯ ⋯ TangentSpace.fiberBundle
-but is expected to have type
-  @CovariantDerivative ℝ DenselyNormedField.toNontriviallyNormedField ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
-    (fun x ↦ NormedAddCommGroup.toAddCommGroup) (fun x ↦ InnerProductSpace.toNormedSpace.toModule)
-    (fun x ↦ PseudoMetricSpace.toUniformSpace.toTopologicalSpace) ⋯ ⋯ ?_
-in the application
-  @CovariantDerivative.IsMetricCompatible ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ cov
--/
+/-- info: cov.IsMetricCompatible : Prop -/
 #guard_msgs in
 #check cov.IsMetricCompatible --(M := M) (V := TangentSpace I)
 
