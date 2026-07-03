@@ -129,28 +129,7 @@ theorem contMDiffAt_hom_bundle (f : M → LE₁E₂) {x₀ : M} :
       CMDiffAt n (fun x ↦ (f x).1) x₀ ∧ CMDiffAt n
         (fun x ↦ inCoordinates F₁ E₁ F₂ E₂ (f x₀).1 (f x).1 (f x₀).1 (f x).1 (f x).2) x₀ :=
   contMDiffAt_totalSpace
-#where
-theorem contMDiffOn_hom_bundle' (f : M → LE₁E₂) {s : Set M} {x₀ : M} : --(hs : s ⊆ (trivializationAt F₁ E₁ (f x₀).1).baseSet) :
-    CMDiff[s] n f ↔
-      CMDiff[s] n (fun x ↦ (f x).1) ∧ CMDiff[s] n
-        (fun x ↦ inCoordinates F₁ E₁ F₂ E₂ (f x₀).1 (f x).1 (f x₀).1 (f x).1 (f x).2) := by
-  constructor
-  · intro hs
-    constructor
-    · intro x hx
-      specialize hs x hx
-      rw [contMDiffWithinAt_hom_bundle f] at hs
-      apply hs.1
-    · intro x hx
-      specialize hs x hx
-      rw [contMDiffWithinAt_hom_bundle f] at hs
-      apply hs.2
 
-  intro x hx
-
-  --contMDiffAt_totalSpace
-
-#exit
 end
 
 section
@@ -503,39 +482,12 @@ lemma ContMDiffOn.clm_bundle_of_apply {k}
     [ContMDiffVectorBundle k F₁ E₁ IB]
     [∀ x, IsTopologicalAddGroup (E₁ x)] [∀ x, ContinuousSMul 𝕜 (E₁ x)]
     [ContMDiffVectorBundle k F₂ E₂ IB] {s : Set B}
-    (h : ∀ (σ : Π x : B, E₁ x), CMDiff[s] k (T% σ) → CMDiff[s] k (T% (fun x ↦ φ x (σ x)))) :
+    (h : ∀ (σ : Π x : B, E₁ x),
+      (∀ x ∈ s, (∀ᶠ b in 𝓝 x, CMDiffAt[s] k (T% σ) b) → CMDiffAt[s] k (T% (fun x ↦ φ x (σ x))) x)) :
     ContMDiffOn IB (IB.prod 𝓘(𝕜, F₁ →L[𝕜] F₂)) k (fun x ↦ TotalSpace.mk' (F₁ →L[𝕜] F₂) x (φ x))
-    s := by
-  intro x hx
-  apply ContMDiffWithinAt.clm_bundle_of_apply --(fun σ hσ ↦ h σ hx hσ)
-  intro σ hσ
-  apply h σ
-  swap; exact hx
+    s :=
+  fun x hx ↦ ContMDiffWithinAt.clm_bundle_of_apply (fun σ hσ ↦ h σ x hx hσ)
 
-
-
-
-  /-refine (contMDiffOn_hom_bundle fun x ↦ ⟨x, φ x⟩).mpr ⟨contMDiffWithinAt_id, ?_⟩
-  rw [contMDiffWithinAt_iff_source, contMDiffWithinAt_iff_contDiffWithinAt]
-  set t₁ := trivializationAt F₁ E₁ x
-  set t₂ := trivializationAt F₂ E₂ x
-  apply contDiffWithinAt_clm_apply.mpr
-  set ψ := extChartAt IB x
-  intro u
-  have C₀ : CMDiffAt[s] k (fun b ↦ t₂.continuousLinearMapAt 𝕜 b (φ b (t₁.symmL 𝕜 b u)))
-      (ψ.symm (ψ x)) := by
-    rw [extChartAt_to_inv x]
-    apply t₂.contMDiffWithinAt_apply (FiberBundle.mem_baseSet_trivializationAt' x)
-    apply h
-    filter_upwards [t₁.open_baseSet.mem_nhds (FiberBundle.mem_baseSet_trivializationAt' x)] with
-      x' hx'
-    exact (t₁.contMDiffAt_symm_const hx' _).contMDiffWithinAt
-  have := ContMDiffWithinAt.comp' (ψ x) C₀ (contMDiffWithinAt_extChartAt_symm_range_self x)
-  simpa [inter_comm, t₁, t₂, contMDiffWithinAt_iff_contDiffWithinAt, inCoordinates] -/
-
-
-
-#exit
 omit [IsManifold IB 1 B] [ContMDiffVectorBundle 1 F₁ E₁ IB]
   [FiniteDimensional 𝕜 F₂] [ContMDiffVectorBundle 1 F₂ E₂ IB] in
 lemma ContMDiff.clm_bundle_of_apply {k}
