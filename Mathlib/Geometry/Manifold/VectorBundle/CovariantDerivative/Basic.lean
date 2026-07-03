@@ -142,6 +142,8 @@ lemma ContMDiffCovariantDerivativeOn'.contMDiffAt_of_isOpen (k : ℕ∞ω)
   -- proof was (given `(hσ : CMDiffAt (k + 1) (T% σ) x)`)
   -- (hcov.contMDiffWithinAt hx hσ.contMDiffWithinAt).contMDiffAt (ht.mem_nhds hx)
 
+-- XXX: have a version mdifferentiableAt_of_isOpen for leviCivitaConnection?
+
 -- agrees with the above version for open sets; we only want to apply it for `Set.univ`
 -- open Set
 -- lemma ContMDiffCovariantDerivativeOn.contMDiff' [IsManifold I 1 M] [VectorBundle 𝕜 F V]
