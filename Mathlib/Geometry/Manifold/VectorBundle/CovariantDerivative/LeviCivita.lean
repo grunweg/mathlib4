@@ -173,10 +173,55 @@ lemma ContMDiffOn.mvfderivWithin {V : Type*} [NormedAddCommGroup V] [NormedSpace
     CMDiff[s] k (fun (x : M) ↦ d[s] f x (X x)) :=
   fun x hx ↦ ContMDiffWithinAt.mvfderivWithin (hf x hx) (hX x hx)
 
+
+lemma ContMDiff.foo {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
+    {k : ℕ∞ω} {f : M → V} (hf : CMDiff (k + 1) f) (hX : CMDiff (k) (T% X)) :
+    CMDiff k ((fun (x : M) ↦ TotalSpace.mk' V (f x) (mfderiv% f x (X x)))) := by
+  let x : M := sorry
+  let Tf := tangentMap I 𝓘(ℝ, V) f
+  let B := fun (x : M) ↦ Tf (X x)
+  have hdF := hf.contMDiff_tangentMap (m := k) (by norm_num)
+
+  -- we have ContMDiff.contMDiff_tangentMap --- so the map to the tangent bundle is fine
+  -- here, I want to project to the fiber (i.e., use secToFun). missing API (or use a different approach!)
+  have : CMDiff k B := hdF.comp hX
+  #check B x
+  #check (B x).snd
+  #check' Bundle.contMDiff_proj (TangentSpace I (M := M))
+  --have hp := Bundle.contMDiff_proj (TangentSpace I (M := M)) (IB := I)
+
+
+  let A := (mfderiv% f x) (X x)
+  sorry
+
 lemma ContMDiff.mvfderiv {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
-    {k : ℕ∞ω} {f : M → V} (hf : CMDiff (k + 1) f) (hX : CMDiff (k + 1) (T% X)) :
-    CMDiff k (fun (x : M) ↦ d% f x (X x)) :=
-  fun x ↦ ContMDiffAt.mvfderiv (hf x) (hX x)
+    {k : ℕ∞ω} {f : M → V} (hf : CMDiff (k + 1) f) (hX : CMDiff k (T% X)) :
+    CMDiff k (fun (x : M) ↦ d% f x (X x)) := by
+  have hdF := hf.contMDiff_tangentMap (m := k) (by norm_num)
+  have : CMDiff k (fun (x : M) ↦ (tangentMap I 𝓘(ℝ, V) f) (X x)) := hdF.comp hX
+  let B := (fun (x : M) ↦ (tangentMap I 𝓘(ℝ, V) f) (X x))
+  let x : M := sorry
+  let arg := ((tangentMap I 𝓘(ℝ, V) f) (X x))
+  let sdfs := NormedSpace.fromTangentSpace (𝕜 := ℝ) (f x)
+  let B' := (fun (x : M) ↦ ((tangentMap I 𝓘(ℝ, V) f) (X x)))
+  -- missing lemma: go from B' to C; needs some work in general!
+  let C := (fun (x : M) ↦ (tangentMap I 𝓘(ℝ, V) f (X x)).snd)
+  apply ContMDiff.congr (f := C)
+  · simp only [C]
+    simp [tangentMap]
+    sorry
+  intro y
+  simp [C, _root_.mvfderiv, NormedSpace.fromTangentSpace]
+
+
+  -- -- hf: f : M → (M × V) is C^k+1, in particular its tangent map df : TM → TV is C^k
+  -- let hdF := hf.contMDiff_tangentMap (m := k) (by norm_num)
+  -- -- hX : (TX : M → TM) is C^k+1
+  -- #check tangentMap I 𝓘(ℝ, V) f
+  -- -- in particular, its differential is C^k
+  -- let hdX := ContMDiff.contMDiff_tangentMap hX (m := k) (by norm_num)
+  -- --have aux := hdX.comp hf
+  -- --fun x ↦ ContMDiffAt.mvfderiv (hf x) (hX x)
 
 end prerequisites
 
