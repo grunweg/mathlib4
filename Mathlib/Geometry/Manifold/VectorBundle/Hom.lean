@@ -456,6 +456,43 @@ lemma ContMDiffWithinAt.clm_bundle_of_apply {k}
     exact (t₁.contMDiffAt_symm_const hx' _).contMDiffWithinAt
   have := ContMDiffWithinAt.comp' (ψ x) C₀ (contMDiffWithinAt_extChartAt_symm_range_self x)
   simpa [inter_comm, t₁, t₂, contMDiffWithinAt_iff_contDiffWithinAt, inCoordinates]
+#where
+omit [IsManifold IB 1 B] [ContMDiffVectorBundle 1 F₁ E₁ IB]
+  [FiniteDimensional 𝕜 F₂] [ContMDiffVectorBundle 1 F₂ E₂ IB] in
+lemma ContMDiffWithinAt.clm_bundle_of_applyB {k} {b : M → B}
+    {φ : Π m : M, E₁ (b m) →L[𝕜] E₂ (b m)}
+    [FiniteDimensional 𝕜 EB]
+    [IsManifold IB k B]
+    [ContMDiffVectorBundle k F₁ E₁ IB]
+    [∀ x, IsTopologicalAddGroup (E₁ x)] [∀ x, ContinuousSMul 𝕜 (E₁ x)]
+    [ContMDiffVectorBundle k F₂ E₂ IB] {s' : Set B} {x' : B} {s : Set M} {x : M}
+    (h : ∀ (σ : Π (m : M), E₁ (b m)),
+      (∀ᶠ y in 𝓝 x, CMDiffAt[s] k (fun (m : M) ↦ TotalSpace.mk' F₁ (b m) (σ m)) x) →
+      CMDiffAt[s] k ((fun (m : M) ↦ TotalSpace.mk' F₂ (b m) (φ m (σ m)))) x) :
+    CMDiffAt[s] k
+      (fun (m : M) ↦ TotalSpace.mk' (E := fun (x : B) ↦ (E₁ x →L[𝕜] E₂ x))
+        (F₁ →L[𝕜] F₂) (b m) (φ m)) x := by
+  have hb : CMDiffAt[s] k b x := sorry
+  -- original line upstairs: refine (contMDiffWithinAt_hom_bundle fun x ↦ ⟨x, φ x⟩).mpr ⟨sorry, ?_⟩
+  rw [contMDiffWithinAt_hom_bundle]
+  refine ⟨hb, ?_⟩
+  rw [contMDiffWithinAt_iff_source, contMDiffWithinAt_iff_contDiffWithinAt]
+  set t₁ := trivializationAt F₁ E₁ (b x)
+  set t₂ := trivializationAt F₂ E₂ (b x)
+  apply contDiffWithinAt_clm_apply.mpr
+  set ψ := extChartAt IB (b x)
+  intro u
+  /- have C₀ : CMDiffAt[s] k (fun (m : M) ↦ t₂.continuousLinearMapAt 𝕜 (b m) (φ m (t₁.symmL 𝕜 (b m) u)))
+      (x) := by--(ψ.symm (ψ (b x))) := by
+    --rw [extChartAt_to_inv x]
+    apply t₂.contMDiffWithinAt_apply (FiberBundle.mem_baseSet_trivializationAt' x)
+    apply h
+    filter_upwards [t₁.open_baseSet.mem_nhds (FiberBundle.mem_baseSet_trivializationAt' x)] with
+      x' hx'
+    exact (t₁.contMDiffAt_symm_const hx' _).contMDiffWithinAt
+  have := ContMDiffWithinAt.comp' (ψ x) C₀ (contMDiffWithinAt_extChartAt_symm_range_self x)
+  simpa [inter_comm, t₁, t₂, contMDiffWithinAt_iff_contDiffWithinAt, inCoordinates] -/
+  sorry
 
 -- Note: In the next lemma, the assumption `∀ᶠ b in 𝓝 x, CMDiffAt k (T% σ) b` is almost equivalent
 -- to `CMDiffAt k (T% σ) x` but not quite: it is stronger if `k = ∞`.
@@ -695,8 +732,12 @@ lemma ContMDiffWithinAt.clm_bundle_apply₂
       (E := fun (x : B) ↦ (E₁ x →L[𝕜] E₂ x →L[𝕜] E₃ x)) (b m) (ψ m)) x)
     (hv : CMDiffAt[s] n (fun m ↦ TotalSpace.mk' F₁ (b m) (v m)) x)
     (hw : CMDiffAt[s] n (fun m ↦ TotalSpace.mk' F₂ (b m) (w m)) x) :
-    CMDiffAt[s] n (fun m ↦ TotalSpace.mk' F₃ (b m) (ψ m (v m) (w m))) x :=
-  hψ.clm_bundle_apply hv |>.clm_bundle_apply hw
+    CMDiffAt[s] n (fun m ↦ TotalSpace.mk' F₃ (b m) (ψ m (v m) (w m))) x := by
+
+  --apply ContMDiffWithinAt.clm_bundle_apply ?_ hw
+  have : CMDiffAt[s] n
+    (fun m ↦ TotalSpace.mk' (E := fun (x : B) ↦ E₂ x →L[𝕜] E₃ x) (F₂ →L[𝕜] F₃) (b m) ((ψ m) (v m))) x := hψ.clm_bundle_apply hv
+  exact (hψ.clm_bundle_apply hv).clm_bundle_apply hw
 
 /-- Consider `C^n` maps `v : M → E₁` and `w : M → E₂` to vector bundles, over a base map
 `b : M → B`, and bilinear maps `ψ m : E₁ (b m) → E₂ (b m) → E₃ (b m)` depending smoothly on `m`.
@@ -732,8 +773,78 @@ lemma ContMDiff.clm_bundle_apply₂
       (E := fun (x : B) ↦ (E₁ x →L[𝕜] E₂ x →L[𝕜] E₃ x)) (b m) (ψ m)))
     (hv : CMDiff n (fun m ↦ TotalSpace.mk' F₁ (b m) (v m)))
     (hw : CMDiff n (fun m ↦ TotalSpace.mk' F₂ (b m) (w m))) :
-    CMDiff n (fun m ↦ TotalSpace.mk' F₃ (b m) (ψ m (v m) (w m))) :=
-  fun x ↦ (hψ x).clm_bundle_apply₂ (hv x) (hw x)
+    CMDiff n (fun m ↦ TotalSpace.mk' F₃ (b m) (ψ m (v m) (w m))) := by
+  intro x
+  have aux := (hψ x).clm_bundle_apply₂ (hv x) (w := w)
+  sorry --exact fun x ↦ (hψ x).clm_bundle_apply₂ (hv x) (hw x)
+
+-- simpler verfsion avoiding over the tirivial bundle, using T% again
+lemma ContMDiffWithinAt.clm_bundle_of_apply₂NOB {s : Set B} {x : B}
+    {ψ : (x : B) → E₁ x →L[𝕜] E₂ x →L[𝕜] E₃ x}
+    (h : ∀ (v : (x : B) → E₁ x) (w : (x : B) → E₂ x),
+      (∀ᶠ y in 𝓝 x, CMDiffAt[s] n (T% v) y) →
+      (∀ᶠ y in 𝓝 x, CMDiffAt[s] n (T% w) y) →
+      CMDiffAt[s] n (T% (fun x ↦ (ψ x (v x) (w x)))) x) :
+    CMDiffAt[s] n (fun x ↦ TotalSpace.mk' (F₁ →L[𝕜] F₂ →L[𝕜] F₃)
+      (E := fun (x : B) ↦ (E₁ x →L[𝕜] E₂ x →L[𝕜] E₃ x)) x (ψ x)) x := by
+  sorry
+
+lemma ContMDiffWithinAt.clm_bundle_of_apply₂
+    (h : ∀ (v : (x : M) → E₁ (b x)) (w : (x : M) → E₂ (b x)),
+      (∀ᶠ y in 𝓝 x, CMDiffAt[s] n (fun m ↦ TotalSpace.mk' F₁ (b m) (v m)) y) →
+      (∀ᶠ y in 𝓝 x, CMDiffAt[s] n (fun m ↦ TotalSpace.mk' F₂ (b m) (w m)) y) →
+      CMDiffAt[s] n (fun m ↦ TotalSpace.mk' F₃ (b m) (ψ m (v m) (w m))) x) :
+    CMDiffAt[s] n (fun m ↦ TotalSpace.mk' (F₁ →L[𝕜] F₂ →L[𝕜] F₃)
+      (E := fun (x : B) ↦ (E₁ x →L[𝕜] E₂ x →L[𝕜] E₃ x)) (b m) (ψ m)) x := by
+  have h' : ∀ (v : (x : M) → E₁ (b x)),
+      (∀ᶠ y in 𝓝 x, CMDiffAt[s] n (fun m ↦ TotalSpace.mk' F₁ (b m) (v m)) y) →
+      ∀ (w : (x : M) → E₂ (b x)),
+      (∀ᶠ y in 𝓝 x, CMDiffAt[s] n (fun m ↦ TotalSpace.mk' F₂ (b m) (w m)) y) →
+      CMDiffAt[s] n (fun m ↦ TotalSpace.mk' F₃ (b m) (ψ m (v m) (w m))) x :=
+    sorry -- use h
+
+  have : ∀ (v : (x : M) → E₁ (b x)),
+      (∀ᶠ y in 𝓝 x, CMDiffAt[s] n (fun m ↦ TotalSpace.mk' F₁ (b m) (v m)) y) →
+      CMDiffAt[s] n
+        (fun m ↦ TotalSpace.mk' (E := fun (x : B) ↦ E₂ x →L[𝕜] E₃ x)
+        (F₂ →L[𝕜] F₃) (b m) ((ψ m) (v m))) x := by
+    intro v hv
+    specialize h' v hv
+    have : CompleteSpace 𝕜 := sorry -- careful!
+    have : FiniteDimensional 𝕜 EB := sorry -- careful,
+    --#where
+    -- let aux := ContMDiffWithinAt.clm_bundle_of_applyB (b := b) (x := x) (E₁ := E₂) (IB := IB) (IM := IM) h'
+
+
+    sorry --hψ.clm_bundle_apply hv
+
+  --have aux : ∀ (v : (x : M) → E₁ (b x)),
+  --  ContMDiffWithinAt IM (IB.prod 𝓘(𝕜, F₂ →L[𝕜] F₃)) n (fun m ↦ TotalSpace.mk' F₁ (b m) ((ψ m) (v m))) s x := sorry
+
+  --apply ContMDiffWithinAt.clm_bundle_of_apply
+  sorry --hψ.clm_bundle_apply hv |>.clm_bundle_apply hw
+
+lemma ContMDiffAt.clm_bundle_of_apply₂
+    (h : ∀ (v : (x : M) → E₁ (b x)) (w : (x : M) → E₂ (b x)),
+      (∀ᶠ y in 𝓝 x, CMDiffAt n (fun m ↦ TotalSpace.mk' F₁ (b m) (v m)) y) →
+      (∀ᶠ y in 𝓝 x, CMDiffAt n (fun m ↦ TotalSpace.mk' F₂ (b m) (w m)) y) →
+      CMDiffAt n (fun m ↦ TotalSpace.mk' F₃ (b m) (ψ m (v m) (w m))) x) :
+    CMDiffAt n (fun m ↦ TotalSpace.mk' (F₁ →L[𝕜] F₂ →L[𝕜] F₃)
+      (E := fun (x : B) ↦ (E₁ x →L[𝕜] E₂ x →L[𝕜] E₃ x)) (b m) (ψ m)) x := by
+  simp_rw [← contMDiffWithinAt_univ] at h ⊢
+  exact ContMDiffWithinAt.clm_bundle_of_apply₂ h
+
+lemma ContMDiffAt.clm_bundle_of_apply₂NOB
+    {x : B}
+    {ψ : (x : B) → E₁ x →L[𝕜] E₂ x →L[𝕜] E₃ x}
+    (h : ∀ (v : (x : B) → E₁ x) (w : (x : B) → E₂ x),
+      (∀ᶠ y in 𝓝 x, CMDiffAt n (T% v) y) →
+      (∀ᶠ y in 𝓝 x, CMDiffAt n (T% w) y) →
+      CMDiffAt n (fun x ↦ TotalSpace.mk' F₃ x (ψ x (v x) (w x))) x) :
+    CMDiffAt n (fun x ↦ TotalSpace.mk' (F₁ →L[𝕜] F₂ →L[𝕜] F₃)
+      (E := fun (x : B) ↦ (E₁ x →L[𝕜] E₂ x →L[𝕜] E₃ x)) x (ψ x)) x := by
+  simp_rw [← contMDiffWithinAt_univ] at h ⊢
+  exact ContMDiffWithinAt.clm_bundle_of_apply₂ h
 
 end TwoVariables
 
