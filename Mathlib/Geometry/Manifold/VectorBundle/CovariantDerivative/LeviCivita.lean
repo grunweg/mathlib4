@@ -765,6 +765,29 @@ variable {k : ℕ∞}
 
 /-- If `M` is `C^{k+2}` and endowed with a `C^{k+1}` metric,
 its Levi-Civita connection is a `C^k` connection. -/
+instance leviCivitaConnection_baz [FiniteDimensional ℝ E] :
+    ContMDiffCovariantDerivative (leviCivitaConnection I M) (k + 1) where
+  contMDiff := by
+    dsimp [leviCivitaConnection]
+    unfold lcAux
+    refine ⟨fun {σ} hσ ↦ ?_⟩
+    have := (contMDiffOn_univ.mp hσ).mdifferentiable (by simp)
+    let arg : M → TotalSpace (E →L[ℝ] E) fun (x : M) ↦ TangentSpace I x →L[ℝ] TangentSpace I x :=
+      fun x ↦ TotalSpace.mk' _ x (lcAux₁ I x (this x))
+    suffices hyp : ContMDiffOn I (I.prod 𝓘(ℝ, E →L[ℝ] E)) (↑k + 1) arg Set.univ by
+      apply hyp.congr
+      intro y _hy
+      simp [arg, this y]
+    unfold arg lcAux₁
+    dsimp
+    rw [contMDiffOn_univ]
+    -- mismatch: the line below gives us a section of the Hom bundle.
+    -- We also want to dualise...
+    -- apply TensorialAt.contMDiff_mkHom (IB := I) (F₁ := E) (F₂ := E) (k := k + 1)
+    sorry
+
+/-- If `M` is `C^{k+2}` and endowed with a `C^{k+1}` metric,
+its Levi-Civita connection is a `C^k` connection. -/
 instance leviCivitaConnection_bar [FiniteDimensional ℝ E] :
     ContMDiffCovariantDerivative (leviCivitaConnection I M) (k + 1) where
   contMDiff := by
