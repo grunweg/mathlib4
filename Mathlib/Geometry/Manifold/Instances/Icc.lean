@@ -129,6 +129,8 @@ lemma contMDiff_subtypeVal_Icc : CMDiff n (fun (z : Icc x y) ↦ (z : ℝ)) :=
 @[deprecated (since := "2026-07-22")]
 alias contMDiff_subtype_coe_Icc := contMDiff_subtypeVal_Icc
 
+-- TODO: also add mdifferentiableAt version!
+
 /-- A function `f : M → Icc x y` is smooth iff its composition with the inclusion
 into `ℝ` is smooth. -/
 lemma contMDiff_iff_comp_subtypeVal_Icc {f : M → Icc x y} :
@@ -182,29 +184,33 @@ lemma isSubmersionAtOfComplement_subtypeVal_Icc {z : Icc x y} :
       IccRightChart_symm_apply_of_le hu, Equiv.pointReflection_apply]
     linarith
 
+lemma aux (c : ℝ) : (Homeomorph.addLeft c).toOpenPartialHomeomorph
+    ∈ StructureGroupoid.maximalAtlas ℝ (contDiffGroupoid n 𝓘(ℝ)) := by
+  apply OpenPartialHomeomorph.mem_maximalAtlas_of_contMDiffOn
+  · have : ContDiff ℝ n (fun y ↦ c + y) := by fun_prop
+    simpa [contMDiffOn_iff_contDiffOn, contDiffOn_univ]
+  · have : ContDiff ℝ n (fun y ↦ -c + y) := by fun_prop
+    simpa [contMDiffOn_iff_contDiffOn, contDiffOn_univ, Homeomorph.addLeft]
+
 /-- The projection from `ℝ` to a closed segment is a smooth submersion on the segment -/
 lemma isSubmersionAtOfComplement_procIcc {z : Icc x y} :
     IsSubmersionAtOfComplement Unit 𝓘(ℝ) (𝓡∂ 1) n (Set.projIcc x y h.out.le) z := by
   letI φ₀ := ContinuousLinearEquiv.prodUnique ℝ (EuclideanSpace ℝ (Fin 1)) Unit
   let φ : ℝ ≃L[ℝ] EuclideanSpace ℝ (Fin 1) × Unit :=
     (PiLp.equivOfUnique 2 ℝ (fun (_ : Fin 1) ↦ ℝ)).symm.trans φ₀.symm
+  by_cases! hzx : z = x
+  · rw [hzx]
+    sorry
   by_cases hz : ↑z < y
-  · -- At all points but `y`, the correct codomain chart maps `a` to `a + x`.
+  · -- At all points but `x` and `y`, the correct codomain chart maps `a` to `a + x`.
     apply IsSubmersionAtOfComplement.mk_of_continuousAt (by fun_prop) φ
-      ((Homeomorph.addLeft (-x)).toOpenPartialHomeomorph) (chartAt _ z)
-      (mem_chart_source _ _) (by simp [hz, IccLeftChart]) ?_ (chart_mem_maximalAtlas _) ?_
-    · sorry
-      /-
-      -- TODO: should this be a lemma?
-      apply OpenPartialHomeomorph.mem_maximalAtlas_of_contMDiffOn
-      · have : ContDiff ℝ n (fun y ↦ -x + y) := by fun_prop
-        simpa [contMDiffOn_iff_contDiffOn, contDiffOn_univ]
-      · have : ContDiff ℝ n (fun y ↦ x + y) := by fun_prop
-        simpa [contMDiffOn_iff_contDiffOn, contDiffOn_univ, Homeomorph.addLeft] -/
+      (((Homeomorph.addLeft (-x)).toOpenPartialHomeomorph).restr (Set.Ioo x y)) (chartAt _ z)
+      ?_ (by simp [hz, IccLeftChart]) ?_ (chart_mem_maximalAtlas _) ?_
+    · simp [hz, lt_of_le_of_ne z.property.1 hzx.symm]
+    · exact restr_mem_maximalAtlas _ (aux _) isOpen_Ioo
     intro z' hz'
-    -- missing hypothesis, need to restrict the domain chart
-    -- TODO: also include one more shift!
-    have hz'' : z' ∈ Set.Icc 0 (y - x) := sorry
+    have hz'' : z' ∈ Set.Icc 0 (y - x) :=
+      Ioo_subset_Icc_self (by simpa [Homeomorph.addLeft] using hz')
     have : max x (min y (x + z')) - x = z' := by
       simp only [mem_Icc] at hz''
       rw [min_eq_right, max_eq_right]
@@ -214,44 +220,12 @@ lemma isSubmersionAtOfComplement_procIcc {z : Icc x y} :
     simp [hz, IccLeftChart_apply, φ, φ₀, projIcc, Homeomorph.addLeft, this]
     congr
   sorry
-#exit
-/-- The projection from `ℝ` to a closed segment is smooth on the segment, in the manifold sense. -/
-lemma contMDiffOn_projIcc : CMDiff[Icc x y] n (Set.projIcc x y h.out.le) := by
-  intro z hz
-  have aux := isSubmersionAtOfComplement_subtypeVal_Icc (n := n) (z := ⟨z, hz⟩)
-  have aux' := aux.contMDiffAt
-  apply ContMDiffAt.contMDiffWithinAt
-  apply aux'.congr
-  rw [contMDiffWithinAt_iff]
-  refine ⟨by apply ContinuousAt.continuousWithinAt; fun_prop, ?_⟩
-  -- We come back to the definition: we should check that, in each chart, the map is smooth
-  -- There are two charts, and we check things separately in each of them using the
-  -- explicit formulas.
-  suffices ContDiffWithinAt ℝ n _ (Icc x y) z by simpa
-  split_ifs with h'z
-  · have : ContDiff ℝ n (fun (w : ℝ) ↦
-        (show EuclideanSpace ℝ (Fin 1) from toLp 2 fun (_ : Fin 1) ↦ w - x)) := by
-      dsimp
-      apply contDiff_euclidean.2 (fun i ↦ by fun_prop)
-    apply this.contDiffWithinAt.congr_of_eventuallyEq_of_mem _ hz
-    filter_upwards [self_mem_nhdsWithin] with w hw
-    ext i
-    suffices max x (min y w) - x = w - x by
-      simpa [modelWithCornersEuclideanHalfSpace, IccLeftChart]
-    rw [max_eq_right, min_eq_right hw.2]
-    simp [hw.1, h.out.le]
-  · have : ContDiff ℝ n (fun (w : ℝ) ↦
-        (show EuclideanSpace ℝ (Fin 1) from toLp 2 fun (_ : Fin 1) ↦ y - w)) := by
-      dsimp
-      apply contDiff_euclidean.2 (fun i ↦ by fun_prop)
-    apply this.contDiffWithinAt.congr_of_eventuallyEq_of_mem _ hz
-    filter_upwards [self_mem_nhdsWithin] with w hw
-    ext i
-    suffices y - max x (min y w) = y - w by
-      simpa [modelWithCornersEuclideanHalfSpace, IccRightChart]
-    rw [max_eq_right, min_eq_right hw.2]
-    simp [hw.1, h.out.le]
 
+/-- The projection from `ℝ` to a closed segment is smooth on the segment, in the manifold sense. -/
+lemma contMDiffOn_projIcc : CMDiff[Icc x y] n (Set.projIcc x y h.out.le) :=
+  fun z hz ↦ (isSubmersionAtOfComplement_procIcc (z := ⟨z, hz⟩)).contMDiffAt.contMDiffWithinAt
+
+-- TODO: can the following lemmas be golfed using a general fact about submersions?
 lemma contMDiffOn_comp_projIcc_iff {f : Icc x y → M} :
     CMDiff[Icc x y] n (f ∘ (Set.projIcc x y h.out.le)) ↔ CMDiff n f := by
   refine ⟨fun hf ↦ ?_, fun hf ↦ hf.comp_contMDiffOn contMDiffOn_projIcc⟩
