@@ -593,3 +593,13 @@ lemma mvfderiv_zero {x : M} : d% (0 : M → F) x = 0 := by
     simp
   simpa using this
 @[deprecated (since := "2026-05-17")] alias extDerivFun_zero := mvfderiv_zero
+
+-- TODO: these lemmas are still type incorrect; the correct form is fderiv ∘SL TangentSpaceCastModel
+protected theorem MDifferentiableWithinAt.mvfderivWithin {f : M → E'} (h : MDiffAt[s] f x) :
+    d[s] f x = (fderivWithin 𝕜 (writtenInExtChartAt I 𝓘(𝕜, E') x f)
+      ((extChartAt I x).symm ⁻¹' s ∩ range I) (extChartAt I x x)) := by
+  convert! h.mfderivWithin
+
+protected theorem MDifferentiableAt.mvfderiv {f : M → E'} (h : MDiffAt f x) :
+    d% f x = fderivWithin 𝕜 (writtenInExtChartAt I 𝓘(𝕜, E') x f) (range I) (extChartAt I x x) := by
+  convert! h.mfderiv
