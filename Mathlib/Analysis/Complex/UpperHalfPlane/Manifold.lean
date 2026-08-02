@@ -49,38 +49,41 @@ theorem contMDiff_coe : CMDiff n ((↑) : ℍ → ℂ) :=
 theorem mdifferentiable_coe : MDiff ((↑) : ℍ → ℂ) :=
   contMDiff_coe.mdifferentiable one_ne_zero
 
-lemma contMDiffAt_ofComplex {z : ℂ} (hz : 0 < z.im) : CMDiffAt n ofComplex z := by
-  rw [contMDiffAt_iff]
-  constructor
-  · -- continuity at z
-    rw [ContinuousAt, nhds_induced, tendsto_comap_iff]
-    refine Tendsto.congr' (eventuallyEq_coe_comp_ofComplex hz).symm ?_
-    simpa [ofComplex_apply_of_im_pos hz] using! tendsto_id
-  · -- smoothness in local chart
-    simpa using! contDiffAt_id.congr_of_eventuallyEq (eventuallyEq_coe_comp_ofComplex hz)
+-- lemma contMDiffAt_ofComplex {z : ℂ} (hz : 0 < z.im) : CMDiffAt n ofComplex z := by
+--   rw [contMDiffAt_iff]
+--   constructor
+--   · -- continuity at z
+--     rw [ContinuousAt, nhds_induced, tendsto_comap_iff]
+--     refine Tendsto.congr' (eventuallyEq_coe_comp_ofComplex hz).symm ?_
+--     simpa [ofComplex_apply_of_im_pos hz] using! tendsto_id
+--   · -- smoothness in local chart
+--     simpa using! contDiffAt_id.congr_of_eventuallyEq (eventuallyEq_coe_comp_ofComplex hz)
 
-lemma mdifferentiableAt_ofComplex {z : ℂ} (hz : 0 < z.im) : MDiffAt ofComplex z :=
-  (contMDiffAt_ofComplex hz).mdifferentiableAt one_ne_zero
+-- lemma mdifferentiableAt_ofComplex {z : ℂ} (hz : 0 < z.im) : MDiffAt ofComplex z :=
+--   (contMDiffAt_ofComplex hz).mdifferentiableAt one_ne_zero
 
-lemma contMDiffAt_iff {f : ℍ → ℂ} {τ : ℍ} :
-    CMDiffAt n f τ ↔ ContDiffAt ℂ n (f ∘ ofComplex) τ := by
-  rw [← contMDiffAt_iff_contDiffAt]
-  refine ⟨fun hf ↦ ?_, fun hf ↦ ?_⟩
-  · exact (ofComplex_apply τ ▸ hf).comp _ (contMDiffAt_ofComplex τ.im_pos)
-  · simpa only [Function.comp_def, ofComplex_apply] using hf.comp τ (contMDiff_coe τ)
+-- XXX: do we want to have the next three lemmas?
+-- lemma contMDiffAt_iff {f : ℍ → ℂ} {τ : ℍ} :
+--     CMDiffAt n f τ ↔ ContDiffAt ℂ n (f ∘ isOpenEmbedding_coe.toPartialHomeomorph.symm) τ := by
+--   let a : OpenPartialHomeomorph ℍ ℂ := chartAt ℍ τ
 
-lemma mdifferentiableAt_iff {f : ℍ → ℂ} {τ : ℍ} :
-    MDiffAt f τ ↔ DifferentiableAt ℂ (f ∘ ofComplex) ↑τ := by
-  rw [← mdifferentiableAt_iff_differentiableAt]
-  refine ⟨fun hf ↦ ?_, fun hf ↦ ?_⟩
-  · exact (ofComplex_apply τ ▸ hf).comp _ (mdifferentiableAt_ofComplex τ.im_pos)
-  · simpa only [Function.comp_def, ofComplex_apply] using hf.comp τ (mdifferentiable_coe τ)
+--   rw [← contMDiffAt_iff_contDiffAt]
+--   refine ⟨fun hf ↦ ?_, fun hf ↦ ?_⟩
+--   · exact (ofComplex_apply τ ▸ hf).comp _ (contMDiffAt_ofComplex τ.im_pos)
+--   · simpa only [Function.comp_def, ofComplex_apply] using hf.comp τ (contMDiff_coe τ)
 
-lemma mdifferentiable_iff {f : ℍ → ℂ} :
-    MDiff f ↔ DifferentiableOn ℂ (f ∘ ofComplex) {z | 0 < z.im} :=
-  ⟨fun h z hz ↦ (mdifferentiableAt_iff.mp (h ⟨z, hz⟩)).differentiableWithinAt,
-    fun h ⟨z, hz⟩ ↦ mdifferentiableAt_iff.mpr <| (h z hz).differentiableAt
-     <| isOpen_upperHalfPlaneSet.mem_nhds hz⟩
+-- lemma mdifferentiableAt_iff {f : ℍ → ℂ} {τ : ℍ} :
+--     MDiffAt f τ ↔ DifferentiableAt ℂ (f ∘ ofComplex) ↑τ := by
+--   rw [← mdifferentiableAt_iff_differentiableAt]
+--   refine ⟨fun hf ↦ ?_, fun hf ↦ ?_⟩
+--   · exact (ofComplex_apply τ ▸ hf).comp _ (mdifferentiableAt_ofComplex τ.im_pos)
+--   · simpa only [Function.comp_def, ofComplex_apply] using hf.comp τ (mdifferentiable_coe τ)
+
+-- lemma mdifferentiable_iff {f : ℍ → ℂ} :
+--     MDiff f ↔ DifferentiableOn ℂ (f ∘ ofComplex) {z | 0 < z.im} :=
+--   ⟨fun h z hz ↦ (mdifferentiableAt_iff.mp (h ⟨z, hz⟩)).differentiableWithinAt,
+--     fun h ⟨z, hz⟩ ↦ mdifferentiableAt_iff.mpr <| (h z hz).differentiableAt
+--      <| isOpen_upperHalfPlaneSet.mem_nhds hz⟩
 
 lemma contMDiff_num (g : GL (Fin 2) ℝ) : CMDiff n (fun τ : ℍ ↦ num g τ) :=
   (contMDiff_const.mul contMDiff_coe).add contMDiff_const

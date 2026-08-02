@@ -138,67 +138,67 @@ theorem ModularGroup_T_zpow_mem_verticalStrip (z : ℍ) {N : ℕ} (hn : 0 < N) :
 
 end strips
 
-section ofComplex
+-- section ofComplex
 
-/-- A section `ℂ → ℍ` of the natural inclusion map, bundled as an `OpenPartialHomeomorph`. -/
-def ofComplex : OpenPartialHomeomorph ℂ ℍ := (isOpenEmbedding_coe.toOpenPartialHomeomorph _).symm
+-- /-- A section `ℂ → ℍ` of the natural inclusion map, bundled as an `OpenPartialHomeomorph`. -/
+-- def ofComplex : OpenPartialHomeomorph ℂ ℍ := (isOpenEmbedding_coe.toOpenPartialHomeomorph _).symm
 
-/-- Extend a function on `ℍ` arbitrarily to a function on all of `ℂ`. -/
-scoped notation "↑ₕ" f => f ∘ ofComplex
+-- /-- Extend a function on `ℍ` arbitrarily to a function on all of `ℂ`. -/
+-- scoped notation "↑ₕ" f => f ∘ ofComplex
 
-@[simp]
-lemma ofComplex_apply (z : ℍ) : ofComplex (z : ℂ) = z :=
-  IsOpenEmbedding.toOpenPartialHomeomorph_left_inv ..
+-- @[simp]
+-- lemma ofComplex_apply (z : ℍ) : ofComplex (z : ℂ) = z :=
+--   IsOpenEmbedding.toOpenPartialHomeomorph_left_inv ..
 
-lemma ofComplex_apply_eq_ite (w : ℂ) :
-    ofComplex w = if hw : 0 < w.im then ⟨w, hw⟩ else Classical.choice inferInstance := by
-  split_ifs with hw
-  · exact ofComplex_apply ⟨w, hw⟩
-  · change (Function.invFunOn UpperHalfPlane.coe Set.univ w) = _
-    simp only [invFunOn, dite_eq_right_iff, mem_univ, true_and]
-    rintro ⟨a, rfl⟩
-    exact (a.im_pos.not_ge (by simpa using hw)).elim
+-- lemma ofComplex_apply_eq_ite (w : ℂ) :
+--     ofComplex w = if hw : 0 < w.im then ⟨w, hw⟩ else Classical.choice inferInstance := by
+--   split_ifs with hw
+--   · exact ofComplex_apply ⟨w, hw⟩
+--   · change (Function.invFunOn UpperHalfPlane.coe Set.univ w) = _
+--     simp only [invFunOn, dite_eq_right_iff, mem_univ, true_and]
+--     rintro ⟨a, rfl⟩
+--     exact (a.im_pos.not_ge (by simpa using hw)).elim
 
-lemma ofComplex_apply_of_im_pos {z : ℂ} (hz : 0 < z.im) :
-    ofComplex z = ⟨z, hz⟩ :=
-  ofComplex_apply ⟨z, hz⟩
+-- lemma ofComplex_apply_of_im_pos {z : ℂ} (hz : 0 < z.im) :
+--     ofComplex z = ⟨z, hz⟩ :=
+--   ofComplex_apply ⟨z, hz⟩
 
-lemma ofComplex_apply_of_im_nonpos {w : ℂ} (hw : w.im ≤ 0) :
-    ofComplex w = Classical.choice inferInstance := by
-  simp [ofComplex_apply_eq_ite w, hw]
+-- lemma ofComplex_apply_of_im_nonpos {w : ℂ} (hw : w.im ≤ 0) :
+--     ofComplex w = Classical.choice inferInstance := by
+--   simp [ofComplex_apply_eq_ite w, hw]
 
-lemma ofComplex_apply_eq_of_im_nonpos {w w' : ℂ} (hw : w.im ≤ 0) (hw' : w'.im ≤ 0) :
-    ofComplex w = ofComplex w' := by
-  simp [ofComplex_apply_of_im_nonpos, hw, hw']
+-- lemma ofComplex_apply_eq_of_im_nonpos {w w' : ℂ} (hw : w.im ≤ 0) (hw' : w'.im ≤ 0) :
+--     ofComplex w = ofComplex w' := by
+--   simp [ofComplex_apply_of_im_nonpos, hw, hw']
 
-lemma comp_ofComplex (f : ℍ → ℂ) (z : ℍ) : (↑ₕf) z = f z :=
-  congrArg _ <| ofComplex_apply z
+-- lemma comp_ofComplex (f : ℍ → ℂ) (z : ℍ) : (↑ₕf) z = f z :=
+--   congrArg _ <| ofComplex_apply z
 
-lemma comp_ofComplex_of_im_pos (f : ℍ → ℂ) (z : ℂ) (hz : 0 < z.im) : (↑ₕf) z = f ⟨z, hz⟩ :=
-  congrArg _ <| ofComplex_apply ⟨z, hz⟩
+-- lemma comp_ofComplex_of_im_pos (f : ℍ → ℂ) (z : ℂ) (hz : 0 < z.im) : (↑ₕf) z = f ⟨z, hz⟩ :=
+--   congrArg _ <| ofComplex_apply ⟨z, hz⟩
 
-lemma comp_ofComplex_of_im_le_zero (f : ℍ → ℂ) (z z' : ℂ) (hz : z.im ≤ 0) (hz' : z'.im ≤ 0) :
-    (↑ₕf) z = (↑ₕf) z' := by
-  simp [ofComplex_apply_of_im_nonpos, hz, hz']
+-- lemma comp_ofComplex_of_im_le_zero (f : ℍ → ℂ) (z z' : ℂ) (hz : z.im ≤ 0) (hz' : z'.im ≤ 0) :
+--     (↑ₕf) z = (↑ₕf) z' := by
+--   simp [ofComplex_apply_of_im_nonpos, hz, hz']
 
-lemma eventuallyEq_coe_comp_ofComplex {z : ℂ} (hz : 0 < z.im) :
-    UpperHalfPlane.coe ∘ ofComplex =ᶠ[𝓝 z] id := by
-  filter_upwards [isOpen_upperHalfPlaneSet.mem_nhds hz] with x hx
-  simp only [Function.comp_apply, ofComplex_apply_of_im_pos hx, id_eq]
+-- lemma eventuallyEq_coe_comp_ofComplex {z : ℂ} (hz : 0 < z.im) :
+--     UpperHalfPlane.coe ∘ ofComplex =ᶠ[𝓝 z] id := by
+--   filter_upwards [isOpen_upperHalfPlaneSet.mem_nhds hz] with x hx
+--   simp only [Function.comp_apply, ofComplex_apply_of_im_pos hx, id_eq]
 
-@[fun_prop]
-lemma continuousOn_ofComplex_I_mul :
-    ContinuousOn (fun t : ℝ ↦ ofComplex (I * t)) (Set.Ioi 0) := by
-  simp only [ofComplex_apply_eq_ite, continuousOn_iff_continuous_domRestrict,
-    continuous_induced_rng]
-  have : Continuous (fun t : ℝ ↦ Complex.I * t) := by fun_prop
-  exact (this.comp continuous_subtype_val).congr (by simp +contextual)
+-- @[fun_prop]
+-- lemma continuousOn_ofComplex_I_mul :
+--     ContinuousOn (fun t : ℝ ↦ ofComplex (I * t)) (Set.Ioi 0) := by
+--   simp only [ofComplex_apply_eq_ite, continuousOn_iff_continuous_domRestrict,
+--     continuous_induced_rng]
+--   have : Continuous (fun t : ℝ ↦ Complex.I * t) := by fun_prop
+--   exact (this.comp continuous_subtype_val).congr (by simp +contextual)
 
-lemma J_smul (τ : ℍ) : J • τ = ofComplex (-(conj ↑τ)) := by
-  ext
-  rw [coe_J_smul, ofComplex_apply_of_im_pos (by simpa using τ.im_pos)]
+-- lemma J_smul (τ : ℍ) : J • τ = ofComplex (-(conj ↑τ)) := by
+--   ext
+--   rw [coe_J_smul, ofComplex_apply_of_im_pos (by simpa using τ.im_pos)]
 
-end ofComplex
+-- end ofComplex
 
 section IsOpenMap
 
