@@ -124,6 +124,7 @@ local notation "⟪" X ", " Y "⟫" => fun x ↦ inner ℝ (X x) (Y x)
 
 section prerequisites
 
+set_option backward.isDefEq.respectTransparency.types false in
 -- TODO: generalise and move to a better place!
 -- TODO: should we have ContDiffMul, and then deduce this from a ContDiffMul instance?
 instance {𝕜 : Type*} [NontriviallyNormedField 𝕜] {n : ℕ∞ω} : ContMDiffMul 𝓘(𝕜) n 𝕜 where
@@ -194,6 +195,7 @@ lemma ContMDiff.foo {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
   let A := (mfderiv% f x) (X x)
   sorry
 
+set_option backward.isDefEq.respectTransparency.types false in
 lemma ContMDiff.mvfderiv {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
     {k : ℕ∞ω} {f : M → V} (hf : CMDiff (k + 1) f) (hX : CMDiff k (T% X)) :
     CMDiff k (fun (x : M) ↦ d% f x (X x)) := by

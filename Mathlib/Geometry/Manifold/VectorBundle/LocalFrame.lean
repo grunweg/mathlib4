@@ -681,11 +681,11 @@ variable (b) in
 /-- A local extension has constant frame coefficients within its defining trivialisation. -/
 lemma localExtensionOn_localFrame_coeff [ContMDiffVectorBundle 1 F V I]
     (hx : x ∈ e.baseSet) (hx' : x' ∈ e.baseSet) (v : V x) (i : ι) :
-    (Trivialization.localFrame_coeff I e b i x') ((localExtensionOn b e) v x') =
-    (Trivialization.localFrame_coeff I e b i x) ((localExtensionOn b e) v x) := by
+    (Trivialization.localFrameCoeff I e b i x') ((localExtensionOn b e) v x') =
+    (Trivialization.localFrameCoeff I e b i x) ((localExtensionOn b e) v x) := by
   -- Combining these into one `simp` call makes these lemmas never fire.
-  rw [e.localFrame_coeff_apply_of_mem_baseSet b hx ((localExtensionOn b e) v) i,
-    e.localFrame_coeff_apply_of_mem_baseSet b hx' ((localExtensionOn b e) v) i]
+  rw [e.localFrameCoeff_apply_of_mem_baseSet b hx ((localExtensionOn b e) v) i,
+    e.localFrameCoeff_apply_of_mem_baseSet b hx' ((localExtensionOn b e) v) i]
   simp [localExtensionOn, hx, hx']
 
 variable (F) in
@@ -694,11 +694,11 @@ lemma contMDiffOn_localExtensionOn [FiniteDimensional 𝕜 F] [CompleteSpace �
     CMDiff[e.baseSet] ∞ (T% (localExtensionOn b e v)) := by
   -- The local frame coefficients of `localExtensionOn` w.r.t. the frame induced by `e` are
   -- constant, hence smoothness follows.
-  rw [contMDiffOn_baseSet_iff_localFrame_coeff b]
+  rw [contMDiffOn_baseSet_iff_localFrameCoeff b]
   intro i
   simp only [LinearMap.piApply_apply]
   apply (contMDiffOn_const
-    (c := (Trivialization.localFrame_coeff I e b i x) ((localExtensionOn b e) v x))).congr
+    (c := (Trivialization.localFrameCoeff I e b i x) ((localExtensionOn b e) v x))).congr
   intro y hy
   rw [localExtensionOn_localFrame_coeff b hx hy v i]
 
