@@ -110,8 +110,7 @@ lemma sumInr {M' : Type*} [TopologicalSpace M'] [ChartedSpace H M']
   ⟨IsImmersionOfComplement.sumInr.isImmersion, Topology.IsEmbedding.inr⟩
 
 /-- A smooth embedding is automatically smooth. -/
-lemma contMDiff (hf : IsSmoothEmbedding I J n f) :
-    ContMDiff I J n f :=
+lemma contMDiff (hf : IsSmoothEmbedding I J n f) : CMDiff n f :=
   hf.isImmersion.contMDiff
 
 end IsSmoothEmbedding

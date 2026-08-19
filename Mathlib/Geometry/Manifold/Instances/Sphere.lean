@@ -34,7 +34,7 @@ charts here are obtained by composing the open partial homeomorphisms `stereogra
 isometries from `(ℝ ∙ v)ᗮ` to Euclidean space.
 
 We prove two lemmas about `C^n` maps:
-* `contMDiff_coe_sphere` states that the coercion map from the sphere into `E` is analytic;
+* `contMDiff_subtypeVal_sphere` states that the coercion map from the sphere into `E` is analytic;
   this is a useful tool for constructing smooth maps *from* the sphere.
 * `contMDiff.codRestrict_sphere` states that a map from a manifold into the sphere is
   `C^m` if its lift to a map to `E` is `C^m`; this is a useful tool for constructing `C^m` maps
@@ -420,9 +420,9 @@ instance (n : ℕ) : IsManifold (𝓡 n) ω (sphere (0 : EuclideanSpace ℝ (Fin
   haveI := Fact.mk (@finrank_euclideanSpace_fin ℝ _ (n + 1))
   EuclideanSpace.instIsManifoldSphere
 
-/-- The inclusion map (i.e., `coe`) from the sphere in `E` to `E` is analytic. -/
-theorem contMDiff_coe_sphere {m : ℕ∞ω} {n : ℕ} [Fact (finrank ℝ E = n + 1)] :
-    ContMDiff (𝓡 n) 𝓘(ℝ, E) m ((↑) : sphere (0 : E) 1 → E) := by
+/-- The inclusion map (i.e., `Subtype.val`) from the sphere in `E` to `E` is analytic. -/
+theorem contMDiff_subtypeVal_sphere {m : ℕ∞ω} {n : ℕ} [Fact (finrank ℝ E = n + 1)] :
+    ContMDiff (𝓡 n) 𝓘(ℝ, E) m (Subtype.val : sphere (0 : E) 1 → E) := by
   rw [contMDiff_iff]
   constructor
   · exact continuous_subtype_val
@@ -434,6 +434,8 @@ theorem contMDiff_coe_sphere {m : ℕ∞ω} {n : ℕ} [Fact (finrank ℝ E = n +
     exact
       ((contDiff_stereoInvFunAux.comp (ℝ ∙ (-v : E))ᗮ.subtypeL.contDiff).comp
           U.symm.contDiff).contDiffOn
+
+@[deprecated (since := "2026-08-19")] alias contMDiff_coe_sphere := contMDiff_subtypeVal_sphere
 
 variable {m : ℕ∞ω} {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
 variable {H : Type*} [TopologicalSpace H] {I : ModelWithCorners ℝ F H}
@@ -466,9 +468,7 @@ theorem ContMDiff.codRestrict_sphere {n : ℕ} [Fact (finrank ℝ E = n + 1)] {f
 theorem contMDiff_neg_sphere {m : ℕ∞ω} {n : ℕ} [Fact (finrank ℝ E = n + 1)] :
     CMDiff m fun x : sphere (0 : E) 1 => -x := by
   -- this doesn't elaborate well in term mode
-  apply ContMDiff.codRestrict_sphere
-  apply contDiff_neg.contMDiff.comp _
-  exact contMDiff_coe_sphere
+  apply (contDiff_neg.contMDiff.comp contMDiff_subtypeVal_sphere).codRestrict_sphere
 
 set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
@@ -487,7 +487,7 @@ of `v` in `E`.
 -/
 theorem range_mvfderiv_subtypeVal {n : ℕ} [Fact (finrank ℝ E = n + 1)] (v : sphere (0 : E) 1) :
     (mvfderiv (𝓡 n) ((↑) : sphere (0 : E) 1 → E) v).range = (ℝ ∙ (v : E))ᗮ := by
-  rw [((contMDiff_coe_sphere v).mdifferentiableAt one_ne_zero).mvfderiv]
+  rw [((contMDiff_subtypeVal_sphere v).mdifferentiableAt one_ne_zero).mvfderiv]
   dsimp [chartAt]
   simp only [fderivWithin_univ, mfld_simps]
   let U := (OrthonormalBasis.fromOrthogonalSpanSingleton (𝕜 := ℝ) n
@@ -529,7 +529,7 @@ linear map from `TangentSpace (𝓡 n) v` to `E`.  This map is injective. -/
 theorem injective_mvfderiv_subtypeVal_sphere {n : ℕ} [Fact (finrank ℝ E = n + 1)]
     (v : sphere (0 : E) 1) :
     Injective (mvfderiv (𝓡 n) ((↑) : sphere (0 : E) 1 → E) v) := by
-  rw [((contMDiff_coe_sphere v).mdifferentiableAt one_ne_zero).mvfderiv]
+  rw [((contMDiff_subtypeVal_sphere v).mdifferentiableAt one_ne_zero).mvfderiv]
   simp only [chartAt, fderivWithin_univ, mfld_simps]
   let U := (OrthonormalBasis.fromOrthogonalSpanSingleton
       (𝕜 := ℝ) n (ne_zero_of_mem_unit_sphere (-v))).repr
@@ -582,14 +582,15 @@ instance : LieGroup (𝓡 1) ω Circle where
     have h₂ : ContMDiff (𝓘(ℝ, ℂ).prod 𝓘(ℝ, ℂ)) 𝓘(ℝ, ℂ) ω fun z : ℂ × ℂ => z.fst * z.snd := by
       rw [contMDiff_iff]
       exact ⟨continuous_mul, fun x y => contDiff_mul.contDiffOn⟩
-    -- TODO bug: filling in ω yields an error; expected type has metavariables...
+    -- The elaborator would guess model 𝓘(ℂ).prod 𝓘(ℂ) for the codomain,
+    -- whereas we want models over the real numbers.
     suffices h₁ : ContMDiff _ _ _ (Prod.map c c) from
       h₂.comp h₁
-    apply ContMDiff.prodMap <;> exact contMDiff_coe_sphere
+    exact contMDiff_subtypeVal_sphere.prodMap contMDiff_subtypeVal_sphere
   contMDiff_inv := by
     apply ContMDiff.codRestrict_sphere
     simp only [← Circle.coe_inv, Circle.coe_inv_eq_conj]
-    exact Complex.conjCLE.contDiff.contMDiff.comp contMDiff_coe_sphere
+    exact Complex.conjCLE.contDiff.contMDiff.comp contMDiff_subtypeVal_sphere
 
 /-- The map `fun t ↦ exp (t * I)` from `ℝ` to the unit circle in `ℂ` is analytic. -/
 theorem contMDiff_circleExp {m : ℕ∞ω} : CMDiff m Circle.exp :=
