@@ -1118,8 +1118,8 @@ protected theorem norm_single (hp : 0 < p) (i : α) (x : E i) : ‖lp.single p i
     · intro j hji
       rw [lp.coeFn_single, Pi.single_eq_of_ne hji, _root_.norm_zero, Real.zero_rpow this.ne']
 
-theorem isometry_single [Fact (1 ≤ p)] (i : α) : Isometry (lp.single (E := E) p i) :=
-  AddMonoidHomClass.isometry_of_norm (lp.singleAddMonoidHom (E := E) p i) fun _ ↦
+theorem isometric_single [Fact (1 ≤ p)] (i : α) : Isometric (lp.single (E := E) p i) :=
+  AddMonoidHomClass.isometric_of_norm (lp.singleAddMonoidHom (E := E) p i) fun _ ↦
     lp.norm_single (zero_lt_one.trans_le Fact.out) _ _
 
 variable (p E) in
@@ -1127,7 +1127,7 @@ variable (p E) in
 def singleContinuousAddMonoidHom [Fact (1 ≤ p)] (i : α) :
     ContinuousAddMonoidHom (E i) (lp E p) where
   __ := singleAddMonoidHom p i
-  continuous_toFun := isometry_single i |>.continuous
+  continuous_toFun := isometric_single i |>.continuous
 
 @[simp]
 theorem singleContinuousAddMonoidHom_apply [Fact (1 ≤ p)] (i : α) (x : E i) :
@@ -1138,7 +1138,7 @@ variable (𝕜 p E) in
 /-- `lp.single` as a continuous linear map. -/
 def singleContinuousLinearMap [Fact (1 ≤ p)] (i : α) : E i →L[𝕜] lp E p where
   __ := lsingle p i
-  cont := isometry_single i |>.continuous
+  cont := isometric_single i |>.continuous
 
 @[simp]
 theorem singleContinuousLinearMap_apply [Fact (1 ≤ p)] (i : α) (x : E i) :
@@ -1413,3 +1413,5 @@ theorem LipschitzWith.coordinate [PseudoMetricSpace α] {f : α → ℓ^∞(ι, 
   apply LipschitzOnWith.coordinate
 
 end Lipschitz
+
+@[deprecated (since := "2026-09-09")] alias Mem.lp.isometry_single := Mem.lp.isometric_single

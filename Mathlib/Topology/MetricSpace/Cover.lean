@@ -77,7 +77,7 @@ lemma IsCover.image_lipschitz_of_surjective {f : X → Y} {s : Set Y} {N : Set X
   have : IsCover (K₂ * ε) (f '' s.preimage f) (f '' N) := IsCover.image_lipschitz hs hf
   simp_all only [image_preimage_eq]
 
-lemma _root_.Isometry.isCover_image_iff {f : X → Y} (hf : Isometry f) (C : Set X) :
+lemma _root_.Isometric.isCover_image_iff {f : X → Y} (hf : Isometric f) (C : Set X) :
     IsCover ε (f '' s) (f '' C) ↔ IsCover ε s C := by
   refine ⟨fun h x hx ↦ ?_, fun h ↦ by simpa using h.image_lipschitz hf.lipschitzWith⟩
   obtain ⟨c, hc_mem, hc⟩ := h (Set.mem_image_of_mem _ hx)

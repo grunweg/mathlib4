@@ -662,8 +662,8 @@ lemma prod_lipschitzWith_toLp [PseudoEMetricSpace α] [PseudoEMetricSpace β] :
     LipschitzWith ((2 : ℝ≥0) ^ (1 / p).toReal) (@toLp p (α × β)) :=
   (prod_antilipschitzWith_ofLp p α β).to_rightInverse (ofLp_toLp p)
 
-lemma prod_isometry_ofLp_infty [PseudoEMetricSpace α] [PseudoEMetricSpace β] :
-    Isometry (@ofLp ∞ (α × β)) :=
+lemma prod_isometric_ofLp_infty [PseudoEMetricSpace α] [PseudoEMetricSpace β] :
+    Isometric (@ofLp ∞ (α × β)) :=
   fun x y =>
   le_antisymm (by simpa only [ENNReal.coe_one, one_mul] using prod_lipschitzWith_ofLp ∞ α β x y)
     (by
@@ -1092,15 +1092,15 @@ end WithLp
 
 variable (γ : Type*) {α' β' : Type*}
 
-section Isometry
+section Isometric
 
 variable [hp : Fact (1 ≤ p)] [PseudoEMetricSpace α] [PseudoEMetricSpace β] [PseudoEMetricSpace γ]
   [PseudoEMetricSpace α'] [PseudoEMetricSpace β']
 
 variable {α β} in
 /-- The `L^p` product of two isometries is an isometry. -/
-theorem Isometry.withLpProdMap {f : α → α'} (hf : Isometry f) {g : β → β'} (hg : Isometry g) :
-    Isometry (WithLp.map p (Prod.map f g)) := by
+theorem Isometric.withLpProdMap {f : α → α'} (hf : Isometric f) {g : β → β'} (hg : Isometric g) :
+    Isometric (WithLp.map p (Prod.map f g)) := by
   intro _ _
   rcases p.trichotomy with rfl | rfl | hp
   · absurd hp.elim; simp
@@ -1169,7 +1169,7 @@ theorem coe_withLpUniqueProd [Unique α] : ⇑(withLpUniqueProd p α β) = WithL
 
 end IsometryEquiv
 
-end Isometry
+end Isometric
 
 section Linear
 
@@ -1241,3 +1241,5 @@ theorem coe_withLpUniqueProd [Unique α] : ⇑(withLpUniqueProd p 𝕜 α β) = 
 end LinearIsometryEquiv
 
 end Linear
+
+@[deprecated (since := "2026-09-09")] alias WithLp.prod_isometry_ofLp_infty := WithLp.prod_isometric_ofLp_infty

@@ -140,7 +140,7 @@ theorem nndist_map (x y : P) : nndist (f x) (f y) = nndist x y := by simp [nndis
 @[simp]
 theorem edist_map (x y : P) : edist (f x) (f y) = edist x y := by simp [edist_dist]
 
-protected theorem isometry : Isometry f :=
+protected theorem isometry : Isometric f :=
   f.edist_map
 
 protected theorem injective : Injective f₁ :=
@@ -404,7 +404,7 @@ namespace AffineIsometryEquiv
 
 variable (e : P ≃ᵃⁱ[𝕜] P₂)
 
-protected theorem isometry : Isometry e :=
+protected theorem isometry : Isometric e :=
   e.toAffineIsometry.isometry
 
 /-- Reinterpret an `AffineIsometryEquiv` as an `IsometryEquiv`. -/
@@ -749,8 +749,8 @@ theorem constVAdd_zero : constVAdd 𝕜 P (0 : V) = refl 𝕜 P :=
 include 𝕜 in
 /-- The map `g` from `V` to `V₂` corresponding to a map `f` from `P` to `P₂`, at a base point `p`,
 is an isometry if `f` is one. -/
-theorem vadd_vsub {f : P → P₂} (hf : Isometry f) {p : P} {g : V → V₂}
-    (hg : ∀ v, g v = f (v +ᵥ p) -ᵥ f p) : Isometry g := by
+theorem vadd_vsub {f : P → P₂} (hf : Isometric f) {p : P} {g : V → V₂}
+    (hg : ∀ v, g v = f (v +ᵥ p) -ᵥ f p) : Isometric g := by
   convert! (vaddConst 𝕜 (f p)).symm.isometry.comp (hf.comp (vaddConst 𝕜 p).isometry)
   exact funext hg
 

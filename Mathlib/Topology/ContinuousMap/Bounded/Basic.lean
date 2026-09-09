@@ -455,8 +455,8 @@ theorem dist_extend_extend (f : α ↪ δ) (g₁ g₂ : α →ᵇ β) (h₁ h₂
         rw [extend_apply' x.coe_prop, extend_apply' x.coe_prop]
       _ ≤ _ := dist_coe_le_dist _
 
-theorem isometry_extend (f : α ↪ δ) (h : δ →ᵇ β) : Isometry fun g : α →ᵇ β => extend f g h :=
-  Isometry.of_dist_eq fun g₁ g₂ => by simp
+theorem isometric_extend (f : α ↪ δ) (h : δ →ᵇ β) : Isometric fun g : α →ᵇ β => extend f g h :=
+  Isometric.of_dist_eq fun g₁ g₂ => by simp
 
 end Extend
 
@@ -798,3 +798,5 @@ theorem NNReal.upper_bound {α : Type*} [TopologicalSpace α] (f : α →ᵇ ℝ
   rwa [NNReal.nndist_zero_eq_val' (f x)] at key
 
 end BoundedContinuousFunction
+
+@[deprecated (since := "2026-09-09")] alias BoundedContinuousFunction.isometry_extend := BoundedContinuousFunction.isometric_extend

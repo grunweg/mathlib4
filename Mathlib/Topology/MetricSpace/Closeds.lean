@@ -208,7 +208,7 @@ instance instCompleteSpace [CompleteSpace α] : CompleteSpace (Closeds α) := by
     ((tendsto_order.1 this).2 ε εpos).exists_forall_of_atTop
   exact ⟨N, fun n hn => lt_of_le_of_lt (main n) (hN n hn)⟩
 
-theorem isometry_singleton : Isometry ({·} : α → Closeds α) :=
+theorem isometric_singleton : Isometric ({·} : α → Closeds α) :=
   fun _ _ => hausdorffEDist_singleton
 
 theorem lipschitz_sup : LipschitzWith 1 fun p : Closeds α × Closeds α => p.1 ⊔ p.2 :=
@@ -235,10 +235,10 @@ instance instEMetricSpace : EMetricSpace (Compacts α) where
 theorem edist_eq {s t : Compacts α} : edist s t = hausdorffEDist (s : Set α) t :=
   rfl
 
-theorem isometry_toCloseds : Isometry (Compacts.toCloseds (α := α)) :=
+theorem isometric_toCloseds : Isometric (Compacts.toCloseds (α := α)) :=
   fun _ _ => rfl
 
-theorem isometry_singleton : Isometry ({·} : α → Compacts α) :=
+theorem isometric_singleton : Isometric ({·} : α → Compacts α) :=
   fun _ _ => hausdorffEDist_singleton
 
 theorem lipschitz_sup :
@@ -265,13 +265,13 @@ instance instEMetricSpace : EMetricSpace (NonemptyCompacts α) where
     rwa [s.isCompact.isClosed.closure_eq, t.isCompact.isClosed.closure_eq] at this
 
 /-- `NonemptyCompacts.toCloseds` is an isometry -/
-theorem isometry_toCloseds : Isometry (@NonemptyCompacts.toCloseds α _ _) :=
+theorem isometric_toCloseds : Isometric (@NonemptyCompacts.toCloseds α _ _) :=
   fun _ _ => rfl
 
-theorem isometry_toCompacts : Isometry (NonemptyCompacts.toCompacts (α := α)) :=
+theorem isometric_toCompacts : Isometric (NonemptyCompacts.toCompacts (α := α)) :=
   fun _ _ => rfl
 
-theorem isometry_singleton : Isometry ({·} : α → NonemptyCompacts α) :=
+theorem isometric_singleton : Isometric ({·} : α → NonemptyCompacts α) :=
   fun _ _ => hausdorffEDist_singleton
 
 theorem lipschitz_sup :
@@ -321,3 +321,10 @@ theorem uniformContinuous_infDist_Hausdorff_dist :
 end --section
 
 end Metric --namespace
+
+@[deprecated (since := "2026-09-09")] alias TopologicalSpace.Closeds.isometry_singleton := TopologicalSpace.Closeds.isometric_singleton
+@[deprecated (since := "2026-09-09")] alias TopologicalSpace.Compacts.isometry_toCloseds := TopologicalSpace.Compacts.isometric_toCloseds
+@[deprecated (since := "2026-09-09")] alias TopologicalSpace.Compacts.isometry_singleton := TopologicalSpace.Compacts.isometric_singleton
+@[deprecated (since := "2026-09-09")] alias TopologicalSpace.NonemptyCompacts.isometry_toCloseds := TopologicalSpace.NonemptyCompacts.isometric_toCloseds
+@[deprecated (since := "2026-09-09")] alias TopologicalSpace.NonemptyCompacts.isometry_toCompacts := TopologicalSpace.NonemptyCompacts.isometric_toCompacts
+@[deprecated (since := "2026-09-09")] alias TopologicalSpace.NonemptyCompacts.isometry_singleton := TopologicalSpace.NonemptyCompacts.isometric_singleton

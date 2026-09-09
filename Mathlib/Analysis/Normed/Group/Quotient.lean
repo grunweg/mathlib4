@@ -241,8 +241,8 @@ def _root_.Subgroup.quotientIsometryEquivOfEq (h : S = T) : M ⧸ S ≃ᵢ M ⧸
 @[to_additive /-- An isometric version of `QuotientAddGroup.quotientBot`. -/]
 def quotientBotIsometryEquiv : M ⧸ (⊥ : Subgroup M) ≃ᵢ M where
   __ := quotientBot
-  isometry_toFun : Isometry quotientBot := by
-    rw [MonoidHomClass.isometry_iff_norm]
+  isometry_toFun : Isometric quotientBot := by
+    rw [MonoidHomClass.isometric_iff_norm]
     rintro ⟨x⟩
     change ‖x‖ = ‖QuotientGroup.mk x‖
     simp [norm_mk]
@@ -251,8 +251,8 @@ def quotientBotIsometryEquiv : M ⧸ (⊥ : Subgroup M) ≃ᵢ M where
 @[to_additive /-- An isometric version of `QuotientAddGroup.quotientQuotientEquivQuotient`. -/]
 def quotientQuotientIsometryEquivQuotient (h : S ≤ T) : (M ⧸ S) ⧸ T.map (mk' S) ≃ᵢ M ⧸ T where
   __ := quotientQuotientEquivQuotient S T h
-  isometry_toFun : Isometry (quotientQuotientEquivQuotient S T h) := by
-    rw [MonoidHomClass.isometry_iff_norm]
+  isometry_toFun : Isometric (quotientQuotientEquivQuotient S T h) := by
+    rw [MonoidHomClass.isometric_iff_norm]
     refine fun x => eq_of_forall_le_iff fun r => ?_
     simp only [le_norm_iff]
     exact ⟨
@@ -475,7 +475,7 @@ def Submodule.quotLIEOfEq (h : S = T) : M ⧸ S ≃ₗᵢ[R] M ⧸ T where
 def Submodule.quotientQuotientLIEQuotient (h : S ≤ T) : (M ⧸ S) ⧸ map S.mkQ T ≃ₗᵢ[R] M ⧸ T where
   __ := Submodule.quotientQuotientEquivQuotient S T h
   norm_map' :=
-    (AddMonoidHomClass.isometry_iff_norm _).mp
+    (AddMonoidHomClass.isometric_iff_norm _).mp
       (QuotientAddGroup.quotientQuotientIsometryEquivQuotient
         ((Submodule.toAddSubgroup_le S T).mpr h)).isometry
 

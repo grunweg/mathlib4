@@ -672,8 +672,8 @@ lemma lipschitzWith_toLp [∀ i, PseudoEMetricSpace (β i)] :
     LipschitzWith ((Fintype.card ι : ℝ≥0) ^ (1 / p).toReal) (@toLp p (∀ i, β i)) :=
   (antilipschitzWith_ofLp p β).to_rightInverse (ofLp_toLp p)
 
-lemma isometry_ofLp_infty [∀ i, PseudoEMetricSpace (β i)] :
-    Isometry (@ofLp ∞ (∀ i, β i)) :=
+lemma isometric_ofLp_infty [∀ i, PseudoEMetricSpace (β i)] :
+    Isometric (@ofLp ∞ (∀ i, β i)) :=
   fun x y =>
   le_antisymm (by simpa only [ENNReal.coe_one, one_mul] using lipschitzWith_ofLp ∞ β x y)
     (by simpa only [ENNReal.div_top, ENNReal.toReal_zero, NNReal.rpow_zero, ENNReal.coe_one,
@@ -1309,3 +1309,5 @@ abbrev normedAddCommGroupToPi [∀ i, NormedAddCommGroup (α i)] :
 end toPi
 
 end PiLp
+
+@[deprecated (since := "2026-09-09")] alias PiLp.isometry_ofLp_infty := PiLp.isometric_ofLp_infty

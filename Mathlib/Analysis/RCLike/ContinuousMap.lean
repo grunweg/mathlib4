@@ -65,7 +65,7 @@ variable (X) in
   realToRCLikeOrderEmbedding X 𝕜 |>.lt_iff_lt
 
 variable (X) in
-@[simp] theorem isometry_realToRCLike [CompactSpace X] : Isometry (realToRCLike 𝕜 (X := X)) :=
+@[simp] theorem isometric_realToRCLike [CompactSpace X] : Isometric (realToRCLike 𝕜 (X := X)) :=
   .of_dist_eq fun f g ↦ by simp [dist_eq_norm, norm_eq_iSup_norm, ← map_sub]
 
 variable (X) in
@@ -119,3 +119,5 @@ theorem range_realToRCLike_eq_isSelfAdjoint :
     ⟨f.rclikeToReal, hf.realToRCLike_rclikeToReal⟩
 
 end ContinuousMap
+
+@[deprecated (since := "2026-09-09")] alias ContinuousMap.isometry_realToRCLike := ContinuousMap.isometric_realToRCLike

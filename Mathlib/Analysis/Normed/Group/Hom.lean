@@ -727,22 +727,26 @@ theorem neg_iff {f : NormedAddGroupHom V₁ V₂} : (-f).NormNoninc ↔ f.NormNo
 
 end NormNoninc
 
-section Isometry
+section Isometric
 
-theorem norm_eq_of_isometry {f : NormedAddGroupHom V W} (hf : Isometry f) (v : V) : ‖f v‖ = ‖v‖ :=
-  (AddMonoidHomClass.isometry_iff_norm f).mp hf v
+theorem norm_eq_of_isometric {f : NormedAddGroupHom V W} (hf : Isometric f) (v : V) : ‖f v‖ = ‖v‖ :=
+  (AddMonoidHomClass.isometric_iff_norm f).mp hf v
 
-theorem isometry_id : @Isometry V V _ _ (id V) :=
-  _root_.isometry_id
+theorem isometric_id : @Isometric V V _ _ (id V) :=
+  _root_.isometric_id
 
-theorem isometry_comp {g : NormedAddGroupHom V₂ V₃} {f : NormedAddGroupHom V₁ V₂} (hg : Isometry g)
-    (hf : Isometry f) : Isometry (g.comp f) :=
+@[deprecated (since := "2026-09-09")] alias isometry_id := isometric_id
+
+theorem isometric_comp {g : NormedAddGroupHom V₂ V₃} {f : NormedAddGroupHom V₁ V₂}
+    (hg : Isometric g) (hf : Isometric f) : Isometric (g.comp f) :=
   hg.comp hf
 
-theorem normNoninc_of_isometry (hf : Isometry f) : f.NormNoninc := fun v =>
-  le_of_eq <| norm_eq_of_isometry hf v
+@[deprecated (since := "2026-09-09")] alias isometry_comp := isometric_comp
 
-end Isometry
+theorem normNoninc_of_isometric (hf : Isometric f) : f.NormNoninc := fun v =>
+  le_of_eq <| norm_eq_of_isometric hf v
+
+end Isometric
 
 variable {W₁ W₂ W₃ : Type*} [SeminormedAddCommGroup W₁] [SeminormedAddCommGroup W₂]
   [SeminormedAddCommGroup W₃]
@@ -856,3 +860,6 @@ theorem norm_map_le (hf : ψ.comp f₁ = f₂.comp φ) (hg : ψ.comp g₁ = g₂
 end Equalizer
 
 end NormedAddGroupHom
+
+@[deprecated (since := "2026-09-09")] alias NormedAddGroupHom.norm_eq_of_isometry := NormedAddGroupHom.norm_eq_of_isometric
+@[deprecated (since := "2026-09-09")] alias NormedAddGroupHom.normNoninc_of_isometry := NormedAddGroupHom.normNoninc_of_isometric

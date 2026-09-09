@@ -125,17 +125,17 @@ theorem IsometryEquiv.measurePreserving_euclideanHausdorffMeasure (e : X ≃ᵢ 
     MeasurePreserving e μHE[d] μHE[d] :=
   (IsometryEquiv.measurePreserving_hausdorffMeasure e d).smul_measure _
 
-theorem Isometry.euclideanHausdorffMeasure_image {f : X → Y} {d : ℕ} (hf : Isometry f) (s : Set X) :
+theorem Isometric.euclideanHausdorffMeasure_image {f : X → Y} {d : ℕ} (hf : Isometric f) (s : Set X) :
     μHE[d] (f '' s) = μHE[d] s := by
   simp_rw [euclideanHausdorffMeasure_def, Measure.smul_apply]
-  rw [Isometry.hausdorffMeasure_image hf (by simp)]
+  rw [Isometric.hausdorffMeasure_image hf (by simp)]
 
-theorem Isometry.euclideanHausdorffMeasure_preimage {f : X → Y} {d : ℕ} (hf : Isometry f)
+theorem Isometric.euclideanHausdorffMeasure_preimage {f : X → Y} {d : ℕ} (hf : Isometric f)
     (s : Set Y) : μHE[d] (f ⁻¹' s) = μHE[d] (s ∩ Set.range f) := by
   simp_rw [euclideanHausdorffMeasure_def, Measure.smul_apply]
-  rw [Isometry.hausdorffMeasure_preimage hf (by simp)]
+  rw [Isometric.hausdorffMeasure_preimage hf (by simp)]
 
-theorem Isometry.map_euclideanHausdorffMeasure {f : X → Y} {d : ℕ} (hf : Isometry f) :
+theorem Isometric.map_euclideanHausdorffMeasure {f : X → Y} {d : ℕ} (hf : Isometric f) :
     μHE[d].map f = μHE[d].restrict (Set.range f) := by
   simp_rw [euclideanHausdorffMeasure_def]
   rw [Measure.map_smul _ hf.continuous.aemeasurable, map_hausdorffMeasure hf (by simp),

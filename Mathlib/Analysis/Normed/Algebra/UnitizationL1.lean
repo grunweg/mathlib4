@@ -78,8 +78,8 @@ lemma unitization_norm_inr (x : A) : ‖toLp 1 (x : Unitization 𝕜 A)‖ = ‖
 lemma unitization_nnnorm_inr (x : A) : ‖toLp 1 (x : Unitization 𝕜 A)‖₊ = ‖x‖₊ := by
   simp [unitization_nnnorm_def]
 
-lemma unitization_isometry_inr : Isometry fun x : A ↦ toLp 1 (x : Unitization 𝕜 A) :=
-  AddMonoidHomClass.isometry_of_norm
+lemma unitization_isometric_inr : Isometric fun x : A ↦ toLp 1 (x : Unitization 𝕜 A) :=
+  AddMonoidHomClass.isometric_of_norm
     ((WithLp.linearEquiv 1 𝕜 (Unitization 𝕜 A)).symm.comp <| Unitization.inrHom 𝕜 𝕜 A)
     unitization_norm_inr
 
@@ -139,3 +139,5 @@ noncomputable instance instUnitizationNormedAlgebra :
     exact le_rfl
 
 end WithLp
+
+@[deprecated (since := "2026-09-09")] alias WithLp.unitization_isometry_inr := WithLp.unitization_isometric_inr

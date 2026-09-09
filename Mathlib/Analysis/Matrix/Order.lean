@@ -360,7 +360,7 @@ instance instIsometricContinuousFunctionalCalculus [DecidableEq n] :
     IsometricContinuousFunctionalCalculus ℝ (Matrix n n 𝕜) IsSelfAdjoint where
   isometric A hA := by
     rw [← isHermitian_iff_isSelfAdjoint] at hA
-    rw [IsHermitian.cfcHom_eq_cfcAux hA, AddMonoidHomClass.isometry_iff_norm]
+    rw [IsHermitian.cfcHom_eq_cfcAux hA, AddMonoidHomClass.isometric_iff_norm]
     intro f
     simp only [IsHermitian.cfcAux_apply, Unitary.conjStarAlgAut_apply, ← Unitary.coe_star,
       CStarRing.norm_mul_coe_unitary, CStarRing.norm_coe_unitary_mul, l2_opNorm_diagonal]

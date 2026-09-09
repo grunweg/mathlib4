@@ -44,12 +44,12 @@ variable (M : Type u) (G : Type v) (X : Type w)
 
 /-- An additive action is isometric if each map `x ↦ c +ᵥ x` is an isometry. -/
 class IsIsometricVAdd (X : Type w) [PseudoEMetricSpace X] [VAdd M X] : Prop where
-  isometry_vadd (X) : ∀ c : M, Isometry ((c +ᵥ ·) : X → X)
+  isometry_vadd (X) : ∀ c : M, Isometric ((c +ᵥ ·) : X → X)
 
 /-- A multiplicative action is isometric if each map `x ↦ c • x` is an isometry. -/
 @[to_additive]
 class IsIsometricSMul (X : Type w) [PseudoEMetricSpace X] [SMul M X] : Prop where
-  isometry_smul (X) : ∀ c : M, Isometry ((c • ·) : X → X)
+  isometry_smul (X) : ∀ c : M, Isometric ((c • ·) : X → X)
 
 export IsIsometricSMul (isometry_smul)
 export IsIsometricVAdd (isometry_vadd)
@@ -82,7 +82,7 @@ theorem ediam_smul [SMul M X] [IsIsometricSMul M X] (c : M) (s : Set X) :
 
 @[to_additive]
 theorem isometry_mul_left [Mul M] [PseudoEMetricSpace M] [IsIsometricSMul M M] (a : M) :
-    Isometry (a * ·) :=
+    Isometric (a * ·) :=
   isometry_smul M a
 
 @[to_additive (attr := simp)]
@@ -92,7 +92,7 @@ theorem edist_mul_left [Mul M] [PseudoEMetricSpace M] [IsIsometricSMul M M] (a b
 
 @[to_additive]
 theorem isometry_mul_right [Mul M] [PseudoEMetricSpace M] [IsIsometricSMul Mᵐᵒᵖ M] (a : M) :
-    Isometry fun x => x * a :=
+    Isometric fun x => x * a :=
   isometry_smul M (MulOpposite.op a)
 
 @[to_additive (attr := simp)]
@@ -113,7 +113,7 @@ theorem edist_inv_inv [PseudoEMetricSpace G] [IsIsometricSMul G G] [IsIsometricS
 
 @[to_additive]
 theorem isometry_inv [PseudoEMetricSpace G] [IsIsometricSMul G G] [IsIsometricSMul Gᵐᵒᵖ G] :
-    Isometry (Inv.inv : G → G) :=
+    Isometric (Inv.inv : G → G) :=
   edist_inv_inv
 
 @[to_additive]

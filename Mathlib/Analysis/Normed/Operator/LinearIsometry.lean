@@ -84,8 +84,8 @@ namespace SemilinearIsometryClass
 
 variable [FunLike 𝓕 E E₂]
 
-protected theorem isometry [SemilinearIsometryClass 𝓕 σ₁₂ E E₂] (f : 𝓕) : Isometry f :=
-  AddMonoidHomClass.isometry_of_norm _ (norm_map _)
+protected theorem isometry [SemilinearIsometryClass 𝓕 σ₁₂ E E₂] (f : 𝓕) : Isometric f :=
+  AddMonoidHomClass.isometric_of_norm _ (norm_map _)
 
 @[continuity]
 protected theorem continuous [SemilinearIsometryClass 𝓕 σ₁₂ E E₂] (f : 𝓕) : Continuous f :=
@@ -196,8 +196,8 @@ protected lemma norm_map (x : E) : ‖f x‖ = ‖x‖ := by simp
 protected lemma nnnorm_map (x : E) : ‖f x‖₊ = ‖x‖₊ := by simp
 protected lemma enorm_map (x : E) : ‖f x‖ₑ = ‖x‖ₑ := by simp
 
-protected theorem isometry : Isometry f :=
-  AddMonoidHomClass.isometry_of_norm f.toLinearMap f.norm_map
+protected theorem isometry : Isometric f :=
+  AddMonoidHomClass.isometric_of_norm f.toLinearMap f.norm_map
 
 lemma isEmbedding (f : F →ₛₗᵢ[σ₁₂] E₂) : IsEmbedding f := f.isometry.isEmbedding
 
@@ -223,7 +223,7 @@ theorem edist_map (x y : E) : edist (f x) (f y) = edist x y :=
   f.isometry.edist_eq x y
 
 protected theorem injective : Injective f₁ :=
-  Isometry.injective (LinearIsometry.isometry f₁)
+  Isometric.injective (LinearIsometry.isometry f₁)
 
 @[simp]
 theorem map_eq_iff {x y : F} : f₁ x = f₁ y ↔ x = y :=
@@ -262,10 +262,10 @@ theorem ediam_range : Metric.ediam (range f) = Metric.ediam (univ : Set E) :=
   f.isometry.ediam_range
 
 theorem diam_image (s : Set E) : Metric.diam (f '' s) = Metric.diam s :=
-  Isometry.diam_image (LinearIsometry.isometry f) s
+  Isometric.diam_image (LinearIsometry.isometry f) s
 
 theorem diam_range : Metric.diam (range f) = Metric.diam (univ : Set E) :=
-  Isometry.diam_range (LinearIsometry.isometry f)
+  Isometric.diam_range (LinearIsometry.isometry f)
 
 /-- Interpret a linear isometry as a continuous linear map. -/
 def toContinuousLinearMap : E →SL[σ₁₂] E₂ :=
@@ -385,8 +385,8 @@ end submoduleMap
 
 end LinearIsometry
 
-/-- Construct a `LinearIsometry` from a `LinearMap` satisfying `Isometry`. -/
-def LinearMap.toLinearIsometry (f : E →ₛₗ[σ₁₂] E₂) (hf : Isometry f) : E →ₛₗᵢ[σ₁₂] E₂ :=
+/-- Construct a `LinearIsometry` from a `LinearMap` satisfying `Isometric`. -/
+def LinearMap.toLinearIsometry (f : E →ₛₗ[σ₁₂] E₂) (hf : Isometric f) : E →ₛₗᵢ[σ₁₂] E₂ :=
   { f with
     norm_map' := by
       simp_rw [← dist_zero_right]
@@ -545,7 +545,7 @@ theorem toLinearIsometry_inj {f g : E ≃ₛₗᵢ[σ₁₂] E₂} :
 theorem coe_toLinearIsometry : ⇑e.toLinearIsometry = e :=
   rfl
 
-protected theorem isometry : Isometry e :=
+protected theorem isometry : Isometric e :=
   e.toLinearIsometry.isometry
 
 /-- Reinterpret a `LinearIsometryEquiv` as an `IsometryEquiv`. -/
@@ -1104,7 +1104,7 @@ noncomputable def LinearIsometry.equivRange {R S : Type*} [Semiring R] [Ring S] 
 namespace MulOpposite
 variable {R H : Type*} [Semiring R] [SeminormedAddCommGroup H] [Module R H]
 
-theorem isometry_opLinearEquiv : Isometry (opLinearEquiv R (M := H)) := fun _ _ => rfl
+theorem isometry_opLinearEquiv : Isometric (opLinearEquiv R (M := H)) := fun _ _ => rfl
 
 variable (R H) in
 /-- The linear isometry equivalence version of the function `op`. -/

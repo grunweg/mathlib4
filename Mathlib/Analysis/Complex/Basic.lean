@@ -219,16 +219,16 @@ theorem conjLIE_apply (z : ℂ) : conjLIE z = conj z :=
 theorem conjLIE_symm : conjLIE.symm = conjLIE :=
   rfl
 
-theorem isometry_conj : Isometry (conj : ℂ → ℂ) :=
+theorem isometric_conj : Isometric (conj : ℂ → ℂ) :=
   conjLIE.isometry
 
 @[simp]
 theorem dist_conj_conj (z w : ℂ) : dist (conj z) (conj w) = dist z w :=
-  isometry_conj.dist_eq z w
+  isometric_conj.dist_eq z w
 
 @[simp]
 theorem nndist_conj_conj (z w : ℂ) : nndist (conj z) (conj w) = nndist z w :=
-  isometry_conj.nndist_eq z w
+  isometric_conj.nndist_eq z w
 
 theorem dist_conj_comm (z w : ℂ) : dist (conj z) w = dist z (conj w) := by
   rw [← dist_conj_conj, conj_conj]
@@ -286,7 +286,7 @@ def ofRealLI : ℝ →ₗᵢ[ℝ] ℂ :=
 @[simp]
 theorem ofRealLI_apply (x : ℝ) : ofRealLI x = x := rfl
 
-theorem isometry_ofReal : Isometry ((↑) : ℝ → ℂ) :=
+theorem isometric_ofReal : Isometric ((↑) : ℝ → ℂ) :=
   ofRealLI.isometry
 
 @[continuity, fun_prop]
@@ -434,12 +434,12 @@ def _root_.RCLike.complexLinearIsometryEquiv {𝕜 : Type*} [RCLike 𝕜]
     simp
   exact (RCLike.complexLinearIsometryEquiv h).norm_map a
 
-theorem isometry_intCast : Isometry ((↑) : ℤ → ℂ) :=
-  Isometry.of_dist_eq <| by simp_rw [← Complex.ofReal_intCast,
-    Complex.isometry_ofReal.dist_eq, Int.dist_cast_real, implies_true]
+theorem isometric_intCast : Isometric ((↑) : ℤ → ℂ) :=
+  Isometric.of_dist_eq <| by simp_rw [← Complex.ofReal_intCast,
+    Complex.isometric_ofReal.dist_eq, Int.dist_cast_real, implies_true]
 
 theorem isClosedEmbedding_intCast : IsClosedEmbedding ((↑) : ℤ → ℂ) :=
-  isometry_intCast.isClosedEmbedding
+  isometric_intCast.isClosedEmbedding
 
 @[deprecated (since := "2026-04-15")] alias closedEmbedding_intCast := isClosedEmbedding_intCast
 
@@ -727,3 +727,7 @@ lemma imaginaryPart.norm_le (x : A) : ‖imaginaryPart x‖ ≤ ‖x‖ := by
         realPart.norm_le (Complex.I • (-x))
 
 end realPart_imaginaryPart
+
+@[deprecated (since := "2026-09-09")] alias Complex.isometry_intCast := Complex.isometric_intCast
+@[deprecated (since := "2026-09-09")] alias Complex.isometry_conj := Complex.isometric_conj
+@[deprecated (since := "2026-09-09")] alias Complex.isometry_ofReal := Complex.isometric_ofReal

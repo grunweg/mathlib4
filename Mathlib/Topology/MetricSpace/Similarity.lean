@@ -145,26 +145,26 @@ end Dilation
 
 While these are trivial consequences of the dilation results, they avoid ending up with a
 `toDilation` in the expression, and so are easier to apply to plain functions.
-If `Dilation` were a predicate like `Isometry` then these would not be needed.
+If `Dilation` were a predicate like `Isometric` then these would not be needed.
 -/
 
-section Isometry
+section Isometric
 
-lemma comp_isometry_left {f : P₁ → P₃} (hf : Isometry f) (h : v₁ ∼ v₂) : f ∘ v₁ ∼ v₂ :=
+lemma comp_isometric_left {f : P₁ → P₃} (hf : Isometric f) (h : v₁ ∼ v₂) : f ∘ v₁ ∼ v₂ :=
   comp_left hf.toDilation h
 
-lemma comp_isometry_right {f : P₂ → P₃} (hf : Isometry f) (h : v₁ ∼ v₂) : v₁ ∼ f ∘ v₂ :=
+lemma comp_isometric_right {f : P₂ → P₃} (hf : Isometric f) (h : v₁ ∼ v₂) : v₁ ∼ f ∘ v₂ :=
   comp_right hf.toDilation h
 
 @[simp]
-lemma comp_isometry_left_iff {f : P₁ → P₃} (hf : Isometry f) : f ∘ v₁ ∼ v₂ ↔ v₁ ∼ v₂ :=
+lemma comp_isometric_left_iff {f : P₁ → P₃} (hf : Isometric f) : f ∘ v₁ ∼ v₂ ↔ v₁ ∼ v₂ :=
   comp_left_iff hf.toDilation
 
 @[simp]
-lemma comp_isometry_right_iff {f : P₂ → P₃} (hf : Isometry f) : v₁ ∼ f ∘ v₂ ↔ v₁ ∼ v₂ :=
+lemma comp_isometric_right_iff {f : P₂ → P₃} (hf : Isometric f) : v₁ ∼ f ∘ v₂ ↔ v₁ ∼ v₂ :=
   comp_right_iff hf.toDilation
 
-end Isometry
+end Isometric
 
 section Triangle
 
@@ -328,3 +328,12 @@ alias similar_of_side_side := similar_of_dist_mul_eq_dist_mul_eq
 end Triangle
 
 end PseudoMetricSpace
+
+@[deprecated (since := "2026-09-09")] alias Similar.comp_isometry_left :=
+  Similar.comp_isometric_left
+@[deprecated (since := "2026-09-09")] alias Similar.comp_isometry_right :=
+  Similar.comp_isometric_right
+@[deprecated (since := "2026-09-09")] alias Similar.comp_isometry_left_iff :=
+  Similar.comp_isometric_left_iff
+@[deprecated (since := "2026-09-09")] alias Similar.comp_isometry_right_iff :=
+  Similar.comp_isometric_right_iff

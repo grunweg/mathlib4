@@ -850,7 +850,7 @@ theorem upperHemicontinuous_quasispectrum [NontriviallyNormedField 𝕜] [Proper
     UpperHemicontinuous (quasispectrum 𝕜 : A → Set 𝕜) := by
   convert!
     upperHemicontinuous_spectrum 𝕜 (WithLp 1 (Unitization 𝕜 A)) |>.comp
-      unitization_isometry_inr.continuous
+      unitization_isometric_inr.continuous
   ext1 a
   rw [quasispectrum_eq_spectrum_toLp_inr]
   congr

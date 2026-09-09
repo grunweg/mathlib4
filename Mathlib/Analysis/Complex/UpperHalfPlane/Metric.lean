@@ -309,16 +309,16 @@ instance : ProperSpace ℍ := by
   rw [isEmbedding_coe.isCompact_iff (f := ((↑) : ℍ → ℂ)), image_coe_closedBall]
   apply isCompact_closedBall
 
-theorem isometry_vertical_line (a : ℝ) : Isometry fun y => mk ⟨a, exp y⟩ (exp_pos y) := by
-  refine Isometry.of_dist_eq fun y₁ y₂ => ?_
+theorem isometric_vertical_line (a : ℝ) : Isometric fun y => mk ⟨a, exp y⟩ (exp_pos y) := by
+  refine Isometric.of_dist_eq fun y₁ y₂ => ?_
   rw [dist_of_re_eq]
   exacts [congr_arg₂ _ (log_exp _) (log_exp _), rfl]
 
-theorem isometry_real_vadd (a : ℝ) : Isometry (a +ᵥ · : ℍ → ℍ) :=
-  Isometry.of_dist_eq fun y₁ y₂ => by simp only [dist_eq, coe_vadd, vadd_im, dist_add_left]
+theorem isometric_real_vadd (a : ℝ) : Isometric (a +ᵥ · : ℍ → ℍ) :=
+  Isometric.of_dist_eq fun y₁ y₂ => by simp only [dist_eq, coe_vadd, vadd_im, dist_add_left]
 
-theorem isometry_pos_mul (a : { x : ℝ // 0 < x }) : Isometry (a • · : ℍ → ℍ) := by
-  refine Isometry.of_dist_eq fun y₁ y₂ => ?_
+theorem isometric_pos_mul (a : { x : ℝ // 0 < x }) : Isometric (a • · : ℍ → ℍ) := by
+  refine Isometric.of_dist_eq fun y₁ y₂ => ?_
   simp only [dist_eq, coe_pos_real_smul, pos_real_im]; congr 2
   rw [dist_smul₀, mul_mul_mul_comm, Real.sqrt_mul (mul_self_nonneg _), Real.sqrt_mul_self_eq_abs,
     Real.norm_eq_abs, mul_left_comm]
@@ -327,8 +327,8 @@ theorem isometry_pos_mul (a : { x : ℝ // 0 < x }) : Isometry (a • · : ℍ �
 /-- `SL(2, ℝ)` acts on the upper half plane as an isometry. -/
 instance : IsIsometricSMul SL(2, ℝ) ℍ :=
   ⟨fun g => by
-    have h₀ : Isometry (fun z => ModularGroup.S • z : ℍ → ℍ) :=
-      Isometry.of_dist_eq fun y₁ y₂ => by
+    have h₀ : Isometric (fun z => ModularGroup.S • z : ℍ → ℍ) :=
+      Isometric.of_dist_eq fun y₁ y₂ => by
         have h₁ : 0 ≤ im y₁ * im y₂ := by positivity
         have h₂ : ‖(y₁ * y₂ : ℂ)‖ ≠ 0 := by simp [y₁.ne_zero, y₂.ne_zero]
         simp_rw [modular_S_smul, inv_neg, dist_eq, dist_neg_neg,
@@ -338,10 +338,14 @@ instance : IsIsometricSMul SL(2, ℝ) ℍ :=
     by_cases hc : g 1 0 = 0
     · obtain ⟨u, v, h⟩ := exists_SL2_smul_eq_of_apply_zero_one_eq_zero g hc
       rw [h]
-      exact (isometry_real_vadd v).comp (isometry_pos_mul u)
+      exact (isometric_real_vadd v).comp (isometric_pos_mul u)
     · obtain ⟨u, v, w, h⟩ := exists_SL2_smul_eq_of_apply_zero_one_ne_zero g hc
       rw [h]
       exact
-        (isometry_real_vadd w).comp (h₀.comp <| (isometry_real_vadd v).comp <| isometry_pos_mul u)⟩
+        (isometric_real_vadd w).comp (h₀.comp <| (isometric_real_vadd v).comp <| isometric_pos_mul u)⟩
 
 end UpperHalfPlane
+
+@[deprecated (since := "2026-09-09")] alias UpperHalfPlane.isometry_vertical_line := UpperHalfPlane.isometric_vertical_line
+@[deprecated (since := "2026-09-09")] alias UpperHalfPlane.isometry_real_vadd := UpperHalfPlane.isometric_real_vadd
+@[deprecated (since := "2026-09-09")] alias UpperHalfPlane.isometry_pos_mul := UpperHalfPlane.isometric_pos_mul

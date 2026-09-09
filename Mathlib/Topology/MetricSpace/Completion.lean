@@ -156,12 +156,12 @@ instance instMetricSpace : MetricSpace (Completion α) :=
       uniformity_dist := Completion.uniformity_dist } _
 
 /-- The embedding of a metric space in its completion is an isometry. -/
-theorem coe_isometry : Isometry ((↑) : α → Completion α) :=
-  Isometry.of_dist_eq Completion.dist_eq
+theorem coe_isometric : Isometric ((↑) : α → Completion α) :=
+  Isometric.of_dist_eq Completion.dist_eq
 
 @[simp]
 protected theorem edist_eq (x y : α) : edist (x : Completion α) y = edist x y :=
-  coe_isometry x y
+  coe_isometric x y
 
 instance {M} [Zero M] [Zero α] [SMul M α] [PseudoMetricSpace M] [IsBoundedSMul M α] :
     IsBoundedSMul M (Completion α) where
@@ -190,17 +190,17 @@ theorem LipschitzWith.completion_extension [MetricSpace β] [CompleteSpace β] {
 
 theorem LipschitzWith.completion_map [PseudoMetricSpace β] {f : α → β} {K : ℝ≥0}
     (h : LipschitzWith K f) : LipschitzWith K (Completion.map f) :=
-  one_mul K ▸ (coe_isometry.lipschitzWith.comp h).completion_extension
+  one_mul K ▸ (coe_isometric.lipschitzWith.comp h).completion_extension
 
-theorem Isometry.completion_extension [PseudoMetricSpace β] [CompleteSpace β] [T0Space β]
-    {f : α → β} (h : Isometry f) : Isometry (Completion.extension f) :=
-  Isometry.of_dist_eq fun x y => induction_on₂ x y
+theorem Isometric.completion_extension [PseudoMetricSpace β] [CompleteSpace β] [T0Space β]
+    {f : α → β} (h : Isometric f) : Isometric (Completion.extension f) :=
+  Isometric.of_dist_eq fun x y => induction_on₂ x y
     (isClosed_eq (by fun_prop) (by fun_prop)) fun _ _ ↦ by
       simp only [extension_coe h.uniformContinuous, Completion.dist_eq, h.dist_eq]
 
-theorem Isometry.completion_map [PseudoMetricSpace β] {f : α → β}
-    (h : Isometry f) : Isometry (Completion.map f) :=
-  (coe_isometry.comp h).completion_extension
+theorem Isometric.completion_map [PseudoMetricSpace β] {f : α → β}
+    (h : Isometric f) : Isometric (Completion.map f) :=
+  (coe_isometric.comp h).completion_extension
 
 section extension_maps
 
@@ -209,28 +209,33 @@ variable [Ring α] [IsTopologicalRing α] [IsUniformAddGroup α] [Ring β]
 
 /-- The extension of an isometry to the completion of the domain. -/
 @[deprecated Completion.extensionHom (since := "2026-08-11")]
-def Isometry.extensionHom [CompleteSpace β] [T0Space β] {f : α →+* β} (h : Isometry f) :
+def Isometric.extensionHom [CompleteSpace β] [T0Space β] {f : α →+* β} (h : Isometric f) :
     Completion α →+* β := Completion.extensionHom f h.continuous
 
 @[deprecated Completion.extensionHom_coe (since := "2026-08-11")]
-theorem Isometry.extensionHom_coe [CompleteSpace β] [T0Space β] {f : α →+* β} (h : Isometry f)
+theorem Isometric.extensionHom_coe [CompleteSpace β] [T0Space β] {f : α →+* β} (h : Isometric f)
     (x : α) : h.extensionHom x = f x := Completion.extensionHom_coe f h.continuous _
 
 /-- The lift of an isometry to completions. -/
 @[deprecated Completion.mapRingHom (since := "2026-08-11")]
-def Isometry.mapRingHom {f : α →+* β} (h : Isometry f) : Completion α →+* Completion β :=
+def Isometric.mapRingHom {f : α →+* β} (h : Isometric f) : Completion α →+* Completion β :=
   Completion.mapRingHom f h.continuous
 
 @[deprecated Completion.mapRingHom_coe (since := "2026-08-11")]
-theorem Isometry.mapRingHom_coe {f : α →+* β} (h : Isometry f) (x : α) : h.mapRingHom x = f x :=
+theorem Isometric.mapRingHom_coe {f : α →+* β} (h : Isometric f) (x : α) : h.mapRingHom x = f x :=
   Completion.mapRingHom_coe h.uniformContinuous.continuous _
 
-theorem UniformSpace.Completion.isometry_mapRingHom {f : α →+* β} (h : Isometry f) :
-    Isometry (Completion.mapRingHom f h.continuous) :=
+theorem UniformSpace.Completion.isometric_mapRingHom {f : α →+* β} (h : Isometric f) :
+    Isometric (Completion.mapRingHom f h.continuous) :=
   h.completion_map
 
-@[deprecated Completion.isometry_mapRingHom (since := "2026-08-11")]
-theorem Isometry.isometry_mapRingHom {f : α →+* β} (h : Isometry f) : Isometry h.mapRingHom :=
-  Completion.isometry_mapRingHom h
+@[deprecated Completion.isometric_mapRingHom (since := "2026-08-11")]
+theorem Isometric.isometric_mapRingHom {f : α →+* β} (h : Isometric f) : Isometric h.mapRingHom :=
+  Completion.isometric_mapRingHom h
 
 end extension_maps
+
+@[deprecated (since := "2026-09-09")] alias UniformSpace.Completion.coe_isometry :=
+  UniformSpace.Completion.coe_isometric
+@[deprecated (since := "2026-09-09")] alias Isometric.isometry_mapRingHom :=
+  Isometric.isometric_mapRingHom
