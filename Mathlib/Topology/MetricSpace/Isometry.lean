@@ -753,12 +753,18 @@ def Isometric.isometryEquivOnRange [EMetricSpace α] [PseudoEMetricSpace β] {f 
   isometry_toFun := h
   toEquiv := Equiv.ofInjective f h.injective
 
+@[deprecated (since := "2026-09-10")] alias Isometry.isometryEquivOnRange :=
+  Isometric.isometryEquivOnRange
+
 open NNReal in
 /-- Post-composition by an isometry does not change the Lipschitz-property of a function. -/
 lemma Isometric.lipschitzWith_iff {α β γ : Type*} [PseudoEMetricSpace α] [PseudoEMetricSpace β]
     [PseudoEMetricSpace γ] {f : α → β} {g : β → γ} (K : ℝ≥0) (h : Isometric g) :
     LipschitzWith K (g ∘ f) ↔ LipschitzWith K f := by
   simp [LipschitzWith, h.edist_eq]
+
+@[deprecated (since := "2026-09-10")] alias Isometry.lipschitzWith_iff :=
+  Isometric.lipschitzWith_iff
 
 /-- If `f` is locally Lipschitz on `s` after precomposition with an isometry `g`, then `f` is
 locally Lipschitz on `g '' s`. -/
@@ -772,6 +778,9 @@ lemma Isometric.locallyLipschitzOn_image {α β γ : Type*} [EMetricSpace α] [P
     exact Filter.image_mem_map ht
   · rintro _ ⟨a, ha, rfl⟩ _ ⟨b, hb, rfl⟩
     simpa [hg.edist_eq] using hK ha hb
+
+@[deprecated (since := "2026-09-10")] alias Isometry.locallyLipschitzOn_image :=
+  Isometric.locallyLipschitzOn_image
 
 namespace IsometryClass
 

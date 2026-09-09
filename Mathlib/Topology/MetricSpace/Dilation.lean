@@ -245,6 +245,9 @@ def _root_.Isometric.toDilation (f : α → β) (hf : Isometric f) : α →ᵈ �
   toFun := f
   edist_eq' := ⟨1, one_ne_zero, by simpa using! hf⟩
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.toDilation :=
+  _root_.Isometric.toDilation
+
 @[simp]
 lemma _root_.Isometric.toDilation_ratio {f : α → β} {hf : Isometric f} :
     ratio hf.toDilation = 1 := by
@@ -252,6 +255,9 @@ lemma _root_.Isometric.toDilation_ratio {f : α → β} {hf : Isometric f} :
   · exact ratio_of_trivial hf.toDilation h
   · obtain ⟨x, y, h₁, h₂⟩ := h
     exact ratio_unique h₁ h₂ (by simp [hf x y]) |>.symm
+
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.toDilation_ratio :=
+  _root_.Isometric.toDilation_ratio
 
 theorem lipschitz : LipschitzWith (ratio f) (f : α → β) := fun x y => (edist_eq f x y).le
 

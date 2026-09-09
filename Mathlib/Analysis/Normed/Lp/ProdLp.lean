@@ -1109,6 +1109,8 @@ theorem Isometric.withLpProdMap {f : α → α'} (hf : Isometric f) {g : β → 
   · simp [WithLp.prod_edist_eq_sup, hf.edist_eq, hg.edist_eq]
   · simp [WithLp.prod_edist_eq_add hp, hf.edist_eq, hg.edist_eq]
 
+@[deprecated (since := "2026-09-10")] alias Isometry.withLpProdMap := Isometric.withLpProdMap
+
 namespace IsometryEquiv
 
 variable {α β} in

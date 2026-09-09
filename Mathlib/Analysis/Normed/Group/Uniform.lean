@@ -35,6 +35,11 @@ instance NormedGroup.to_isIsometricSMul : IsIsometricSMul E E :=
 theorem Isometric.norm_map_of_map_one {f : E → F} (hi : Isometric f) (h₁ : f 1 = 1) (x : E) :
     ‖f x‖ = ‖x‖ := by rw [← dist_one_right, ← h₁, hi.dist_eq, dist_one_right]
 
+@[deprecated (since := "2026-09-10")] alias Isometry.norm_map_of_map_one :=
+  Isometric.norm_map_of_map_one
+@[deprecated (since := "2026-09-10")] alias Isometry.norm_map_of_map_zero :=
+  Isometric.norm_map_of_map_zero
+
 @[to_additive (attr := simp) norm_map]
 theorem norm_map' [FunLike 𝓕 E F] [IsometryClass 𝓕 E F] [OneHomClass 𝓕 E F] (f : 𝓕) (x : E) :
     ‖f x‖ = ‖x‖ :=
@@ -118,9 +123,19 @@ theorem MonoidHomClass.isometric_iff_norm [MonoidHomClass 𝓕 E F] (f : 𝓕) :
   refine ⟨fun h x => ?_, fun h x y => h _⟩
   simpa using h x 1
 
+@[deprecated (since := "2026-09-10")] alias MonoidHomClass.isometry_iff_norm :=
+  MonoidHomClass.isometric_iff_norm
+@[deprecated (since := "2026-09-10")] alias AddMonoidHomClass.isometry_iff_norm :=
+  AddMonoidHomClass.isometric_iff_norm
+
 alias ⟨_, MonoidHomClass.isometric_of_norm⟩ := MonoidHomClass.isometric_iff_norm
 
 attribute [to_additive] MonoidHomClass.isometric_of_norm
+
+@[deprecated (since := "2026-09-10")] alias MonoidHomClass.isometry_of_norm :=
+  MonoidHomClass.isometric_of_norm
+@[deprecated (since := "2026-09-10")] alias AddMonoidHomClass.isometry_of_norm :=
+  AddMonoidHomClass.isometric_of_norm
 
 section NNNorm
 
@@ -172,6 +187,11 @@ theorem OneHomClass.bound_of_antilipschitz [OneHomClass 𝓕 E F] (f : 𝓕) {K 
 theorem Isometric.nnnorm_map_of_map_one {f : E → F} (hi : Isometric f) (h₁ : f 1 = 1) (x : E) :
     ‖f x‖₊ = ‖x‖₊ :=
   Subtype.ext <| hi.norm_map_of_map_one h₁ x
+
+@[deprecated (since := "2026-09-10")] alias Isometry.nnnorm_map_of_map_one :=
+  Isometric.nnnorm_map_of_map_one
+@[deprecated (since := "2026-09-10")] alias Isometry.nnnorm_map_of_map_zero :=
+  Isometric.nnnorm_map_of_map_zero
 
 end NNNorm
 
@@ -476,6 +496,8 @@ open Topology
 
 theorem isometric_intCast : Isometric ((↑) : ℤ → ℝ) :=
   Isometric.of_dist_eq <| by tauto
+
+@[deprecated (since := "2026-09-10")] alias isometry_intCast := isometric_intCast
 
 theorem isClosedEmbedding_intCast : IsClosedEmbedding ((↑) : ℤ → ℝ) :=
   isometric_intCast.isClosedEmbedding

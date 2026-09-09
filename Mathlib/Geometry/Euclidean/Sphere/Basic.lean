@@ -191,6 +191,9 @@ theorem _root_.Isometric.cospherical {E F : Type*} [MetricSpace E] [MetricSpace 
   rintro _ ⟨p, hp, rfl⟩
   rw [hf.dist_eq, hc p hp]
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.cospherical :=
+  _root_.Isometric.cospherical
+
 end MetricSpace
 
 section NormedSpace

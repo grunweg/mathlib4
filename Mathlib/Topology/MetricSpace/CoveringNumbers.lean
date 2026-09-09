@@ -410,6 +410,9 @@ lemma _root_.Isometric.coveringNumber_image' {f : X → Y} (hf : Isometric f) (h
     rw [InjOn.encard_image]
     exact hf_inj.mono hC'_subset
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.coveringNumber_image' :=
+  _root_.Isometric.coveringNumber_image'
+
 /-- The covering number of the image of a set under an injective isometry is equal to
 the covering number of the set.
 See `Isometric.coveringNumber_image'` for the version in a `PseudoEMetricSpace` and not
@@ -418,5 +421,8 @@ lemma _root_.Isometric.coveringNumber_image {X : Type*} [EMetricSpace X]
     {f : X → Y} (hf : Isometric f) {A : Set X} :
     coveringNumber ε (f '' A) = coveringNumber ε A :=
   hf.coveringNumber_image' hf.injective.injOn
+
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.coveringNumber_image :=
+  _root_.Isometric.coveringNumber_image
 
 end Metric

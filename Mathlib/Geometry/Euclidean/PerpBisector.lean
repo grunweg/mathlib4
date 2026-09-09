@@ -196,6 +196,12 @@ theorem Isometric.preimage_perpBisector {f : P → P'} (h : Isometric f) (p₁ p
     f ⁻¹' (perpBisector (f p₁) (f p₂)) = perpBisector p₁ p₂ := by
   ext x; simp [mem_perpBisector_iff_dist_eq, h.dist_eq]
 
+@[deprecated (since := "2026-09-10")] alias Isometry.preimage_perpBisector :=
+  Isometric.preimage_perpBisector
+
 theorem Isometric.mapsTo_perpBisector {f : P → P'} (h : Isometric f) (p₁ p₂ : P) :
     MapsTo f (perpBisector p₁ p₂) (perpBisector (f p₁) (f p₂)) :=
   (h.preimage_perpBisector p₁ p₂).ge
+
+@[deprecated (since := "2026-09-10")] alias Isometry.mapsTo_perpBisector :=
+  Isometric.mapsTo_perpBisector

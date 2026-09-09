@@ -84,6 +84,9 @@ lemma _root_.Isometric.isCover_image_iff {f : X → Y} (hf : Isometric f) (C : S
   obtain ⟨c', hc', rfl⟩ := hc_mem
   exact ⟨c', hc', le_of_eq_of_le (hf.edist_eq _ _).symm hc⟩
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.isCover_image_iff :=
+  _root_.Isometric.isCover_image_iff
+
 lemma IsCover.singleton_of_ediam_le (hA : ediam s ≤ ε) (hx : x ∈ s) :
     IsCover ε s ({x} : Set X) :=
   fun _ h_mem ↦ ⟨x, by simp, (edist_le_ediam_of_mem h_mem hx).trans hA⟩

@@ -130,16 +130,25 @@ theorem Isometric.euclideanHausdorffMeasure_image {f : X → Y} {d : ℕ} (hf : 
   simp_rw [euclideanHausdorffMeasure_def, Measure.smul_apply]
   rw [Isometric.hausdorffMeasure_image hf (by simp)]
 
+@[deprecated (since := "2026-09-10")] alias Isometry.euclideanHausdorffMeasure_image :=
+  Isometric.euclideanHausdorffMeasure_image
+
 theorem Isometric.euclideanHausdorffMeasure_preimage {f : X → Y} {d : ℕ} (hf : Isometric f)
     (s : Set Y) : μHE[d] (f ⁻¹' s) = μHE[d] (s ∩ Set.range f) := by
   simp_rw [euclideanHausdorffMeasure_def, Measure.smul_apply]
   rw [Isometric.hausdorffMeasure_preimage hf (by simp)]
+
+@[deprecated (since := "2026-09-10")] alias Isometry.euclideanHausdorffMeasure_preimage :=
+  Isometric.euclideanHausdorffMeasure_preimage
 
 theorem Isometric.map_euclideanHausdorffMeasure {f : X → Y} {d : ℕ} (hf : Isometric f) :
     μHE[d].map f = μHE[d].restrict (Set.range f) := by
   simp_rw [euclideanHausdorffMeasure_def]
   rw [Measure.map_smul _ hf.continuous.aemeasurable, map_hausdorffMeasure hf (by simp),
     Measure.restrict_smul]
+
+@[deprecated (since := "2026-09-10")] alias Isometry.map_euclideanHausdorffMeasure :=
+  Isometric.map_euclideanHausdorffMeasure
 
 /-!
 ### Applying scalers to `μHE[d]`
