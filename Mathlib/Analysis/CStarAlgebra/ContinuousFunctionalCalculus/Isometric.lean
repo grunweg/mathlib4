@@ -428,7 +428,7 @@ protected theorem isometric_cfc (f : C(S, R)) (halg : Isometric (algebraMap R S)
       congr! 2
       all_goals ext; exact haf.left_inv _ |>.symm
 
-@[deprecated (since := "2026-09-09")] alias isometry_cfc := isometric_cfc
+@[deprecated (since := "2026-09-09")] alias isometry_cfc := QuasispectrumRestricts.isometric_cfc
 
 end QuasispectrumRestricts
 
