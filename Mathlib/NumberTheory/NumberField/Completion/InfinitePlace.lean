@@ -68,10 +68,15 @@ theorem isometric_embedding : Isometric (v.embedding.comp (WithAbs.equiv v.1).to
   AddMonoidHomClass.isometric_of_norm _ fun x ↦ by
     simpa using! v.norm_embedding_eq (WithAbs.equiv v.1 x)
 
+@[deprecated (since := "2026-09-09")] alias isometry_embedding := isometric_embedding
+
 theorem isometric_embedding_of_isReal (hv : v.IsReal) :
     Isometric ((v.embedding_of_isReal hv).comp (WithAbs.equiv v.1).toRingHom) :=
   AddMonoidHomClass.isometric_of_norm _ fun x ↦ by
     simpa using! v.norm_embedding_of_isReal hv (WithAbs.equiv v.1 x)
+
+@[deprecated (since := "2026-09-09")] alias isometry_embedding_of_isReal :=
+  isometric_embedding_of_isReal
 
 instance : CompletableTopField (WithAbs v.1) :=
   v.isometric_embedding.isUniformInducing.completableTopField
@@ -132,6 +137,8 @@ theorem ofCompletion_surjective : Function.Surjective (ofCompletion (v := v)) :=
 
 theorem isometric_toCompletion : Isometric (toCompletion (v := v)) :=
   Isometric.of_dist_eq fun _ _ ↦ rfl
+
+@[deprecated (since := "2026-09-09")] alias isometry_toCompletion := isometric_toCompletion
 
 /-- `Completion.toCompletion` as an isometry equivalence onto the underlying completion. -/
 def isometryEquivCompletion : v.Completion ≃ᵢ v.1.Completion where
@@ -245,10 +252,16 @@ theorem extensionEmbeddingOfIsReal_coe {v : InfinitePlace K} (hv : IsReal v) (x 
 theorem isometric_extensionEmbedding : Isometric (extensionEmbedding v) :=
   v.isometric_embedding.completion_extension.comp (isometric_toCompletion v)
 
+@[deprecated (since := "2026-09-09")] alias isometry_extensionEmbedding :=
+  isometric_extensionEmbedding
+
 /-- The embedding `v.Completion →+* ℝ` at a real infinite place is an isometry. -/
 theorem isometric_extensionEmbeddingOfIsReal {v : InfinitePlace K} (hv : IsReal v) :
     Isometric (extensionEmbeddingOfIsReal hv) :=
   (v.isometric_embedding_of_isReal hv).completion_extension.comp (isometric_toCompletion v)
+
+@[deprecated (since := "2026-09-09")] alias isometry_extensionEmbeddingOfIsReal :=
+  isometric_extensionEmbeddingOfIsReal
 
 @[simp]
 theorem extensionEmbeddingOfIsReal_apply {v : InfinitePlace K} (hv : IsReal v) (x : v.Completion) :
@@ -405,6 +418,8 @@ theorem isometric_algebraMap : Isometric (algebraMap (WithAbs v.1) (WithAbs w.1)
     simpa [WithAbs.norm_eq_apply_ofAbs] using
       WithAbs.ofAbs_algebraMap v.1 w.1 x ▸ comp_of_comap_eq (comap_eq w v) x.ofAbs
 
+@[deprecated (since := "2026-09-09")] alias isometry_algebraMap := isometric_algebraMap
+
 variable {v}
 
 theorem embedding_liesOver_of_isReal (h : v.IsReal) :
@@ -421,10 +436,3 @@ theorem extensionEmbedding_liesOver_of_isReal (h : v.IsReal) :
 end LiesOver
 
 end NumberField.InfinitePlace.LiesOver
-
-@[deprecated (since := "2026-09-09")] alias NumberField.InfinitePlace.isometry_embedding := NumberField.InfinitePlace.isometric_embedding
-@[deprecated (since := "2026-09-09")] alias NumberField.InfinitePlace.isometry_embedding_of_isReal := NumberField.InfinitePlace.isometric_embedding_of_isReal
-@[deprecated (since := "2026-09-09")] alias NumberField.InfinitePlace.Completion.isometry_toCompletion := NumberField.InfinitePlace.Completion.isometric_toCompletion
-@[deprecated (since := "2026-09-09")] alias NumberField.InfinitePlace.Completion.isometry_extensionEmbedding := NumberField.InfinitePlace.Completion.isometric_extensionEmbedding
-@[deprecated (since := "2026-09-09")] alias NumberField.InfinitePlace.Completion.isometry_extensionEmbeddingOfIsReal := NumberField.InfinitePlace.Completion.isometric_extensionEmbeddingOfIsReal
-@[deprecated (since := "2026-09-09")] alias NumberField.InfinitePlace.LiesOver.isometry_algebraMap := NumberField.InfinitePlace.LiesOver.isometric_algebraMap

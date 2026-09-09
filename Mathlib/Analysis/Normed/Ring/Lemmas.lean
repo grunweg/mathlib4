@@ -68,6 +68,8 @@ lemma RingHom.isometric {𝕜₁ 𝕜₂ : Type*} [SeminormedRing 𝕜₁] [Semi
     (σ : 𝕜₁ →+* 𝕜₂) [RingHomIsometric σ] :
     Isometric σ := AddMonoidHomClass.isometric_of_norm _ fun _ => RingHomIsometric.norm_map
 
+@[deprecated (since := "2026-09-09")] alias RingHom.isometry := RingHom.isometric
+
 /-- If `σ` and `σ'` are mutually inverse, then one is `RingHomIsometric` if the other is. Not an
 instance, as it would cause loops. -/
 lemma RingHomIsometric.inv {𝕜₁ 𝕜₂ : Type*} [SeminormedRing 𝕜₁] [SeminormedRing 𝕜₂]
@@ -272,5 +274,3 @@ lemma comap_mul_right_cobounded {a : α} (ha : a ≠ 0) :
 end Filter
 
 end NonUnitalNormedRing
-
-@[deprecated (since := "2026-09-09")] alias RingHom.isometry := RingHom.isometric

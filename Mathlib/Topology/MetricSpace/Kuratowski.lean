@@ -81,6 +81,9 @@ theorem embeddingOfSubset_isometric (H : DenseRange x) : Isometric (embeddingOfS
       _ = dist (embeddingOfSubset x b) (embeddingOfSubset x a) + e := by ring
   simpa [dist_comm] using this
 
+@[deprecated (since := "2026-09-09")] alias embeddingOfSubset_isometry :=
+  embeddingOfSubset_isometric
+
 /-- Every separable metric space embeds isometrically in `ℓ^∞(ℕ)`. -/
 theorem exists_isometric_embedding (α : Type u) [MetricSpace α] [SeparableSpace α] :
     ∃ f : α → ℓ^∞(ℕ, ℝ), Isometric f := by
@@ -152,5 +155,3 @@ theorem LipschitzOnWith.extend_lp_infty [PseudoMetricSpace α] {s : Set α} {ι 
     · intro a hyp
       ext i
       exact (hgeq i) hyp
-
-@[deprecated (since := "2026-09-09")] alias KuratowskiEmbedding.embeddingOfSubset_isometry := KuratowskiEmbedding.embeddingOfSubset_isometric

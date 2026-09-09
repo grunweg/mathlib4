@@ -46,6 +46,8 @@ lemma isometric_cfcHom (a : A) (ha : p a := by cfc_tac) :
     Isometric (cfcHom (show p a from ha) (R := R)) :=
   IsometricContinuousFunctionalCalculus.isometric a ha
 
+@[deprecated (since := "2026-09-09")] alias isometry_cfcHom := isometric_cfcHom
+
 instance [CompleteSpace R] : ClosedEmbeddingContinuousFunctionalCalculus R A p where
   isClosedEmbedding a ha := (isometric_cfcHom a).isClosedEmbedding
 
@@ -426,6 +428,8 @@ protected theorem isometric_cfc (f : C(S, R)) (halg : Isometric (algebraMap R S)
       congr! 2
       all_goals ext; exact haf.left_inv _ |>.symm
 
+@[deprecated (since := "2026-09-09")] alias isometry_cfc := isometric_cfc
+
 end QuasispectrumRestricts
 
 end NonUnital
@@ -656,6 +660,3 @@ instance toNonUnital : NonUnitalIsometricContinuousFunctionalCalculus 𝕜 A p w
       · exact (f : C(σₙ 𝕜 a, 𝕜)).comp ι |>.norm_coe_le_norm ⟨x, hx'⟩
 
 end IsometricContinuousFunctionalCalculus
-
-@[deprecated (since := "2026-09-09")] alias isometry_cfcHom := isometric_cfcHom
-@[deprecated (since := "2026-09-09")] alias QuasispectrumRestricts.isometry_cfc := QuasispectrumRestricts.isometric_cfc

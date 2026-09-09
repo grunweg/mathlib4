@@ -153,16 +153,24 @@ section Isometric
 lemma comp_isometric_left {f : P₁ → P₃} (hf : Isometric f) (h : v₁ ∼ v₂) : f ∘ v₁ ∼ v₂ :=
   comp_left hf.toDilation h
 
+@[deprecated (since := "2026-09-09")] alias comp_isometry_left := comp_isometric_left
+
 lemma comp_isometric_right {f : P₂ → P₃} (hf : Isometric f) (h : v₁ ∼ v₂) : v₁ ∼ f ∘ v₂ :=
   comp_right hf.toDilation h
+
+@[deprecated (since := "2026-09-09")] alias comp_isometry_right := comp_isometric_right
 
 @[simp]
 lemma comp_isometric_left_iff {f : P₁ → P₃} (hf : Isometric f) : f ∘ v₁ ∼ v₂ ↔ v₁ ∼ v₂ :=
   comp_left_iff hf.toDilation
 
+@[deprecated (since := "2026-09-09")] alias comp_isometry_left_iff := comp_isometric_left_iff
+
 @[simp]
 lemma comp_isometric_right_iff {f : P₂ → P₃} (hf : Isometric f) : v₁ ∼ f ∘ v₂ ↔ v₁ ∼ v₂ :=
   comp_right_iff hf.toDilation
+
+@[deprecated (since := "2026-09-09")] alias comp_isometry_right_iff := comp_isometric_right_iff
 
 end Isometric
 
@@ -328,12 +336,3 @@ alias similar_of_side_side := similar_of_dist_mul_eq_dist_mul_eq
 end Triangle
 
 end PseudoMetricSpace
-
-@[deprecated (since := "2026-09-09")] alias Similar.comp_isometry_left :=
-  Similar.comp_isometric_left
-@[deprecated (since := "2026-09-09")] alias Similar.comp_isometry_right :=
-  Similar.comp_isometric_right
-@[deprecated (since := "2026-09-09")] alias Similar.comp_isometry_left_iff :=
-  Similar.comp_isometric_left_iff
-@[deprecated (since := "2026-09-09")] alias Similar.comp_isometry_right_iff :=
-  Similar.comp_isometric_right_iff

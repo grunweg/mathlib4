@@ -1023,6 +1023,8 @@ lemma edist_def (x y : PiNatEmbed X Y f) :
 
 lemma isometric_embed : Isometric (embed X Y f) := PseudoEMetricSpace.isometry_induced _
 
+@[deprecated (since := "2026-09-09")] alias isometry_embed := isometric_embed
+
 end PseudoEMetricSpace
 
 section PseudoMetricSpace
@@ -1165,5 +1167,3 @@ theorem exists_embedding_to_hilbert_cube : ∃ F : X → ℕ → I, IsEmbedding 
 end MetricSpace
 end PiNatEmbed
 end Metric
-
-@[deprecated (since := "2026-09-09")] alias Metric.PiNatEmbed.isometry_embed := Metric.PiNatEmbed.isometric_embed

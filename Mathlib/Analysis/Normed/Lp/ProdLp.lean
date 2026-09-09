@@ -670,6 +670,8 @@ lemma prod_isometric_ofLp_infty [PseudoEMetricSpace α] [PseudoEMetricSpace β] 
       simpa only [ENNReal.div_top, ENNReal.toReal_zero, NNReal.rpow_zero, ENNReal.coe_one,
         one_mul] using prod_antilipschitzWith_ofLp ∞ α β x y)
 
+@[deprecated (since := "2026-09-09")] alias prod_isometry_ofLp_infty := prod_isometric_ofLp_infty
+
 /-- Seminormed group instance on the product of two normed groups, using the `L^p`
 norm. -/
 instance instProdSeminormedAddCommGroup [SeminormedAddCommGroup α] [SeminormedAddCommGroup β] :
@@ -1241,5 +1243,3 @@ theorem coe_withLpUniqueProd [Unique α] : ⇑(withLpUniqueProd p 𝕜 α β) = 
 end LinearIsometryEquiv
 
 end Linear
-
-@[deprecated (since := "2026-09-09")] alias WithLp.prod_isometry_ofLp_infty := WithLp.prod_isometric_ofLp_infty

@@ -1122,6 +1122,8 @@ theorem isometric_single [Fact (1 ≤ p)] (i : α) : Isometric (lp.single (E := 
   AddMonoidHomClass.isometric_of_norm (lp.singleAddMonoidHom (E := E) p i) fun _ ↦
     lp.norm_single (zero_lt_one.trans_le Fact.out) _ _
 
+@[deprecated (since := "2026-09-09")] alias isometry_single := isometric_single
+
 variable (p E) in
 /-- `lp.single` as a continuous morphism of additive monoids. -/
 def singleContinuousAddMonoidHom [Fact (1 ≤ p)] (i : α) :
@@ -1413,5 +1415,3 @@ theorem LipschitzWith.coordinate [PseudoMetricSpace α] {f : α → ℓ^∞(ι, 
   apply LipschitzOnWith.coordinate
 
 end Lipschitz
-
-@[deprecated (since := "2026-09-09")] alias Mem.lp.isometry_single := Mem.lp.isometric_single

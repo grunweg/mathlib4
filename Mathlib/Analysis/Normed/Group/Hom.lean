@@ -732,6 +732,8 @@ section Isometric
 theorem norm_eq_of_isometric {f : NormedAddGroupHom V W} (hf : Isometric f) (v : V) : ‖f v‖ = ‖v‖ :=
   (AddMonoidHomClass.isometric_iff_norm f).mp hf v
 
+@[deprecated (since := "2026-09-09")] alias norm_eq_of_isometry := norm_eq_of_isometric
+
 theorem isometric_id : @Isometric V V _ _ (id V) :=
   _root_.isometric_id
 
@@ -745,6 +747,8 @@ theorem isometric_comp {g : NormedAddGroupHom V₂ V₃} {f : NormedAddGroupHom 
 
 theorem normNoninc_of_isometric (hf : Isometric f) : f.NormNoninc := fun v =>
   le_of_eq <| norm_eq_of_isometric hf v
+
+@[deprecated (since := "2026-09-09")] alias normNoninc_of_isometry := normNoninc_of_isometric
 
 end Isometric
 
@@ -860,6 +864,3 @@ theorem norm_map_le (hf : ψ.comp f₁ = f₂.comp φ) (hg : ψ.comp g₁ = g₂
 end Equalizer
 
 end NormedAddGroupHom
-
-@[deprecated (since := "2026-09-09")] alias NormedAddGroupHom.norm_eq_of_isometry := NormedAddGroupHom.norm_eq_of_isometric
-@[deprecated (since := "2026-09-09")] alias NormedAddGroupHom.normNoninc_of_isometry := NormedAddGroupHom.normNoninc_of_isometric

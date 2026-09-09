@@ -298,9 +298,13 @@ theorem Sum.dist_eq {x y : X ⊕ Y} : dist x y = Sum.dist x y := rfl
 theorem isometric_inl : Isometric (Sum.inl : X → X ⊕ Y) :=
   Isometric.of_dist_eq fun _ _ => rfl
 
+@[deprecated (since := "2026-09-09")] alias isometry_inl := isometric_inl
+
 /-- The right injection of a space in a disjoint union is an isometry -/
 theorem isometric_inr : Isometric (Sum.inr : Y → X ⊕ Y) :=
   Isometric.of_dist_eq fun _ _ => rfl
+
+@[deprecated (since := "2026-09-09")] alias isometry_inr := isometric_inr
 
 end Sum
 
@@ -440,6 +444,8 @@ attribute [local instance] Sigma.metricSpace
 theorem isometric_mk (i : ι) : Isometric (Sigma.mk i : E i → Σ k, E k) :=
   Isometric.of_dist_eq fun x y => by simp
 
+@[deprecated (since := "2026-09-09")] alias isometry_mk := isometric_mk
+
 /-- A disjoint union of complete metric spaces is complete. -/
 protected theorem completeSpace [∀ i, CompleteSpace (E i)] : CompleteSpace (Σ i, E i) := by
   set s : ι → Set (Σ i, E i) := fun i => Sigma.fst ⁻¹' {i}
@@ -509,8 +515,12 @@ theorem toGlue_commute (hΦ : Isometric Φ) (hΨ : Isometric Ψ) :
 theorem toGlueL_isometric (hΦ : Isometric Φ) (hΨ : Isometric Ψ) : Isometric (toGlueL hΦ hΨ) :=
   Isometric.of_dist_eq fun _ _ => rfl
 
+@[deprecated (since := "2026-09-09")] alias toGlueL_isometry := toGlueL_isometric
+
 theorem toGlueR_isometric (hΦ : Isometric Φ) (hΨ : Isometric Ψ) : Isometric (toGlueR hΦ hΨ) :=
   Isometric.of_dist_eq fun _ _ => rfl
+
+@[deprecated (since := "2026-09-09")] alias toGlueR_isometry := toGlueR_isometric
 
 end Gluing --section
 
@@ -612,6 +622,8 @@ theorem toInductiveLimit_isometric (I : ∀ n, Isometric (f n)) (n : ℕ) :
     rw [inductiveLimitDist_eq_dist I ⟨n, x⟩ ⟨n, y⟩ n (le_refl n) (le_refl n), leRecOn_self,
       leRecOn_self]
 
+@[deprecated (since := "2026-09-09")] alias toInductiveLimit_isometry := toInductiveLimit_isometric
+
 /-- The maps `toInductiveLimit n` are compatible with the maps `f n`. -/
 theorem toInductiveLimit_commute (I : ∀ n, Isometric (f n)) (n : ℕ) :
     toInductiveLimit I n.succ ∘ f n = toInductiveLimit I n := by
@@ -653,11 +665,3 @@ theorem separableSpaceInductiveLimit_of_separableSpace
 end InductiveLimit --section
 
 end Metric --namespace
-
-@[deprecated (since := "2026-09-09")] alias Metric.isometry_inl := Metric.isometric_inl
-@[deprecated (since := "2026-09-09")] alias Metric.isometry_inr := Metric.isometric_inr
-@[deprecated (since := "2026-09-09")] alias Metric.Sigma.isometry_mk := Metric.Sigma.isometric_mk
-@[deprecated (since := "2026-09-09")] alias Metric.toGlueL_isometry := Metric.toGlueL_isometric
-@[deprecated (since := "2026-09-09")] alias Metric.toGlueR_isometry := Metric.toGlueR_isometric
-@[deprecated (since := "2026-09-09")] alias Metric.toInductiveLimit_isometry :=
-  Metric.toInductiveLimit_isometric

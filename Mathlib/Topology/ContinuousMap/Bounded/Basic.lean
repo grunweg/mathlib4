@@ -458,6 +458,8 @@ theorem dist_extend_extend (f : α ↪ δ) (g₁ g₂ : α →ᵇ β) (h₁ h₂
 theorem isometric_extend (f : α ↪ δ) (h : δ →ᵇ β) : Isometric fun g : α →ᵇ β => extend f g h :=
   Isometric.of_dist_eq fun g₁ g₂ => by simp
 
+@[deprecated (since := "2026-09-09")] alias isometry_extend := isometric_extend
+
 end Extend
 
 /-- The indicator function of a clopen set, as a bounded continuous function. -/
@@ -798,5 +800,3 @@ theorem NNReal.upper_bound {α : Type*} [TopologicalSpace α] (f : α →ᵇ ℝ
   rwa [NNReal.nndist_zero_eq_val' (f x)] at key
 
 end BoundedContinuousFunction
-
-@[deprecated (since := "2026-09-09")] alias BoundedContinuousFunction.isometry_extend := BoundedContinuousFunction.isometric_extend

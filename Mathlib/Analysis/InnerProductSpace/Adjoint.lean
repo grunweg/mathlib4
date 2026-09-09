@@ -861,6 +861,9 @@ theorem isometric_iff_adjoint_comp_self (u : H →L[𝕜] K) :
     Isometric u ↔ adjoint u ∘L u = 1 := by
   rw [AddMonoidHomClass.isometric_iff_norm, norm_map_iff_adjoint_comp_self]
 
+@[deprecated (since := "2026-09-09")] alias isometry_iff_adjoint_comp_self :=
+  isometric_iff_adjoint_comp_self
+
 @[simp]
 lemma _root_.LinearIsometryEquiv.adjoint_eq_symm (e : H ≃ₗᵢ[𝕜] K) :
     adjoint (e : H →L[𝕜] K) = e.symm :=
@@ -1081,5 +1084,3 @@ theorem LinearIsometry.adjoint_comp_self' {E E' : Type*}
   have := FiniteDimensional.complete 𝕜 E'
   ext x
   exact congr($(f.adjoint_comp_self) x)
-
-@[deprecated (since := "2026-09-09")] alias ContinuousLinearMap.isometry_iff_adjoint_comp_self := ContinuousLinearMap.isometric_iff_adjoint_comp_self

@@ -83,6 +83,8 @@ lemma unitization_isometric_inr : Isometric fun x : A ↦ toLp 1 (x : Unitizatio
     ((WithLp.linearEquiv 1 𝕜 (Unitization 𝕜 A)).symm.comp <| Unitization.inrHom 𝕜 𝕜 A)
     unitization_norm_inr
 
+@[deprecated (since := "2026-09-09")] alias unitization_isometry_inr := unitization_isometric_inr
+
 variable [IsScalarTower 𝕜 A A] [SMulCommClass 𝕜 A A]
 
 instance instUnitizationRing : Ring (WithLp 1 (Unitization 𝕜 A)) :=
@@ -139,5 +141,3 @@ noncomputable instance instUnitizationNormedAlgebra :
     exact le_rfl
 
 end WithLp
-
-@[deprecated (since := "2026-09-09")] alias WithLp.unitization_isometry_inr := WithLp.unitization_isometric_inr

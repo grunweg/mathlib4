@@ -489,6 +489,8 @@ def optimalGHInjl (x : X) : OptimalGHCoupling X Y :=
 theorem isometric_optimalGHInjl : Isometric (optimalGHInjl X Y) :=
   Isometric.of_dist_eq fun _ _ => candidates_dist_inl (optimalGHDist_mem_candidatesB X Y) _ _
 
+@[deprecated (since := "2026-09-09")] alias isometry_optimalGHInjl := isometric_optimalGHInjl
+
 /-- Injection of `Y` in the optimal coupling between `X` and `Y` -/
 def optimalGHInjr (y : Y) : OptimalGHCoupling X Y :=
   Quotient.mk'' (inr y)
@@ -496,6 +498,8 @@ def optimalGHInjr (y : Y) : OptimalGHCoupling X Y :=
 /-- The injection of `Y` in the optimal coupling between `X` and `Y` is an isometry. -/
 theorem isometric_optimalGHInjr : Isometric (optimalGHInjr X Y) :=
   Isometric.of_dist_eq fun _ _ => candidates_dist_inr (optimalGHDist_mem_candidatesB X Y) _ _
+
+@[deprecated (since := "2026-09-09")] alias isometry_optimalGHInjr := isometric_optimalGHInjr
 
 set_option backward.isDefEq.respectTransparency false in
 /-- The optimal coupling between two compact spaces `X` and `Y` is still a compact space -/
@@ -544,6 +548,3 @@ end Consequences
 end GromovHausdorffRealized
 
 end GromovHausdorff
-
-@[deprecated (since := "2026-09-09")] alias GromovHausdorff.isometry_optimalGHInjl := GromovHausdorff.isometric_optimalGHInjl
-@[deprecated (since := "2026-09-09")] alias GromovHausdorff.isometry_optimalGHInjr := GromovHausdorff.isometric_optimalGHInjr

@@ -222,6 +222,8 @@ theorem conjLIE_symm : conjLIE.symm = conjLIE :=
 theorem isometric_conj : Isometric (conj : ℂ → ℂ) :=
   conjLIE.isometry
 
+@[deprecated (since := "2026-09-09")] alias isometry_conj := isometric_conj
+
 @[simp]
 theorem dist_conj_conj (z w : ℂ) : dist (conj z) (conj w) = dist z w :=
   isometric_conj.dist_eq z w
@@ -288,6 +290,8 @@ theorem ofRealLI_apply (x : ℝ) : ofRealLI x = x := rfl
 
 theorem isometric_ofReal : Isometric ((↑) : ℝ → ℂ) :=
   ofRealLI.isometry
+
+@[deprecated (since := "2026-09-09")] alias isometry_ofReal := isometric_ofReal
 
 @[continuity, fun_prop]
 theorem continuous_ofReal : Continuous ((↑) : ℝ → ℂ) :=
@@ -437,6 +441,8 @@ def _root_.RCLike.complexLinearIsometryEquiv {𝕜 : Type*} [RCLike 𝕜]
 theorem isometric_intCast : Isometric ((↑) : ℤ → ℂ) :=
   Isometric.of_dist_eq <| by simp_rw [← Complex.ofReal_intCast,
     Complex.isometric_ofReal.dist_eq, Int.dist_cast_real, implies_true]
+
+@[deprecated (since := "2026-09-09")] alias isometry_intCast := isometric_intCast
 
 theorem isClosedEmbedding_intCast : IsClosedEmbedding ((↑) : ℤ → ℂ) :=
   isometric_intCast.isClosedEmbedding
@@ -727,7 +733,3 @@ lemma imaginaryPart.norm_le (x : A) : ‖imaginaryPart x‖ ≤ ‖x‖ := by
         realPart.norm_le (Complex.I • (-x))
 
 end realPart_imaginaryPart
-
-@[deprecated (since := "2026-09-09")] alias Complex.isometry_intCast := Complex.isometric_intCast
-@[deprecated (since := "2026-09-09")] alias Complex.isometry_conj := Complex.isometric_conj
-@[deprecated (since := "2026-09-09")] alias Complex.isometry_ofReal := Complex.isometric_ofReal

@@ -424,6 +424,8 @@ theorem tendsto_iff_tendstoUniformly {ι : Type*} {F : ι → C₀(α, β)} {f :
 
 theorem isometric_toBCF : Isometric (toBCF : C₀(α, β) → α →ᵇ β) := by tauto
 
+@[deprecated (since := "2026-09-09")] alias isometry_toBCF := isometric_toBCF
+
 theorem isClosed_range_toBCF : IsClosed (range (toBCF : C₀(α, β) → α →ᵇ β)) := by
   refine isClosed_iff_clusterPt.mpr fun f hf => ?_
   rw [clusterPt_principal_iff] at hf
@@ -643,5 +645,3 @@ def compNonUnitalAlgHom {R : Type*} [Semiring R] [NonUnitalNonAssocSemiring δ]
   map_mul' _ _ := rfl
 
 end ZeroAtInftyContinuousMap
-
-@[deprecated (since := "2026-09-09")] alias ZeroAtInftyContinuousMap.isometry_toBCF := ZeroAtInftyContinuousMap.isometric_toBCF

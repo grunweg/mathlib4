@@ -314,8 +314,12 @@ theorem isometric_vertical_line (a : ℝ) : Isometric fun y => mk ⟨a, exp y⟩
   rw [dist_of_re_eq]
   exacts [congr_arg₂ _ (log_exp _) (log_exp _), rfl]
 
+@[deprecated (since := "2026-09-09")] alias isometry_vertical_line := isometric_vertical_line
+
 theorem isometric_real_vadd (a : ℝ) : Isometric (a +ᵥ · : ℍ → ℍ) :=
   Isometric.of_dist_eq fun y₁ y₂ => by simp only [dist_eq, coe_vadd, vadd_im, dist_add_left]
+
+@[deprecated (since := "2026-09-09")] alias isometry_real_vadd := isometric_real_vadd
 
 theorem isometric_pos_mul (a : { x : ℝ // 0 < x }) : Isometric (a • · : ℍ → ℍ) := by
   refine Isometric.of_dist_eq fun y₁ y₂ => ?_
@@ -323,6 +327,8 @@ theorem isometric_pos_mul (a : { x : ℝ // 0 < x }) : Isometric (a • · : ℍ
   rw [dist_smul₀, mul_mul_mul_comm, Real.sqrt_mul (mul_self_nonneg _), Real.sqrt_mul_self_eq_abs,
     Real.norm_eq_abs, mul_left_comm]
   exact mul_div_mul_left _ _ (mt _root_.abs_eq_zero.1 a.2.ne')
+
+@[deprecated (since := "2026-09-09")] alias isometry_pos_mul := isometric_pos_mul
 
 /-- `SL(2, ℝ)` acts on the upper half plane as an isometry. -/
 instance : IsIsometricSMul SL(2, ℝ) ℍ :=
@@ -345,7 +351,3 @@ instance : IsIsometricSMul SL(2, ℝ) ℍ :=
         (isometric_real_vadd w).comp (h₀.comp <| (isometric_real_vadd v).comp <| isometric_pos_mul u)⟩
 
 end UpperHalfPlane
-
-@[deprecated (since := "2026-09-09")] alias UpperHalfPlane.isometry_vertical_line := UpperHalfPlane.isometric_vertical_line
-@[deprecated (since := "2026-09-09")] alias UpperHalfPlane.isometry_real_vadd := UpperHalfPlane.isometric_real_vadd
-@[deprecated (since := "2026-09-09")] alias UpperHalfPlane.isometry_pos_mul := UpperHalfPlane.isometric_pos_mul

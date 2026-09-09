@@ -256,6 +256,8 @@ lemma nnnorm_inr (a : A) : ‖(a : Unitization 𝕜 A)‖₊ = ‖a‖₊ :=
 lemma isometric_inr : Isometric ((↑) : A → Unitization 𝕜 A) :=
   AddMonoidHomClass.isometric_of_norm (inrNonUnitalAlgHom 𝕜 A) norm_inr
 
+@[deprecated (since := "2026-09-09")] alias isometry_inr := isometric_inr
+
 @[fun_prop]
 theorem continuous_inr : Continuous (inr : A → Unitization 𝕜 A) :=
   isometric_inr.continuous
@@ -293,5 +295,3 @@ protected theorem continuous_snd : Continuous (fun x : Unitization 𝕜 A ↦ x.
 end
 
 end Unitization
-
-@[deprecated (since := "2026-09-09")] alias Unitization.isometry_inr := Unitization.isometric_inr

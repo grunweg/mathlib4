@@ -679,6 +679,8 @@ lemma isometric_ofLp_infty [∀ i, PseudoEMetricSpace (β i)] :
     (by simpa only [ENNReal.div_top, ENNReal.toReal_zero, NNReal.rpow_zero, ENNReal.coe_one,
       one_mul] using antilipschitzWith_ofLp ∞ β x y)
 
+@[deprecated (since := "2026-09-09")] alias isometry_ofLp_infty := isometric_ofLp_infty
+
 /-- seminormed group instance on the product of finitely many normed groups, using the `L^p`
 norm. -/
 instance seminormedAddCommGroup [∀ i, SeminormedAddCommGroup (β i)] :
@@ -1309,5 +1311,3 @@ abbrev normedAddCommGroupToPi [∀ i, NormedAddCommGroup (α i)] :
 end toPi
 
 end PiLp
-
-@[deprecated (since := "2026-09-09")] alias PiLp.isometry_ofLp_infty := PiLp.isometric_ofLp_infty

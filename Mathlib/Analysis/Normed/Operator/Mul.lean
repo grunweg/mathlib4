@@ -119,6 +119,8 @@ variable [RegularNormedAlgebra 𝕜 R]
 lemma isometric_mul : Isometric (mul 𝕜 R) :=
   RegularNormedAlgebra.isometric_mul'
 
+@[deprecated (since := "2026-09-09")] alias isometry_mul := isometric_mul
+
 @[simp]
 lemma opNorm_mul_apply (x : R) : ‖mul 𝕜 R x‖ = ‖x‖ :=
   (AddMonoidHomClass.isometric_iff_norm (mul 𝕜 R)).mp (isometric_mul 𝕜 R) x
@@ -309,5 +311,3 @@ theorem opENorm_lsmul_apply [NormedDivisionRing R] [NormedAlgebra 𝕜 R] [Modul
 end ContinuousLinearMap
 
 end Normed
-
-@[deprecated (since := "2026-09-09")] alias ContinuousLinearMap.isometry_mul := ContinuousLinearMap.isometric_mul

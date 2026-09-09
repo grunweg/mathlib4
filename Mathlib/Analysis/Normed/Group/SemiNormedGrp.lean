@@ -166,6 +166,9 @@ theorem iso_isometric_of_normNoninc {V W : SemiNormedGrp} (i : V ≅ W) (h1 : i.
     ‖v‖ = ‖i.inv (i.hom v)‖ := by rw [← comp_apply, Iso.hom_inv_id, id_apply]
     _ ≤ ‖i.hom v‖ := h2 _
 
+@[deprecated (since := "2026-09-09")] alias iso_isometry_of_normNoninc :=
+  iso_isometric_of_normNoninc
+
 instance Hom.add {M N : SemiNormedGrp} : Add (M ⟶ N) where
   add f g := ofHom (f.hom + g.hom)
 
@@ -384,7 +387,6 @@ theorem iso_isometric {V W : SemiNormedGrp₁} (i : V ≅ W) : Isometric i.hom :
     ‖v‖ = ‖i.inv (i.hom v)‖ := by rw [← comp_apply, Iso.hom_inv_id, id_apply]
     _ ≤ ‖i.hom v‖ := i.inv.2 _
 
-end SemiNormedGrp₁
+@[deprecated (since := "2026-09-09")] alias iso_isometry := iso_isometric
 
-@[deprecated (since := "2026-09-09")] alias SemiNormedGrp.iso_isometry_of_normNoninc := SemiNormedGrp.iso_isometric_of_normNoninc
-@[deprecated (since := "2026-09-09")] alias SemiNormedGrp.iso_isometry := SemiNormedGrp.iso_isometric
+end SemiNormedGrp₁

@@ -169,10 +169,16 @@ lemma isometric_ofFun_boundedContinuousFunction [TopologicalSpace α] :
     Isometric (ofFun ∘ DFunLike.coe : (α →ᵇ β) → α →ᵤ β) := by
   simp [Isometric, edist_def, edist_eq_iSup]
 
+@[deprecated (since := "2026-09-09")] alias isometry_ofFun_boundedContinuousFunction :=
+  isometric_ofFun_boundedContinuousFunction
+
 lemma isometric_ofFun_continuousMap [TopologicalSpace α] [CompactSpace α] :
     Isometric (ofFun ∘ DFunLike.coe : C(α, β) → α →ᵤ β) :=
   isometric_ofFun_boundedContinuousFunction.comp <|
     ContinuousMap.isometryEquivBoundedOfCompact α β |>.isometry
+
+@[deprecated (since := "2026-09-09")] alias isometry_ofFun_continuousMap :=
+  isometric_ofFun_continuousMap
 
 lemma edist_continuousMapMk [TopologicalSpace α] [CompactSpace α]
     {f g : α →ᵤ β} (hf : Continuous (toFun f)) (hg : Continuous (toFun g)) :
@@ -281,6 +287,8 @@ lemma isometric_restrict (s : Set α) :
     Isometric (UniformFun.ofFun ∘ s.domRestrict ∘ toFun {s} : (α →ᵤ[{s}] β) → (s →ᵤ β)) := by
   simp [Isometric, edist_def, UniformFun.edist_def, iSup_subtype]
 
+@[deprecated (since := "2026-09-09")] alias isometry_restrict := isometric_restrict
+
 end EMetric
 
 section Metric
@@ -324,7 +332,3 @@ lemma edist_continuousRestrict_of_singleton [TopologicalSpace α] {s : Set α}
 end Metric
 
 end UniformOnFun
-
-@[deprecated (since := "2026-09-09")] alias UniformFun.isometry_ofFun_boundedContinuousFunction := UniformFun.isometric_ofFun_boundedContinuousFunction
-@[deprecated (since := "2026-09-09")] alias UniformFun.isometry_ofFun_continuousMap := UniformFun.isometric_ofFun_continuousMap
-@[deprecated (since := "2026-09-09")] alias UniformOnFun.isometry_restrict := UniformOnFun.isometric_restrict

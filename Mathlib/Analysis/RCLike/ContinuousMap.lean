@@ -68,6 +68,8 @@ variable (X) in
 @[simp] theorem isometric_realToRCLike [CompactSpace X] : Isometric (realToRCLike 𝕜 (X := X)) :=
   .of_dist_eq fun f g ↦ by simp [dist_eq_norm, norm_eq_iSup_norm, ← map_sub]
 
+@[deprecated (since := "2026-09-09")] alias isometry_realToRCLike := isometric_realToRCLike
+
 variable (X) in
 @[simp, fun_prop] lemma continuous_realToRCLike : Continuous (realToRCLike 𝕜 (X := X)) :=
   continuous_postcomp { toFun x := RCLike.ofReal x }
@@ -119,5 +121,3 @@ theorem range_realToRCLike_eq_isSelfAdjoint :
     ⟨f.rclikeToReal, hf.realToRCLike_rclikeToReal⟩
 
 end ContinuousMap
-
-@[deprecated (since := "2026-09-09")] alias ContinuousMap.isometry_realToRCLike := ContinuousMap.isometric_realToRCLike

@@ -155,6 +155,8 @@ theorem gelfandTransform_isometric : Isometric (gelfandTransform ℂ A) := by
   simpa only [Function.comp_apply, NNReal.sqrt_sq] using!
     congr_arg (((↑) : ℝ≥0 → ℝ) ∘ ⇑NNReal.sqrt) this
 
+@[deprecated (since := "2026-09-09")] alias gelfandTransform_isometry := gelfandTransform_isometric
+
 set_option backward.defeqAttrib.useBackward true in
 /-- The Gelfand transform is bijective when the algebra is a C⋆-algebra over `ℂ`. -/
 theorem gelfandTransform_bijective : Function.Bijective (gelfandTransform ℂ A) := by
@@ -407,5 +409,3 @@ lemma WeakDual.CharacterSpace.homeoEval_naturality {X Y 𝕜 : Type*} [RCLike �
     (homeoEval Y 𝕜 : C(_, _)).comp f =
       (f.compStarAlgHom' 𝕜 𝕜 |> compContinuousMap).comp (homeoEval X 𝕜 : C(_, _)) :=
   rfl
-
-@[deprecated (since := "2026-09-09")] alias gelfandTransform_isometry := gelfandTransform_isometric

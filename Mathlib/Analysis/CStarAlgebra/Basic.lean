@@ -67,6 +67,8 @@ theorem star_isometric : Isometric (star : E → E) :=
   show Isometric starAddEquiv from
     AddMonoidHomClass.isometric_of_norm starAddEquiv (show ∀ x, ‖x⋆‖ = ‖x‖ from norm_star)
 
+@[deprecated (since := "2026-09-09")] alias star_isometry := star_isometric
+
 instance (priority := 100) NormedStarGroup.to_continuousStar : ContinuousStar E :=
   ⟨star_isometric.continuous⟩
 
@@ -330,5 +332,3 @@ instance to_cstarRing {R A} [CommRing R] [StarRing R] [NormedRing A] [StarRing A
   norm_mul_self_le x := @CStarRing.norm_mul_self_le A _ _ _ x
 
 end StarSubalgebra
-
-@[deprecated (since := "2026-09-09")] alias star_isometry := star_isometric

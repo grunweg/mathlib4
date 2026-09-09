@@ -259,6 +259,9 @@ theorem isometric_lpMeasSubgroupToLpTrim [hp : Fact (1 ≤ p)] (hm : m ≤ m0) :
     rw [dist_eq_norm, ← lpMeasSubgroupToLpTrim_sub, lpMeasSubgroupToLpTrim_norm_map,
       dist_eq_norm]
 
+@[deprecated (since := "2026-09-09")] alias isometry_lpMeasSubgroupToLpTrim :=
+  isometric_lpMeasSubgroupToLpTrim
+
 variable (F p μ)
 
 /-- `lpMeasSubgroup` and `Lp F p (μ.trim hm)` are isometric. -/
@@ -493,5 +496,3 @@ theorem MemLp.induction_stronglyMeasurable (hm : m ≤ m0) (hp_ne_top : p ≠ �
 end Induction
 
 end MeasureTheory
-
-@[deprecated (since := "2026-09-09")] alias MeasureTheory.isometry_lpMeasSubgroupToLpTrim := MeasureTheory.isometric_lpMeasSubgroupToLpTrim

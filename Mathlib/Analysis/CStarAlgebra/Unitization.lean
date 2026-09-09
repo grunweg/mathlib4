@@ -50,6 +50,8 @@ variable (E)
 lemma isometric_mul_flip : Isometric (mul 𝕜 E).flip :=
   AddMonoidHomClass.isometric_of_norm _ (opNorm_mul_flip_apply 𝕜)
 
+@[deprecated (since := "2026-09-09")] alias isometry_mul_flip := isometric_mul_flip
+
 end ContinuousLinearMap
 
 variable [DenselyNormedField 𝕜] [NonUnitalNormedRing E] [StarRing E] [CStarRing E]
@@ -185,5 +187,3 @@ noncomputable instance Unitization.instCommCStarAlgebra {A : Type*} [NonUnitalCo
     CommCStarAlgebra (Unitization ℂ A) where
 
 end CStarProperty
-
-@[deprecated (since := "2026-09-09")] alias ContinuousLinearMap.isometry_mul_flip := ContinuousLinearMap.isometric_mul_flip

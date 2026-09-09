@@ -159,6 +159,8 @@ instance instMetricSpace : MetricSpace (Completion α) :=
 theorem coe_isometric : Isometric ((↑) : α → Completion α) :=
   Isometric.of_dist_eq Completion.dist_eq
 
+@[deprecated (since := "2026-09-09")] alias coe_isometry := coe_isometric
+
 @[simp]
 protected theorem edist_eq (x y : α) : edist (x : Completion α) y = edist x y :=
   coe_isometric x y
@@ -233,9 +235,7 @@ theorem UniformSpace.Completion.isometric_mapRingHom {f : α →+* β} (h : Isom
 theorem Isometric.isometric_mapRingHom {f : α →+* β} (h : Isometric f) : Isometric h.mapRingHom :=
   Completion.isometric_mapRingHom h
 
-end extension_maps
-
-@[deprecated (since := "2026-09-09")] alias UniformSpace.Completion.coe_isometry :=
-  UniformSpace.Completion.coe_isometric
 @[deprecated (since := "2026-09-09")] alias Isometric.isometry_mapRingHom :=
   Isometric.isometric_mapRingHom
+
+end extension_maps

@@ -361,6 +361,8 @@ theorem isometric_comap_mkMetric (m : ℝ≥0∞ → ℝ≥0∞) {f : X → Y} (
     apply le_trans _ (h_mono (ediam_mono hst))
     simp only [(ediam_mono hst).trans ht, le_refl, ciInf_pos]
 
+@[deprecated (since := "2026-09-09")] alias isometry_comap_mkMetric := isometric_comap_mkMetric
+
 theorem mkMetric_smul (m : ℝ≥0∞ → ℝ≥0∞) {c : ℝ≥0∞} (hc : c ≠ ∞) (hc' : c ≠ 0) :
     (mkMetric (c • m) : OuterMeasure X) = c • mkMetric m := by
   simp only [mkMetric, mkMetric', mkMetric'.pre]
@@ -374,6 +376,8 @@ theorem mkMetric_nnreal_smul (m : ℝ≥0∞ → ℝ≥0∞) {c : ℝ≥0} (hc :
 theorem isometric_map_mkMetric (m : ℝ≥0∞ → ℝ≥0∞) {f : X → Y} (hf : Isometric f)
     (H : Monotone m ∨ Surjective f) : map f (mkMetric m) = restrict (range f) (mkMetric m) := by
   rw [← isometric_comap_mkMetric _ hf H, map_comap]
+
+@[deprecated (since := "2026-09-09")] alias isometry_map_mkMetric := isometric_map_mkMetric
 
 theorem isometryEquiv_comap_mkMetric (m : ℝ≥0∞ → ℝ≥0∞) (f : X ≃ᵢ Y) :
     comap f (mkMetric m) = mkMetric m :=
@@ -1132,6 +1136,3 @@ theorem hausdorffMeasure_orthogonalProjectionOnto_le [RCLike 𝕜]
 end Geometric
 
 end MeasureTheory
-
-@[deprecated (since := "2026-09-09")] alias MeasureTheory.OuterMeasure.mkMetric.isometry_comap_mkMetric := MeasureTheory.OuterMeasure.mkMetric.isometric_comap_mkMetric
-@[deprecated (since := "2026-09-09")] alias MeasureTheory.OuterMeasure.mkMetric.isometry_map_mkMetric := MeasureTheory.OuterMeasure.mkMetric.isometric_map_mkMetric
