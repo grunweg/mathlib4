@@ -394,6 +394,8 @@ end AntilipschitzWith
 theorem Isometric.dimH_image (hf : Isometric f) (s : Set X) : dimH (f '' s) = dimH s :=
   le_antisymm (hf.lipschitzWith.dimH_image_le _) (hf.antilipschitzWith.le_dimH_image _)
 
+@[deprecated (since := "2026-09-10")] alias Isometry.dimH_image := Isometric.dimH_image
+
 namespace IsometryEquiv
 
 @[simp]
