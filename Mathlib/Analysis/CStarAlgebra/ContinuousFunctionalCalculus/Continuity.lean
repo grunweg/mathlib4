@@ -705,7 +705,7 @@ lemma lipschitzOnWith_cfcₙ_fun (a : A) :
   by_cases ha : p a
   · rintro f ⟨hf, hf0⟩ g ⟨hg, hg0⟩
     simp only
-    rw [cfcₙ_apply .., cfcₙ_apply .., isometry_cfcₙHom (R := R) a ha |>.edist_eq]
+    rw [cfcₙ_apply .., cfcₙ_apply .., isometric_cfcₙHom (R := R) a ha |>.edist_eq]
     simp only [ENNReal.coe_one, one_mul]
     rw [← ContinuousMapZero.isometric_toContinuousMap.edist_eq,
       edist_continuousRestrict_of_singleton hf hg]
@@ -760,7 +760,7 @@ theorem continuous_cfcₙHomSuperset_left
     simp only [Metric.mem_closedBall, dist_comm g, dist_eq_norm] at hg
     refine ⟨_, g_cont, fun x ↦ ?_⟩
     rw [← map_sub, cfcₙHomSuperset_apply]
-    rw [isometry_cfcₙHom (R := 𝕜) _ (ha' x) |>.norm_map_of_map_zero (map_zero (cfcₙHom (ha' x)))]
+    rw [isometric_cfcₙHom (R := 𝕜) _ (ha' x) |>.norm_map_of_map_zero (map_zero (cfcₙHom (ha' x)))]
     rw [ContinuousMapZero.norm_def, ContinuousMap.norm_le _ hε.le] at hg ⊢
     aesop
 
