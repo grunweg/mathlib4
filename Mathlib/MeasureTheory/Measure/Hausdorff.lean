@@ -832,15 +832,24 @@ theorem hausdorffMeasure_image (hf : Isometric f) (hd : 0 ≤ d ∨ Surjective f
   rw [OuterMeasure.isometric_comap_mkMetric _ hf (hd.imp_left _)]
   exact ENNReal.monotone_rpow_of_nonneg
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.hausdorffMeasure_image :=
+  hausdorffMeasure_image
+
 theorem hausdorffMeasure_preimage (hf : Isometric f) (hd : 0 ≤ d ∨ Surjective f) (s : Set Y) :
     μH[d] (f ⁻¹' s) = μH[d] (s ∩ range f) := by
   rw [← hf.hausdorffMeasure_image hd, image_preimage_eq_inter_range]
+
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.hausdorffMeasure_preimage :=
+  hausdorffMeasure_preimage
 
 theorem map_hausdorffMeasure (hf : Isometric f) (hd : 0 ≤ d ∨ Surjective f) :
     Measure.map f μH[d] = μH[d].restrict (range f) := by
   ext1 s hs
   rw [map_apply hf.continuous.measurable hs, Measure.restrict_apply hs,
     hf.hausdorffMeasure_preimage hd]
+
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.map_hausdorffMeasure :=
+  map_hausdorffMeasure
 
 end Isometric
 

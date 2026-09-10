@@ -84,15 +84,20 @@ variable {f : α → β} {x : α}
 theorem edist_eq (hf : Isometric f) (x y : α) : edist (f x) (f y) = edist x y :=
   hf x y
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.edist_eq := edist_eq
+
 theorem lipschitzWith (h : Isometric f) : LipschitzWith 1 f :=
   LipschitzWith.of_edist_le fun x y => (h x y).le
 
 @[deprecated (since := "2026-08-16")] alias lipschitz := lipschitzWith
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.lipschitzWith := lipschitzWith
 
 theorem antilipschitzWith (h : Isometric f) : AntilipschitzWith 1 f := fun x y => by
   simp only [h x y, ENNReal.coe_one, one_mul, le_refl]
 
 @[deprecated (since := "2026-08-16")] alias antilipschitz := antilipschitzWith
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.antilipschitzWith :=
+  antilipschitzWith
 
 /-- Any map on a subsingleton is an isometry -/
 @[nontriviality]
@@ -111,10 +116,14 @@ theorem prodMap {δ} [PseudoEMetricSpace δ] {f : α → β} {g : γ → δ} (hf
     (hg : Isometric g) : Isometric (Prod.map f g) := fun x y => by
   simp only [Prod.edist_eq, Prod.map_fst, hf.edist_eq, Prod.map_snd, hg.edist_eq]
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.prodMap := prodMap
+
 protected theorem piMap {ι} [Fintype ι] {α β : ι → Type*} [∀ i, PseudoEMetricSpace (α i)]
     [∀ i, PseudoEMetricSpace (β i)] (f : ∀ i, α i → β i) (hf : ∀ i, Isometric (f i)) :
     Isometric (Pi.map f) := fun x y => by
   simp only [edist_pi_def, (hf _).edist_eq, Pi.map_apply]
+
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.piMap := Isometric.piMap
 
 protected lemma single [Fintype ι] [DecidableEq ι] {E : ι → Type*} [∀ i, PseudoEMetricSpace (E i)]
     [∀ i, Zero (E i)] (i : ι) :
@@ -126,69 +135,104 @@ protected lemma single [Fintype ι] [DecidableEq ι] {E : ι → Type*} [∀ i, 
   · simp
   · simp [h]
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.single := Isometric.single
+
 protected lemma inl [AddZeroClass α] [AddZeroClass β] : Isometric (AddMonoidHom.inl α β) := by
   intro x y
   rw [Prod.edist_eq]
   simp
+
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.inl := Isometric.inl
 
 protected lemma inr [AddZeroClass α] [AddZeroClass β] : Isometric (AddMonoidHom.inr α β) := by
   intro x y
   rw [Prod.edist_eq]
   simp
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.inr := Isometric.inr
+
 /-- The composition of isometries is an isometry. -/
 theorem comp {g : β → γ} {f : α → β} (hg : Isometric g) (hf : Isometric f) : Isometric (g ∘ f) :=
   fun _ _ => (hg _ _).trans (hf _ _)
+
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.comp := comp
 
 omit [PseudoEMetricSpace α] in
 lemma postcomp_pi [Fintype α] {g : β → γ} (hg : Isometric g) : Isometric (fun f : α → β ↦ g ∘ f) :=
   fun _ _ ↦ by simp [edist_pi_def, hg.edist_eq]
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.postcomp_pi := postcomp_pi
+
 /-- An isometry from a metric space is a uniform continuous map -/
 protected theorem uniformContinuous (hf : Isometric f) : UniformContinuous f :=
   hf.lipschitzWith.uniformContinuous
+
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.uniformContinuous :=
+  Isometric.uniformContinuous
 
 /-- An isometry from a metric space is a uniform inducing map -/
 theorem isUniformInducing (hf : Isometric f) : IsUniformInducing f :=
   hf.antilipschitzWith.isUniformInducing hf.uniformContinuous
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.isUniformInducing := isUniformInducing
+
 theorem tendsto_nhds_iff {ι : Type*} {f : α → β} {g : ι → α} {a : Filter ι} {b : α}
     (hf : Isometric f) : Filter.Tendsto g a (𝓝 b) ↔ Filter.Tendsto (f ∘ g) a (𝓝 (f b)) :=
   hf.isUniformInducing.isInducing.tendsto_nhds_iff
+
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.tendsto_nhds_iff := tendsto_nhds_iff
 
 /-- An isometry is continuous. -/
 protected theorem continuous (hf : Isometric f) : Continuous f :=
   hf.lipschitzWith.continuous
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.continuous := Isometric.continuous
+
 /-- The right inverse of an isometry is an isometry. -/
 theorem right_inv {f : α → β} {g : β → α} (h : Isometric f) (hg : RightInverse g f) : Isometric g :=
   fun x y => by rw [← h, hg _, hg _]
+
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.right_inv := right_inv
 
 theorem preimage_closedEBall (h : Isometric f) (x : α) (r : ℝ≥0∞) :
     f ⁻¹' Metric.closedEBall (f x) r = Metric.closedEBall x r := by
   ext y
   simp [h.edist_eq]
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.preimage_closedEBall :=
+  preimage_closedEBall
+
 theorem preimage_eball (h : Isometric f) (x : α) (r : ℝ≥0∞) :
     f ⁻¹' Metric.eball (f x) r = Metric.eball x r := by
   ext y
   simp [h.edist_eq]
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.preimage_eball := preimage_eball
+
 /-- Isometries preserve the diameter in pseudoemetric spaces. -/
 theorem ediam_image (hf : Isometric f) (s : Set α) : Metric.ediam (f '' s) = Metric.ediam s :=
   eq_of_forall_ge_iff fun d => by simp only [Metric.ediam_le_iff, forall_mem_image, hf.edist_eq]
+
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.ediam_image := ediam_image
 
 theorem ediam_range (hf : Isometric f) : Metric.ediam (range f) = Metric.ediam (univ : Set α) := by
   rw [← image_univ]
   exact hf.ediam_image univ
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.ediam_range := ediam_range
+
 theorem mapsTo_eball (hf : Isometric f) (x : α) (r : ℝ≥0∞) :
     MapsTo f (Metric.eball x r) (Metric.eball (f x) r) :=
   (hf.preimage_eball x r).ge
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.mapsTo_eball := mapsTo_eball
+
 theorem mapsTo_closedEBall (hf : Isometric f) (x : α) (r : ℝ≥0∞) :
     MapsTo f (Metric.closedEBall x r) (Metric.closedEBall (f x) r) :=
   (hf.preimage_closedEBall x r).ge
+
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.mapsTo_closedEBall :=
+  mapsTo_closedEBall
 
 /-- The injection from a subtype is an isometry -/
 theorem _root_.isometric_subtype_coe {s : Set α} : Isometric ((↑) : s → α) := fun _ _ => rfl
@@ -205,9 +249,15 @@ theorem comp_continuousOn_iff {γ} [TopologicalSpace γ] (hf : Isometric f) {g :
     ContinuousOn (f ∘ g) s ↔ ContinuousOn g s :=
   hf.isUniformInducing.isInducing.continuousOn_iff.symm
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.comp_continuousOn_iff :=
+  comp_continuousOn_iff
+
 theorem comp_continuous_iff {γ} [TopologicalSpace γ] (hf : Isometric f) {g : γ → α} :
     Continuous (f ∘ g) ↔ Continuous g :=
   hf.isUniformInducing.isInducing.continuous_iff.symm
+
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.comp_continuous_iff :=
+  comp_continuous_iff
 
 end PseudoEMetricIsometry
 
@@ -220,17 +270,27 @@ variable [EMetricSpace α] [PseudoEMetricSpace β] {f : α → β}
 protected theorem injective (h : Isometric f) : Injective f :=
   h.antilipschitzWith.injective
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.injective := Isometric.injective
+
 /-- An isometry from an emetric space is a uniform embedding -/
 lemma isUniformEmbedding (hf : Isometric f) : IsUniformEmbedding f :=
   hf.antilipschitzWith.isUniformEmbedding hf.lipschitzWith.uniformContinuous
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.isUniformEmbedding :=
+  isUniformEmbedding
+
 /-- An isometry from an emetric space is an embedding -/
 theorem isEmbedding (hf : Isometric f) : IsEmbedding f := hf.isUniformEmbedding.isEmbedding
+
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.isEmbedding := isEmbedding
 
 /-- An isometry from a complete emetric space is a closed embedding -/
 theorem isClosedEmbedding [CompleteSpace α] [EMetricSpace γ] {f : α → γ} (hf : Isometric f) :
     IsClosedEmbedding f :=
   hf.antilipschitzWith.isClosedEmbedding hf.lipschitzWith.uniformContinuous
+
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.isClosedEmbedding :=
+  isClosedEmbedding
 
 end EMetricIsometry
 
@@ -243,39 +303,58 @@ variable [PseudoMetricSpace α] [PseudoMetricSpace β] {f : α → β}
 theorem diam_image (hf : Isometric f) (s : Set α) : Metric.diam (f '' s) = Metric.diam s := by
   rw [Metric.diam, Metric.diam, hf.ediam_image]
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.diam_image := diam_image
+
 theorem diam_range (hf : Isometric f) : Metric.diam (range f) = Metric.diam (univ : Set α) := by
   rw [← image_univ]
   exact hf.diam_image univ
+
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.diam_range := diam_range
 
 theorem preimage_setOfPred_dist (hf : Isometric f) (x : α) (p : ℝ → Prop) :
     f ⁻¹' { y | p (dist y (f x)) } = { y | p (dist y x) } := by
   simp [hf.dist_eq]
 
 @[deprecated (since := "2026-07-09")] alias preimage_setOf_dist := preimage_setOfPred_dist
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.preimage_setOfPred_dist :=
+  preimage_setOfPred_dist
 
 theorem preimage_closedBall (hf : Isometric f) (x : α) (r : ℝ) :
     f ⁻¹' Metric.closedBall (f x) r = Metric.closedBall x r :=
   hf.preimage_setOfPred_dist x (· ≤ r)
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.preimage_closedBall :=
+  preimage_closedBall
+
 theorem preimage_ball (hf : Isometric f) (x : α) (r : ℝ) :
     f ⁻¹' Metric.ball (f x) r = Metric.ball x r :=
   hf.preimage_setOfPred_dist x (· < r)
+
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.preimage_ball := preimage_ball
 
 theorem preimage_sphere (hf : Isometric f) (x : α) (r : ℝ) :
     f ⁻¹' Metric.sphere (f x) r = Metric.sphere x r :=
   hf.preimage_setOfPred_dist x (· = r)
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.preimage_sphere := preimage_sphere
+
 theorem mapsTo_ball (hf : Isometric f) (x : α) (r : ℝ) :
     MapsTo f (Metric.ball x r) (Metric.ball (f x) r) :=
   (hf.preimage_ball x r).ge
+
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.mapsTo_ball := mapsTo_ball
 
 theorem mapsTo_sphere (hf : Isometric f) (x : α) (r : ℝ) :
     MapsTo f (Metric.sphere x r) (Metric.sphere (f x) r) :=
   (hf.preimage_sphere x r).ge
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.mapsTo_sphere := mapsTo_sphere
+
 theorem mapsTo_closedBall (hf : Isometric f) (x : α) (r : ℝ) :
     MapsTo f (Metric.closedBall x r) (Metric.closedBall (f x) r) :=
   (hf.preimage_closedBall x r).ge
+
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.mapsTo_closedBall := mapsTo_closedBall
 
 end PseudoMetricIsometry
 
