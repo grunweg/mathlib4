@@ -364,7 +364,7 @@ instance instIsometricContinuousFunctionalCalculus [DecidableEq n] :
     intro f
     simp only [IsHermitian.cfcAux_apply, Unitary.conjStarAlgAut_apply, ← Unitary.coe_star,
       CStarRing.norm_mul_coe_unitary, CStarRing.norm_coe_unitary_mul, l2_opNorm_diagonal]
-    rw [((algebraMap_isometry ℝ 𝕜).postcomp_pi).norm_map_of_map_zero (by ext; simp)]
+    rw [((algebraMap_isometric ℝ 𝕜).postcomp_pi).norm_map_of_map_zero (by ext; simp)]
     let : Fintype (spectrum ℝ A) := .ofFinite _
     rw [ContinuousMap.norm_eq_norm_coeFn]
     refine Function.Surjective.pi_norm_comp ?_ _

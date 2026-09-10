@@ -149,13 +149,20 @@ noncomputable def affineIsometryOfStrictConvexSpace (hi : Isometric f) : PF →�
       hi.continuous with
     norm_map := fun x => by simp [AffineMap.ofMapMidpoint, ← dist_eq_norm_vsub E, hi.dist_eq] }
 
-@[deprecated (since := "2026-09-10")] alias Isometry.affineIsometryOfStrictConvexSpace :=
-  Isometric.affineIsometryOfStrictConvexSpace
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.affineIsometryOfStrictConvexSpace :=
+  affineIsometryOfStrictConvexSpace
 
 @[simp] lemma coe_affineIsometryOfStrictConvexSpace (hi : Isometric f) :
     ⇑hi.affineIsometryOfStrictConvexSpace = f := rfl
 
+@[deprecated (since := "2026-09-10")] alias _root_.Isometry.coe_affineIsometryOfStrictConvexSpace :=
+  coe_affineIsometryOfStrictConvexSpace
+
 @[simp] lemma affineIsometryOfStrictConvexSpace_apply (hi : Isometric f) (p : PF) :
     hi.affineIsometryOfStrictConvexSpace p = f p := rfl
+
+@[deprecated (since := "2026-09-10")]
+alias _root_.Isometry.affineIsometryOfStrictConvexSpace_apply :=
+  affineIsometryOfStrictConvexSpace_apply
 
 end Isometric
