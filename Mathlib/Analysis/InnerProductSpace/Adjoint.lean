@@ -1072,7 +1072,7 @@ theorem LinearIsometry.adjoint_comp_self {E E' : Type*}
     [NormedAddCommGroup E] [InnerProductSpace 𝕜 E] [CompleteSpace E]
     [NormedAddCommGroup E'] [InnerProductSpace 𝕜 E'] [CompleteSpace E'] (f : E →ₗᵢ[𝕜] E') :
     f.toContinuousLinearMap.adjoint ∘L f.toContinuousLinearMap = 1 :=
-  f.toContinuousLinearMap.isometric_iff_adjoint_comp_self.mp f.isometry
+  f.toContinuousLinearMap.isometric_iff_adjoint_comp_self.mp f.isometric
 
 /-- A version of `LinearIsometry.adjoint_comp_self` in terms of `LinearMap.adjoint`. -/
 @[simp]

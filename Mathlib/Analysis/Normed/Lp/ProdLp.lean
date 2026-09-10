@@ -1190,7 +1190,7 @@ variable {𝕜 α β} in
 def LinearIsometry.withLpProdMap (f : α →ₗᵢ[𝕜] α') (g : β →ₗᵢ[𝕜] β') :
     WithLp p (α × β) →ₗᵢ[𝕜] WithLp p (α' × β') where
   __ := (f.toLinearMap.prodMap g.toLinearMap).withLpMap p
-  norm_map' := (f.isometry.withLpProdMap p g.isometry).norm_map_of_map_zero
+  norm_map' := (f.isometric.withLpProdMap p g.isometric).norm_map_of_map_zero
     ((f.toLinearMap.prodMap g.toLinearMap).withLpMap p).map_zero
 
 namespace LinearIsometryEquiv

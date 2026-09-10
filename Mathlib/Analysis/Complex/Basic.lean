@@ -220,7 +220,7 @@ theorem conjLIE_symm : conjLIE.symm = conjLIE :=
   rfl
 
 theorem isometric_conj : Isometric (conj : ℂ → ℂ) :=
-  conjLIE.isometry
+  conjLIE.isometric
 
 @[deprecated (since := "2026-09-09")] alias isometry_conj := isometric_conj
 
@@ -289,7 +289,7 @@ def ofRealLI : ℝ →ₗᵢ[ℝ] ℂ :=
 theorem ofRealLI_apply (x : ℝ) : ofRealLI x = x := rfl
 
 theorem isometric_ofReal : Isometric ((↑) : ℝ → ℂ) :=
-  ofRealLI.isometry
+  ofRealLI.isometric
 
 @[deprecated (since := "2026-09-09")] alias isometry_ofReal := isometric_ofReal
 
@@ -298,11 +298,11 @@ theorem continuous_ofReal : Continuous ((↑) : ℝ → ℂ) :=
   ofRealLI.continuous
 
 theorem isUniformEmbedding_ofReal : IsUniformEmbedding ((↑) : ℝ → ℂ) :=
-  ofRealLI.isometry.isUniformEmbedding
+  ofRealLI.isometric.isUniformEmbedding
 
 lemma _root_.RCLike.isUniformEmbedding_ofReal {𝕜 : Type*} [RCLike 𝕜] :
     IsUniformEmbedding ((↑) : ℝ → 𝕜) :=
-  RCLike.ofRealLI.isometry.isUniformEmbedding
+  RCLike.ofRealLI.isometric.isUniformEmbedding
 
 theorem _root_.Filter.tendsto_ofReal_iff {α : Type*} {l : Filter α} {f : α → ℝ} {x : ℝ} :
     Tendsto (fun x ↦ (f x : ℂ)) l (𝓝 (x : ℂ)) ↔ Tendsto f l (𝓝 x) :=
