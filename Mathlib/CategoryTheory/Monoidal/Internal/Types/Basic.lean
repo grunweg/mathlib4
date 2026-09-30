@@ -8,6 +8,7 @@ module
 public import Mathlib.Algebra.Category.MonCat.Basic
 public import Mathlib.CategoryTheory.Monoidal.CommMon_
 public import Mathlib.CategoryTheory.Monoidal.Types.Basic
+import Mathlib.Tactic.Linter.InstanceDiamonds
 
 /-!
 # `Mon Type u ≌ MonCat.{u}`
@@ -90,9 +91,6 @@ noncomputable def monTypeEquivalenceMonForget :
     MonTypeEquivalenceMon.functor ⋙ forget MonCat ≅ Mon.forget (Type u) :=
   NatIso.ofComponents (fun _ => Iso.refl _) (by cat_disch)
 
-noncomputable instance monTypeInhabited : Inhabited (Mon (Type u)) :=
-  ⟨MonTypeEquivalenceMon.inverse.obj ↧PUnit⟩
-
 namespace CommMonTypeEquivalenceCommMon
 
 instance commMonCommMonoid (A : Type u) [MonObj A] [IsCommMonObj A] : CommMonoid A :=
@@ -139,3 +137,4 @@ noncomputable def commMonTypeEquivalenceCommMonForget :
     CommMonTypeEquivalenceCommMon.functor ⋙ forget₂ CommMonCat MonCat ≅
       CommMon.forget₂Mon (Type u) ⋙ MonTypeEquivalenceMon.functor :=
   Iso.refl _
+#lint
