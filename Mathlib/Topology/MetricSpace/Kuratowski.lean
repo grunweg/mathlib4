@@ -16,10 +16,9 @@ Any partially defined Lipschitz map into `ℓ^∞` can be extended to the whole 
 
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
-
 
 open Set Metric TopologicalSpace NNReal ENNReal lp Function
 
@@ -37,7 +36,7 @@ variable {n : ℕ} [MetricSpace α] (x : ℕ → α) (a : α)
 /-- A metric space can be embedded in `l^∞(ℝ)` via the distances to points in
 a fixed countable set, if this set is dense. This map is given in `kuratowskiEmbedding`,
 without density assumptions. -/
-def embeddingOfSubset : ℓ^∞(ℕ, ℝ) :=
+@[expose] def embeddingOfSubset : ℓ^∞(ℕ, ℝ) :=
   ⟨fun n => dist a (x n) - dist (x 0) (x n), by
     apply memℓp_infty
     use dist a (x 0)
@@ -101,18 +100,18 @@ open KuratowskiEmbedding
 
 /-- The Kuratowski embedding is an isometric embedding of a separable metric space in `ℓ^∞(ℕ, ℝ)`.
 -/
-def kuratowskiEmbedding (α : Type u) [MetricSpace α] [SeparableSpace α] : α → ℓ^∞(ℕ, ℝ) :=
-  Classical.choose (KuratowskiEmbedding.exists_isometric_embedding α)
+def kuratowskiEmbedding (α : Type u) [MetricSpace α] [SeparableSpace α] :
+    α → ℓ^∞(ℕ, ℝ) :=
+  (KuratowskiEmbedding.exists_isometric_embedding α).choose
 
-/--
-The Kuratowski embedding is an isometry.
+/-- The Kuratowski embedding is an isometry.
 Theorem 2.1 of [Assaf Naor, *Metric Embeddings and Lipschitz Extensions*][Naor-2015]. -/
 protected theorem kuratowskiEmbedding.isometry (α : Type u) [MetricSpace α] [SeparableSpace α] :
     Isometry (kuratowskiEmbedding α) :=
   Classical.choose_spec (exists_isometric_embedding α)
 
 /-- Version of the Kuratowski embedding for nonempty compacts -/
-nonrec def NonemptyCompacts.kuratowskiEmbedding (α : Type u) [MetricSpace α] [CompactSpace α]
+@[expose] nonrec def NonemptyCompacts.kuratowskiEmbedding (α : Type u) [MetricSpace α] [CompactSpace α]
     [Nonempty α] : NonemptyCompacts ℓ^∞(ℕ, ℝ) where
   carrier := range (kuratowskiEmbedding α)
   isCompact' := isCompact_range (kuratowskiEmbedding.isometry α).continuous

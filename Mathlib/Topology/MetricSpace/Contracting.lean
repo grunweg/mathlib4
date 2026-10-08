@@ -110,7 +110,8 @@ variable (f) in
 /-- Let `x` be a point of a complete emetric space. Suppose that `f` is a contracting map,
 and `edist x (f x) ≠ ∞`. Then `efixedPoint` is the unique fixed point of `f`
 in `Metric.eball x ∞`. -/
-noncomputable def efixedPoint (hf : ContractingWith K f) (x : α) (hx : edist x (f x) ≠ ∞) : α :=
+@[no_expose] noncomputable
+def efixedPoint (hf : ContractingWith K f) (x : α) (hx : edist x (f x) ≠ ∞) : α :=
   Classical.choose <| hf.exists_fixedPoint x hx
 
 theorem efixedPoint_isFixedPt (hf : ContractingWith K f) {x : α} (hx : edist x (f x) ≠ ∞) :
@@ -169,7 +170,7 @@ variable (f) in
 /-- Let `s` be a complete forward-invariant set of a self-map `f`. If `f` contracts on `s`
 and `x ∈ s` satisfies `edist x (f x) ≠ ∞`, then `efixedPoint'` is the unique fixed point
 of the restriction of `f` to `s ∩ Metric.eball x ∞`. -/
-noncomputable def efixedPoint' {s : Set α} (hsc : IsComplete s) (hsf : MapsTo f s s)
+@[no_expose] noncomputable def efixedPoint' {s : Set α} (hsc : IsComplete s) (hsf : MapsTo f s s)
     (hf : ContractingWith K <| hsf.restrict f s s) (x : α) (hxs : x ∈ s) (hx : edist x (f x) ≠ ∞) :
     α :=
   Classical.choose <| hf.exists_fixedPoint' hsc hsf hxs hx

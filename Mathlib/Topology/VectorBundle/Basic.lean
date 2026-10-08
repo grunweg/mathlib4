@@ -839,8 +839,8 @@ namespace VectorPrebundle
 variable {R E F}
 
 /-- A randomly chosen coordinate change on a `VectorPrebundle`, given by
-  the field `exists_coordChange`. -/
-def coordChange (a : VectorPrebundle R F E) {e e' : Pretrivialization F (π F E)}
+the field `exists_coordChange`. -/
+@[no_expose] def coordChange (a : VectorPrebundle R F E) {e e' : Pretrivialization F (π F E)}
     (he : e ∈ a.pretrivializationAtlas) (he' : e' ∈ a.pretrivializationAtlas) (b : B) : F →L[R] F :=
   Classical.choose (a.exists_coordChange e he e' he') b
 

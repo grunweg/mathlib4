@@ -50,8 +50,7 @@ namespace Presheaf
 
 namespace SheafCondition
 
-/-- The category of open sets contained in some element of the cover.
--/
+/-- The category of open sets contained in some element of the cover. -/
 def OpensLeCover : Type w :=
   ObjectProperty.FullSubcategory fun V : Opens X ↦ ∃ i, V ≤ U i
 deriving Category
@@ -63,14 +62,12 @@ namespace OpensLeCover
 
 variable {U}
 
-/-- An arbitrarily chosen index such that `V ≤ U i`.
--/
-def index (V : OpensLeCover U) : ι :=
+/-- An arbitrarily chosen index such that `V ≤ U i`. -/
+@[no_expose] def index (V : OpensLeCover U) : ι :=
   V.property.choose
 
-/-- The morphism from `V` to `U i` for some `i`.
--/
-def homToIndex (V : OpensLeCover U) : V.obj ⟶ U (index V) :=
+/-- The morphism from `V` to `U i` for some `i`. -/
+@[no_expose] def homToIndex (V : OpensLeCover U) : V.obj ⟶ U (index V) :=
   V.property.choose_spec.hom
 
 end OpensLeCover

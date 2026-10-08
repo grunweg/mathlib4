@@ -479,7 +479,7 @@ theorem exists_isSubordinate_hasCompactSupport_of_locallyFinite_t2space [Locally
       hs U ho hf hU
 
 /-- Index of a bump function such that `f i =ᶠ[𝓝 x] 1`. -/
-def ind (x : X) (hx : x ∈ s) : ι :=
+@[no_expose] def ind (x : X) (hx : x ∈ s) : ι :=
   (f.eventuallyEq_one' x hx).choose
 
 theorem eventuallyEq_one (x : X) (hx : x ∈ s) : f (f.ind x hx) =ᶠ[𝓝 x] 1 :=

@@ -110,8 +110,8 @@ class QuasiSober (α : Type*) [TopologicalSpace α] : Prop where
   sober : ∀ {S : Set α}, IsIrreducible S → IsClosed S → ∃ x, IsGenericPoint x S
 
 /-- A generic point of the closure of an irreducible space. -/
-noncomputable def IsIrreducible.genericPoint [QuasiSober α] {S : Set α} (hS : IsIrreducible S) :
-    α :=
+@[no_expose] noncomputable
+def IsIrreducible.genericPoint [QuasiSober α] {S : Set α} (hS : IsIrreducible S) : α :=
   (QuasiSober.sober hS.closure isClosed_closure).choose
 
 theorem IsIrreducible.isGenericPoint_genericPoint_closure

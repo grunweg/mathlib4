@@ -466,7 +466,7 @@ instance : CompleteSpace α where
     exact ⟨x, pure_le_nhds x⟩
 
 /-- A constant to which a Cauchy filter in a discrete uniform space converges. -/
-noncomputable def cauchyConst {f : Filter α} (hf : Cauchy f) : α :=
+@[no_expose] noncomputable def cauchyConst {f : Filter α} (hf : Cauchy f) : α :=
   (eq_pure_of_cauchy hf).choose
 
 theorem eq_pure_cauchyConst {f : Filter α} (hf : Cauchy f) : f = pure (cauchyConst hf) :=
@@ -852,7 +852,7 @@ theorem setSeq_prod_subset {N m n} (hm : N ≤ m) (hn : N ≤ n) :
 /-- A sequence of points such that `seq n ∈ setSeq n`. Here `setSeq` is an antitone
 sequence of sets `setSeq n ∈ f` with diameters controlled by a given sequence
 of entourages. -/
-def seq (n : ℕ) : α :=
+@[no_expose] def seq (n : ℕ) : α :=
   (hf.1.nonempty_of_mem (setSeq_mem hf U_mem n)).choose
 
 theorem seq_mem (n : ℕ) : seq hf U_mem n ∈ setSeq hf U_mem n :=
