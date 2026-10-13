@@ -1053,6 +1053,54 @@ open ContDiff in -- for the ∞ notation
 
 end
 
+/-! Inferring a model with corners, when we are given an instance family.
+And document that `ModelWithCorners.pi` is not supported at all yet.
+-/
+section
+
+variable {ι : Type*} [Fintype ι] {Mi Hi Ei : ι → Type*}
+  [∀ i, NormedAddCommGroup (Ei i)] [∀ i, NormedSpace 𝕜 (Ei i)]
+  [∀ i, TopologicalSpace (Hi i)] {Ii : ∀ i, ModelWithCorners 𝕜 (Ei i) (Hi i)}
+  [∀ i, TopologicalSpace (Mi i)] [∀ i, ChartedSpace (Hi i) (Mi i)]
+  {φ : M → ∀ i, Ei i} {f : M → ∀ i, Mi i} {i₀ : ι}
+
+variable (f : Mi i₀ → 𝕜) in
+/-- info: MDifferentiable (Ii i₀) (modelWithCornersSelf 𝕜 𝕜) f : Prop -/
+#guard_msgs in
+#check MDifferentiable (Ii i₀) 𝓘(𝕜) f
+
+-- TODO: families of instances are not supported yet!
+--set_option trace.Elab.DiffGeo.MDiff true in
+variable (f : Mi i₀ → 𝕜) in
+/--
+error: Could not find a model with corners for `Mi i₀`.
+
+Hint: failures to find a model with corners can be debugged with the command `set_option trace.Elab.DiffGeo.MDiff true`.
+-/
+#guard_msgs in
+#check MDiff f
+
+-- This should not be supported: there are two options here!
+-- FIXME: add better error message when implementing a full check for `ModelWithCorners.pi`
+/--
+error: Could not find a model with corners for `(i : ι) → Ei i`.
+
+Hint: failures to find a model with corners can be debugged with the command `set_option trace.Elab.DiffGeo.MDiff true`.
+-/
+#guard_msgs in
+#check CMDiff 2 φ
+
+-- TODO: this could be supported, by inferring ModelWithCorners.pi on each factor.
+-- We'd want a similar ambiguity check as for normed spaces, but this case is actually fine.
+/--
+error: Could not find a model with corners for `(i : ι) → Mi i`.
+
+Hint: failures to find a model with corners can be debugged with the command `set_option trace.Elab.DiffGeo.MDiff true`.
+-/
+#guard_msgs in
+#check CMDiff 1 f
+end
+
 /-! Inferring a model with corners, when the inferred model is not in the local context,
 but an explicitly named construction (e.g. `𝓘(𝕜, E)` on some normed space `E`). -/
 section

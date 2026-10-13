@@ -522,6 +522,7 @@ where
     -- or `e` is `H` itself.
     let some H ← findSomeLocalInstanceOf? ``ChartedSpace fun inst type ↦ do
         trace[Elab.DiffGeo.MDiff] "considering instance of type `{type}`"
+        -- TODO: recurse into ∀ binders also, to catch families of instances.
         match_expr type with
         | ChartedSpace H _ M _ =>
           if ← withReducible (pureIsDefEq M e) then
