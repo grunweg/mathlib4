@@ -369,7 +369,7 @@ theorem toMulEquiv_eq_coe (f : M ≃ₜ* N) : f.toMulEquiv = f :=
   rfl
 
 @[to_additive]
-theorem toHomeomorph_eq_coe (f : M ≃ₜ* N) : f.toHomeomorph = f :=
+theorem toHomeomorph_eq_coe (f : M ≃ₜ* N) : f.toHomeomorph = f.toContinuousMonoidHom :=
   rfl
 
 /-- Makes a continuous multiplicative isomorphism from

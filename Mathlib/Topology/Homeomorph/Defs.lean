@@ -517,11 +517,14 @@ protected theorem coe_ofClass [h : HomeomorphClass F α β] (f : F) : ⇑(Homeom
 
 @[deprecated (since := "2026-10-15")] protected alias coe_coe := HomeomorphClass.coe_ofClass
 
-instance [HomeomorphClass F α β] : CoeOut F (α ≃ₜ β) := ⟨Homeomorph.ofClass⟩
-
-theorem toHomeomorph_injective [HomeomorphClass F α β] : Function.Injective ((↑) : F → α ≃ₜ β) :=
+-- TODO: remove this theorem in the long term?
+theorem ofClass_injective [HomeomorphClass F α β] :
+    Function.Injective (Homeomorph.ofClass : F → (α ≃ₜ β)) :=
   fun _ _ e ↦ DFunLike.ext _ _ fun a ↦ congr($e a)
 
+@[deprecated (since := "2026-10-16")] alias toHomeomorph_injective := ofClass_injective
+
+-- TODO: remove this in the medium term
 instance [HomeomorphClass F α β] : ContinuousMapClass F α β where
   map_continuous f := map_continuous f
 
@@ -530,6 +533,12 @@ instance : HomeomorphClass (α ≃ₜ β) α β where
   inv_continuous e := e.continuous_invFun
 
 end HomeomorphClass
+
+@[simps]
+def Homeomorph.toContinuousMap [TopologicalSpace X] [TopologicalSpace Y] (e : X ≃ₜ Y) :
+    C(X, Y) where
+  toFun := e.toFun
+  continuous_toFun := e.continuous_toFun
 
 section IsHomeomorph
 
