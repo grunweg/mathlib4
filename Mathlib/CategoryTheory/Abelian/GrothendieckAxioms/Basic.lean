@@ -14,7 +14,6 @@ public import Mathlib.CategoryTheory.Limits.Shapes.Countable
 import Mathlib.Logic.Equiv.List
 
 /-!
-
 # Grothendieck Axioms
 
 This file defines some of the Grothendieck Axioms for abelian categories, and proves

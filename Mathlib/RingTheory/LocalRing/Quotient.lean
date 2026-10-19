@@ -17,7 +17,6 @@ import Mathlib.RingTheory.Nakayama
 
 
 /-!
-
 We gather results about the quotients of local rings.
 
 -/

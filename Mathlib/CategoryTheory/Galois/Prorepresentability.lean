@@ -262,7 +262,6 @@ theorem AutGalois.π_surjective (A : PointedGaloisObject F) :
 section EndAutGaloisIsomorphism
 
 /-!
-
 ### Isomorphism between `Aut F` and `AutGalois F`
 
 In this section we establish the isomorphism between the automorphism group of `F` and

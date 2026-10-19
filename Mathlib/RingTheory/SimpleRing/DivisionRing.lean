@@ -8,7 +8,6 @@ module
 public import Mathlib.Algebra.Category.ModuleCat.Simple
 
 /-!
-
 ## Simple modules over division rings
 This file contains some results about simple modules over division rings.
 

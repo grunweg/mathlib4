@@ -8,7 +8,6 @@ module
 public import Mathlib.NumberTheory.RamificationInertia.Galois
 
 /-!
-
 # Decomposition and inertia rings
 
 We develop Hilbert's theory of the splitting of a prime ideal in a Galois extension, working

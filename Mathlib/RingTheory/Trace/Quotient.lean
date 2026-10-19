@@ -11,7 +11,6 @@ import Mathlib.RingTheory.DedekindDomain.Dvr
 import Mathlib.RingTheory.LocalRing.Quotient
 
 /-!
-
 We gather results about the relations between the trace map on `B → A` and the trace map on
 quotients and localizations.
 

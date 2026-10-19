@@ -11,7 +11,6 @@ public import Mathlib.Data.List.MinMax
 public import Mathlib.Order.ConditionallyCompleteLattice.Finset
 
 /-!
-
 # Tropicalization of finitary operations
 
 This file provides the "big-op" or notation-based finitary operations on tropicalized types.

@@ -10,7 +10,6 @@ public meta import Lean.Meta.Tactic.TryThis
 public import Mathlib.Init
 
 /-!
-
 # Tactic `change? term`
 
 This tactic is used to suggest a replacement of the goal by a definitionally equal term.

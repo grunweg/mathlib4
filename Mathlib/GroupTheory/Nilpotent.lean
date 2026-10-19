@@ -14,7 +14,6 @@ public import Mathlib.GroupTheory.Sylow
 import Mathlib.GroupTheory.Commutator.Finite
 
 /-!
-
 # Nilpotent groups
 
 An API for nilpotent groups, that is, groups for which the upper central series
