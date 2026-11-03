@@ -6,6 +6,7 @@ Authors: Patrick Massot, Michael Rothgang, Heather Macbeth
 module
 
 public import Mathlib.Geometry.Manifold.MusicalIso
+public import Mathlib.Geometry.Manifold.VectorBundle.ContMDiffSection
 public import Mathlib.Geometry.Manifold.VectorBundle.CovariantDerivative.Metric
 public import Mathlib.Geometry.Manifold.VectorBundle.CovariantDerivative.Torsion
 
@@ -436,24 +437,55 @@ instance leviCivitaConnection_baz :
     unfold arg leviCivitaAuxOfMDiffAt
 
     -- Next, we handle the application of the musical isomorphism.
-    #check contMDiff_musicalIso_apply
     have : IsManifold I (↑k + 1 + 1) M := sorry
     have : ContMDiffVectorBundle (↑k + 1) E (TangentSpace (M := M) I) I := sorry
     have : IsContMDiffRiemannianBundle I (↑k + 1) E fun (x : M) ↦ TangentSpace I x := sorry
     apply contMDiff_musicalIso_apply (k := k + 1) (IB := I)
 
     -- The final step is applying our smoothness criterion for the tensoriality construction.
-    -- TODO: do we need a 2-tensor version of that?
-    #check' TensorialAt.contMDiff_mkHom
-    -- have : IsManifold I (↑k + 1) M := sorry
-    -- -- TODO: this should need to specify the base point `x`
-    -- let φ : ((x : M) → TangentSpace I x) → ((x : M) → TangentSpace I x) → ℝ :=
-    --   fun X Y ↦ leviCivitaAuxInner I σ X Y x
-    -- apply TensorialAt.contMDiff_mkHom (by simp : (1 : ℕ∞ω) ≤ k + 1)
-    --   (φ := φ)
-    --   (IB := I) (F₁ := E) (F₂ := E →L[ℝ] ℝ)
-    --   (B := M) (E₁ := fun x : M ↦ TangentSpace% x)
-    sorry
+    have : IsManifold I (↑k + 1) M := sorry
+    apply TensorialAt.contMDiff_mkHom₂ (by simp)
+    intro x τ hτ τ' hτ'
+    unfold leviCivitaAuxInner
+    dsimp
+    rw [contMDiffOn_univ] at hσ
+    apply ContMDiffAt.smul_section; swap
+    · simpa [contMDiffAt_section_iff] using contMDiffAt_const
+    let A (x) := ((d% fun x ↦ ⟪σ x, τ' x⟫) x) (τ x)
+    let B (x) := ((d% fun x ↦ ⟪τ' x, τ x⟫) x) (σ x) - ((d% fun x ↦ ⟪τ x, σ x⟫) x) (τ' x)
+    let D (x) := ⟪σ x, mlieBracket I τ τ' x⟫
+    let E (x) := ⟪τ' x, mlieBracket I σ τ x⟫
+    let F (x) := ⟪τ x, mlieBracket I τ' σ x⟫
+    have hA : ContMDiffAt I 𝓘(ℝ, ℝ) (k + 1) A x := by
+      unfold A
+      apply ContMDiffAt.mvfderiv (n := k + 2) -- TODO: count of derivatives doesn't match yet
+      · apply ContMDiffAt.inner_bundle'
+        · apply hσ.of_le
+          apply le_of_eq
+          grind
+        · sorry -- hτ', but need more regularity there!
+      · apply hτ
+      apply le_of_eq
+      grind
+    have hB : ContMDiffAt I 𝓘(ℝ, ℝ) (k + 1) B x := by
+      apply ContMDiffAt.sub <;> sorry -- essentially the above
+    have hD : ContMDiffAt I 𝓘(ℝ, ℝ) (k + 1) D x := by
+      unfold D
+      apply ContMDiffAt.inner_bundle'
+      · apply hσ.of_le (by simp)
+      · have : IsManifold I (minSmoothness ℝ 2) M := sorry -- up to counting derivatives
+        apply ContMDiffAt.mlieBracket_vectorField (n := k)
+        · apply hτ.of_le (by simp)
+        · apply hτ'.of_le (by simp)
+        simp
+        sorry -- unsolvable; need to adjust count of regularity hypotheses
+    have hE : ContMDiffAt I 𝓘(ℝ, ℝ) (k + 1) E x := sorry -- analogous
+    have hF : ContMDiffAt I 𝓘(ℝ, ℝ) (k + 1) F x := sorry -- analogous
+    have : ContMDiffAt I 𝓘(ℝ, ℝ) (k + 1) (fun x ↦ A x + B x + D x + E x + F x) x := by
+      sorry
+    convert this with x₀
+    unfold A B D E
+    sorry -- why doesn't this simplify?
 
 end existence
 
