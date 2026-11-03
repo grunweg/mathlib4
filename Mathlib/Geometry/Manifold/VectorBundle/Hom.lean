@@ -701,6 +701,34 @@ theorem TensorialAt.contMDiff_mkHom₂
   -- apply contMDiff_mkHom twice; details TBD
   sorry
 
+-- TODO: is this version with a loss of derivatives true? Levi-Civita needs that...
+theorem TensorialAt.contMDiff_mkHom₂'
+    [CompleteSpace 𝕜] {k} (hk : 1 ≤ k) [IsManifold IB k B]
+    [FiniteDimensional 𝕜 F₁] [FiniteDimensional 𝕜 F₂]
+    [∀ (x : B), IsTopologicalAddGroup (E₁ x)] [∀ (x : B), ContinuousSMul 𝕜 (E₁ x)]
+    [ContMDiffVectorBundle k F₁ E₁ IB] [ContMDiffVectorBundle k F₂ E₂ IB]
+    [∀ (x : B), IsTopologicalAddGroup (E₃ x)] [∀ (x : B), ContinuousSMul 𝕜 (E₃ x)]
+    [ContMDiffVectorBundle k F₃ E₃ IB]
+    (φ : (Π x : B, E₁ x) → (Π x, E₂ x) → (Π x, E₃ x))
+    -- TODO: double-check if this is what I want, or the x-quantifiers are wrong
+    -- e.g., should I have (φ · τ) instead?
+    -- but at least everything typechecks!
+    (hφ₁ : ∀ x, ∀ τ, MDiffAt (T% τ) x → TensorialAt IB F₁ (φ · τ x) x)
+    (hφ₂ : ∀ x, ∀ σ, MDiffAt (T% σ) x → TensorialAt IB F₂ (φ σ · x) x)
+    -- TODO: is the order of quantifiers the right one?, or shall the ∀ x go further inside?
+    (φ_contMDiff : ∀ x, ∀ (σ : Π x : B, E₁ x), CMDiffAt (k + 1) (T% σ) x →
+      ∀ (τ : Π x : B, E₂ x), CMDiffAt (k + 1) (T% τ) x → CMDiffAt k (T% (φ σ τ)) x) :
+    -- elaborators not working here
+    haveI : ContMDiffVectorBundle 1 F₁ E₁ IB := ContMDiffVectorBundle.of_le hk
+    haveI : ContMDiffVectorBundle 1 F₂ E₂ IB := ContMDiffVectorBundle.of_le hk
+    letI T (x : B) : TotalSpace (F₁ →L[𝕜] F₂ →L[𝕜] F₃) (fun x ↦ E₁ x →L[𝕜] E₂ x →L[𝕜] E₃ x) :=
+      ⟨x, TensorialAt.mkHom₂ (φ · · x) (F := F₁) (I := IB) (F' := F₂) x (hφ₁ x) (hφ₂ x)⟩
+    CMDiff k T := by
+  have : ContMDiffVectorBundle 1 F₁ E₁ IB := ContMDiffVectorBundle.of_le hk
+  have : ContMDiffVectorBundle 1 F₂ E₂ IB := ContMDiffVectorBundle.of_le hk
+  -- apply contMDiff_mkHom twice; details TBD
+  sorry
+
 end OneVariable
 
 section OneVariable'
