@@ -147,19 +147,102 @@ lemma ContMDiffAt.inner_bundle_iff_apply {s : (x : B) → TangentSpace IB x} {x 
 
 -- TODO: add also the corresponding WithinAt, On and unrestricted versions of these lemmas
 
+lemma ContDiffWithinAt.of_apply_inner {E F : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [NormedAddCommGroup F] [InnerProductSpace ℝ F] [CompleteSpace F]
+    {s : E → F} {u : Set E} {x : E}
+    (hs : ∀ t : E → F,
+      ContDiffWithinAt ℝ k t u x → ContDiffWithinAt ℝ k (fun x ↦ inner ℝ (s x) (t x)) u x) :
+    ContDiffWithinAt ℝ k s u x := by
+  -- local frame logic; TODO also add other versions!
+  sorry
+
+lemma ContDiffAt.of_apply_inner {E F : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [NormedAddCommGroup F] [InnerProductSpace ℝ F] [CompleteSpace F]
+    {s : E → F} {x : E}
+    (hs : ∀ t : E → F,
+      ContDiffAt ℝ k t x → ContDiffAt ℝ k (fun x ↦ inner ℝ (s x) (t x)) x) :
+    ContDiffAt ℝ k s x :=
+  ContDiffWithinAt.of_apply_inner hs
+
+lemma local_version_continuousAt_try1 {E F : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [NormedAddCommGroup F] [InnerProductSpace ℝ F] [CompleteSpace F]
+    {s : E → F →L[ℝ] ℝ} {x : E} (hs : ContinuousAt s x) :
+    ContinuousAt (fun x ↦ (InnerProductSpace.toDual ℝ F).symm (s x)) x := by
+  sorry
+
+-- lemma local_version_continuousAt {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+--     {F : E → Type*} [∀ x, NormedAddCommGroup (F x)] [∀ x, InnerProductSpace ℝ (F x)]
+--     [∀ x, CompleteSpace (F x)]
+--     {s : (x : E) → F x →L[ℝ] ℝ} {x : E} (hs : ContinuousAt s x) :
+--     ContinuousAt (fun x ↦ (InnerProductSpace.toDual ℝ (F x)).symm (s x)) x := by
+--   sorry
+
+lemma local_version_contDiffWithinAt_try {E F : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [NormedAddCommGroup F] [InnerProductSpace ℝ F] [CompleteSpace F]
+    {s : E → F →L[ℝ] ℝ} {u : Set E} {x : E} (hs : ContDiffWithinAt ℝ k s u x) :
+    ContDiffWithinAt ℝ k (fun x ↦ (InnerProductSpace.toDual ℝ F).symm (s x)) u x := by
+  apply ContDiffWithinAt.of_apply_inner
+  intro t ht
+  simp
+  -- Decompose using orthonormal basis, then it's easy.
+  sorry
+
+-- lemma local_version_contDiffWithinAt {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+--     {F : E → Type*} [∀ x, NormedAddCommGroup (F x)] [∀ x, InnerProductSpace ℝ (F x)]
+--     {s : (x : E) → F x →L[ℝ] ℝ} {u : Set E} {x : E}
+--     (hs : ContDiffWithinAt ℝ k (fun x ↦ s x) u x) :
+--     ContDiffWithinAt ℝ k (fun x ↦ (InnerProductSpace.toDual ℝ F).symm (s x)) u x := by
+--   apply ContDiffWithinAt.of_apply_inner
+--   intro t ht
+--   simp
+--   -- Decompose using orthonormal basis, then it's easy.
+--   sorry
+
+#where
+lemma local_version_contDiffAt {E F : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [NormedAddCommGroup F] --[InnerProductSpace ℝ F] [CompleteSpace F]
+    {s : E → F →L[ℝ] ℝ} {x : E} (hs : ContDiffAt ℝ k s x) :
+    ContDiffAt ℝ k (fun x ↦ (InnerProductSpace.toDual ℝ F).symm (s x)) x :=
+  local_version_contDiffWithinAt hs
+
 -- wait, is this actually circular now?
+variable [InnerProductSpace ℝ EB] in
+omit [NormedSpace ℝ EB] in
 lemma aux {s : (x : B) → TangentSpace IB x →L[ℝ] ℝ} {x : B}
     (hs : CMDiffAt k (fun (x : B) ↦
       TotalSpace.mk' (E := fun (x : B) ↦ TangentSpace IB x →L[ℝ] ℝ) (EB →L[ℝ] ℝ) x (s x)) x) :
     letI p (x' : B) := (InnerProductSpace.toDual ℝ (TangentSpace IB x')).symm (s x')
-    ContMDiff IB IB.tangent k (T% p) := by
-  dsimp
-  intro x₀
-  rw [contMDiffAt_section_iff]
-  simp_rw [TangentBundle.trivializationAt_apply']
-  simp
-  sorry
+    ContMDiffAt IB IB.tangent k (T% p) x := by
+  -- Plan: reduce to `local_version`.
+  rw [contMDiffAt_section_iff, contMDiffAt_iff] at hs ⊢
+  dsimp at hs ⊢
+  constructor
+  · replace hs := hs.1 -- use hs.1
+    sorry
+  replace hs := hs.2
+  set u := Set.range IB
+  set x₀ := IB (chartAt HB x x)
+  setm ContDiffWithinAt ℝ k ?s u x₀ using hs
+  --have : InnerProductSpace ℝ (EB →L[ℝ] ℝ) := sorry
+  --have : InnerProductSpace ℝ (EB) := sorry
+  have aux := local_version_contDiffWithinAt (u := u) (x := x₀) (F := EB) (s := s)
 
+
+
+  -- The following arrives at the same goal as below... so doesn't make much progress.
+  -- dsimp
+  -- intro x₀
+  -- rw [contMDiffAt_section_iff]
+  -- simp_rw [TangentBundle.trivializationAt_apply']
+  -- simp
+  -- sorry
+
+#exit
 lemma goal {p : (x' : B) → TangentSpace IB x'} (hp : CMDiff k (T% p)) {x : B}
     (hx : x ∈ (chartAt HB x).source) :
     ContMDiffWithinAt IB 𝓘(ℝ, EB) k
