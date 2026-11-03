@@ -682,24 +682,23 @@ theorem TensorialAt.contMDiff_mkHom₂
     [∀ (x : B), IsTopologicalAddGroup (E₃ x)] [∀ (x : B), ContinuousSMul 𝕜 (E₃ x)]
     [ContMDiffVectorBundle k F₃ E₃ IB]
     (φ : (Π x : B, E₁ x) → (Π x, E₂ x) → (Π x, E₃ x))
-    (hφ₁ : ∀ x, ∀ τ, MDiffAt (T% τ) x → TensorialAt IB F₁ (φ · τ) x)
-    (hφ₂ : ∀ x, ∀ σ, MDiffAt (T% σ) x → TensorialAt IB F₂ (φ σ ·) x)
+    -- TODO: double-check if this is what I want, or the x-quantifiers are wrong
+    -- e.g., should I have (φ · τ) instead?
+    -- but at least everything typechecks!
+    (hφ₁ : ∀ x, ∀ τ, MDiffAt (T% τ) x → TensorialAt IB F₁ (φ · τ x) x)
+    (hφ₂ : ∀ x, ∀ σ, MDiffAt (T% σ) x → TensorialAt IB F₂ (φ σ · x) x)
     -- TODO: is the order of quantifiers the right one?, or shall the ∀ x go further inside?
     (φ_contMDiff : ∀ x, ∀ (σ : Π x : B, E₁ x), CMDiffAt k (T% σ) x →
       ∀ (τ : Π x : B, E₂ x), CMDiffAt k (T% τ) x → CMDiffAt k (T% (φ σ τ)) x) :
     -- elaborators not working here
     haveI : ContMDiffVectorBundle 1 F₁ E₁ IB := ContMDiffVectorBundle.of_le hk
     haveI : ContMDiffVectorBundle 1 F₂ E₂ IB := ContMDiffVectorBundle.of_le hk
-    -- type is almost correct; mismatch about x vs x' vs x0
-    let sfd (x' : B) := TensorialAt.mkHom₂ φ (F := F₁) (I := IB) (F' := F₂) x' (hφ₁ x') (hφ₂ x')
-    letI T (x0 : B) : TotalSpace (F₁ →L[𝕜] F₂ →L[𝕜] F₃) (fun x ↦ E₁ x →L[𝕜] E₂ x →L[𝕜] E₃ x) :=
-      ⟨x0,
-        sorry⟩ -- sfd x0
+    letI T (x : B) : TotalSpace (F₁ →L[𝕜] F₂ →L[𝕜] F₃) (fun x ↦ E₁ x →L[𝕜] E₂ x →L[𝕜] E₃ x) :=
+      ⟨x, TensorialAt.mkHom₂ (φ · · x) (F := F₁) (I := IB) (F' := F₂) x (hφ₁ x) (hφ₂ x)⟩
     CMDiff k T := by
-  --haveI : ContMDiffVectorBundle 1 F₁ E₁ IB := ContMDiffVectorBundle.of_le hk
-  --haveI : ContMDiffVectorBundle 1 F₂ E₂ IB := ContMDiffVectorBundle.of_le hk
-  --let sfd := TensorialAt.mkHom₂ φ (F := F₁) (I := IB) (F' := F₂) x hφ₁ hφ₂
-
+  have : ContMDiffVectorBundle 1 F₁ E₁ IB := ContMDiffVectorBundle.of_le hk
+  have : ContMDiffVectorBundle 1 F₂ E₂ IB := ContMDiffVectorBundle.of_le hk
+  -- apply contMDiff_mkHom twice; details TBD
   sorry
 
 end OneVariable
