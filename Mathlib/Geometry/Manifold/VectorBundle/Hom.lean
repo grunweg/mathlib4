@@ -674,6 +674,34 @@ theorem TensorialAt.contMDiff_mkHom
     simp [hx]
   exact (φ_contMDiff σ b hσ.self_of_nhds).congr_of_eventuallyEq this
 
+theorem TensorialAt.contMDiff_mkHom₂
+    [CompleteSpace 𝕜] {k} (hk : 1 ≤ k) [IsManifold IB k B]
+    [FiniteDimensional 𝕜 F₁] [FiniteDimensional 𝕜 F₂]
+    [∀ (x : B), IsTopologicalAddGroup (E₁ x)] [∀ (x : B), ContinuousSMul 𝕜 (E₁ x)]
+    [ContMDiffVectorBundle k F₁ E₁ IB] [ContMDiffVectorBundle k F₂ E₂ IB]
+    [∀ (x : B), IsTopologicalAddGroup (E₃ x)] [∀ (x : B), ContinuousSMul 𝕜 (E₃ x)]
+    [ContMDiffVectorBundle k F₃ E₃ IB]
+    (φ : (Π x : B, E₁ x) → (Π x, E₂ x) → (Π x, E₃ x))
+    (hφ₁ : ∀ x, ∀ τ, MDiffAt (T% τ) x → TensorialAt IB F₁ (φ · τ) x)
+    (hφ₂ : ∀ x, ∀ σ, MDiffAt (T% σ) x → TensorialAt IB F₂ (φ σ ·) x)
+    -- TODO: is the order of quantifiers the right one?, or shall the ∀ x go further inside?
+    (φ_contMDiff : ∀ x, ∀ (σ : Π x : B, E₁ x), CMDiffAt k (T% σ) x →
+      ∀ (τ : Π x : B, E₂ x), CMDiffAt k (T% τ) x → CMDiffAt k (T% (φ σ τ)) x) :
+    -- elaborators not working here
+    haveI : ContMDiffVectorBundle 1 F₁ E₁ IB := ContMDiffVectorBundle.of_le hk
+    haveI : ContMDiffVectorBundle 1 F₂ E₂ IB := ContMDiffVectorBundle.of_le hk
+    -- type is almost correct; mismatch about x vs x' vs x0
+    let sfd (x' : B) := TensorialAt.mkHom₂ φ (F := F₁) (I := IB) (F' := F₂) x' (hφ₁ x') (hφ₂ x')
+    letI T (x0 : B) : TotalSpace (F₁ →L[𝕜] F₂ →L[𝕜] F₃) (fun x ↦ E₁ x →L[𝕜] E₂ x →L[𝕜] E₃ x) :=
+      ⟨x0,
+        sorry⟩ -- sfd x0
+    CMDiff k T := by
+  --haveI : ContMDiffVectorBundle 1 F₁ E₁ IB := ContMDiffVectorBundle.of_le hk
+  --haveI : ContMDiffVectorBundle 1 F₂ E₂ IB := ContMDiffVectorBundle.of_le hk
+  --let sfd := TensorialAt.mkHom₂ φ (F := F₁) (I := IB) (F' := F₂) x hφ₁ hφ₂
+
+  sorry
+
 end OneVariable
 
 section OneVariable'
