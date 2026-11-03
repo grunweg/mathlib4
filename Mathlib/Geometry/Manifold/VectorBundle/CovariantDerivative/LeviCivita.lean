@@ -414,13 +414,16 @@ public lemma isLeviCivitaConnection_leviCivitaConnection :
 
 omit [IsManifold I 2 M]
 variable {k : ℕ∞}
-  [IsContMDiffRiemannianBundle I (k + 2) E (fun (x : M) ↦ TangentSpace% x)]
-  [IsManifold I (k + 2) M]
+  [IsContMDiffRiemannianBundle I (k + 3) E (fun (x : M) ↦ TangentSpace% x)]
+  [IsManifold I (k + 3) M]
 
 attribute [local instance] TangentBundle.contMDiffVectorBundle
 
-/-- If `M` is `C^{k+2}` and endowed with a `C^{k+1}` metric,
-its Levi-Civita connection is a `C^k` connection. -/
+/-- If `k ≥ 1`, `M` is `C^{k+2}` and endowed with a `C^{k+1}` metric,
+its Levi-Civita connection is a `C^k` connection.
+RFC: we don't want to have a condition `k ≠ 0` or `1 ≤ k`, as typeclass inference cannot prove that.
+Instead, we state the regularity as `k + 1` for some k, which is always non-zero.
+-/
 instance leviCivitaConnection_baz :
     ContMDiffCovariantDerivative (leviCivitaConnection I M) (k + 1) where
   contMDiff := by
@@ -432,32 +435,37 @@ instance leviCivitaConnection_baz :
     have := (contMDiffOn_univ.mp hσ).mdifferentiable (by simp)
     let arg : M → TotalSpace (E →L[ℝ] E) fun (x : M) ↦ TangentSpace I x →L[ℝ] TangentSpace I x :=
       fun x ↦ TotalSpace.mk' _ x (leviCivitaAuxOfMDiffAt I (this x))
-    suffices hyp : ContMDiff I (I.prod 𝓘(ℝ, E →L[ℝ] E)) (↑k + 1) arg by
+    suffices hyp : ContMDiff I (I.prod 𝓘(ℝ, E →L[ℝ] E)) (k + 1) arg by
       apply hyp.congr
       intro y
       simp [arg, this y]
     unfold arg leviCivitaAuxOfMDiffAt
 
     -- Next, we handle the application of the musical isomorphism.
-    have : IsManifold I (↑k + 1 + 1) M := IsManifold.of_le (n := k + 2) (le_of_eq (by grind))
-    have : IsContMDiffRiemannianBundle I (↑k + 1) E fun (x : M) ↦ TangentSpace I x :=
-      IsContMDiffRiemannianBundle.of_le (n := k + 2) (by gcongr; simp)
-    apply contMDiff_musicalIso_apply (k := k + 1) (IB := I)
+    have : IsManifold I (↑k + 1 + 1) M := IsManifold.of_le (n := k + 3) (by sorry)
+    have : IsContMDiffRiemannianBundle I (k + 1) E fun (x : M) ↦ TangentSpace I x :=
+      IsContMDiffRiemannianBundle.of_le (n := k + 3) (by gcongr; simp)
+    apply contMDiff_musicalIso_apply
 
     -- The final step is applying our smoothness criterion for the tensoriality construction.
-    have : IsManifold I (↑k + 1) M := IsManifold.of_le (n := k + 2) (by gcongr; simp)
-    apply TensorialAt.contMDiff_mkHom₂ (by simp)
+    have : IsManifold I (k + 1) M := IsManifold.of_le (n := k + 3) (by gcongr; simp)
+    -- NB. We apply the version involving a loss of derivatives, because this is what happens here.
+    apply TensorialAt.contMDiff_mkHom₂' (by simp)
     intro x τ hτ τ' hτ'
     unfold leviCivitaAuxInner
     dsimp
     rw [contMDiffOn_univ] at hσ
     apply ContMDiffAt.smul_section; swap
     · simpa [contMDiffAt_section_iff] using contMDiffAt_const
+    have : IsContMDiffRiemannianBundle I (k + 2) E fun (x : M) ↦ TangentSpace I x :=
+      IsContMDiffRiemannianBundle.of_le (n := k + 3) (by gcongr; norm_num)
     let A (x) := ((d% fun x ↦ ⟪σ x, τ' x⟫) x) (τ x)
     let B (x) := ((d% fun x ↦ ⟪τ' x, τ x⟫) x) (σ x) - ((d% fun x ↦ ⟪τ x, σ x⟫) x) (τ' x)
     let D (x) := ⟪σ x, mlieBracket I τ τ' x⟫
     let E (x) := ⟪τ' x, mlieBracket I σ τ x⟫
     let F (x) := ⟪τ x, mlieBracket I τ' σ x⟫
+    have : IsManifold I (↑(k + 2) + 1) M :=
+      IsManifold.of_le (n := k + 3) (le_of_eq (by simp; grind))
     -- XXX: can fun_prop solve all these with the right tagging? that's the morally correct proof
     have hA : ContMDiffAt I 𝓘(ℝ, ℝ) (k + 1) A x := by
       unfold A
@@ -466,8 +474,13 @@ instance leviCivitaConnection_baz :
         · apply hσ.of_le
           apply le_of_eq
           grind
-        · sorry -- hτ', but need more regularity there!
-      · apply hτ
+        · -- Papercut: have hypotheses (k + 1 + 1)-differentiability; want k + 2-differentiability
+          -- convert won't do it, but creates k = k + 1 and 2 = 1 goals
+          apply hτ'.of_le
+          apply le_of_eq
+          grind
+      · apply hτ.of_le
+        gcongr; simp
       apply le_of_eq
       grind
     have hB : ContMDiffAt I 𝓘(ℝ, ℝ) (k + 1) B x := by
@@ -477,11 +490,15 @@ instance leviCivitaConnection_baz :
       apply ContMDiffAt.inner_bundle'
       · apply hσ.of_le (by simp)
       · have : IsManifold I (minSmoothness ℝ 2) M := sorry -- up to counting derivatives
-        apply ContMDiffAt.mlieBracket_vectorField (n := k)
-        · apply hτ.of_le (by simp)
-        · apply hτ'.of_le (by simp)
-        simp
-        sorry -- unsolvable; need to adjust count of regularity hypotheses
+        apply ContMDiffAt.mlieBracket_vectorField (n := k + 2)
+        · apply hτ.of_le
+          -- TODO: want better automation here
+          apply le_of_eq; simp; grind
+          /- the goal k + 1 + 1 = k + 2 can be done by neither simp nor grind -/
+        · apply hτ'.of_le
+          apply le_of_eq; simp; grind
+        apply le_of_eq
+        simp; grind
     have hE : ContMDiffAt I 𝓘(ℝ, ℝ) (k + 1) E x := sorry -- analogous
     have hF : ContMDiffAt I 𝓘(ℝ, ℝ) (k + 1) F x := sorry -- analogous
     have : ContMDiffAt I 𝓘(ℝ, ℝ) (k + 1) (fun x ↦ A x + B x + D x + E x + F x) x := by
