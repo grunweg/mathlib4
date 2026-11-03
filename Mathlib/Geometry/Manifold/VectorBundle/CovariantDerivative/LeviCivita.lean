@@ -412,11 +412,13 @@ public lemma isLeviCivitaConnection_leviCivitaConnection :
     (leviCivitaConnection I M).IsLeviCivitaConnection :=
   ⟨isMetricCompatible_leviCivitaConnection I, torsion_leviCivitaConnection_eq_zero I⟩
 
--- TODO: have a stale `IsManifold I 2 M` hypothesis lying around...
+omit [IsManifold I 2 M]
 variable {k : ℕ∞}
-  [IsContMDiffRiemannianBundle I (k + 2) E (fun (x : M) ↦ TangentSpace% x)] [IsManifold I (k + 3) M]
+  [IsContMDiffRiemannianBundle I (k + 2) E (fun (x : M) ↦ TangentSpace% x)]
+  [IsManifold I (k + 2) M]
 
-variable (x) in -- silence a warning; TODO this argument should never appear
+attribute [local instance] TangentBundle.contMDiffVectorBundle
+
 /-- If `M` is `C^{k+2}` and endowed with a `C^{k+1}` metric,
 its Levi-Civita connection is a `C^k` connection. -/
 instance leviCivitaConnection_baz :
@@ -437,13 +439,13 @@ instance leviCivitaConnection_baz :
     unfold arg leviCivitaAuxOfMDiffAt
 
     -- Next, we handle the application of the musical isomorphism.
-    have : IsManifold I (↑k + 1 + 1) M := sorry
-    have : ContMDiffVectorBundle (↑k + 1) E (TangentSpace (M := M) I) I := sorry
-    have : IsContMDiffRiemannianBundle I (↑k + 1) E fun (x : M) ↦ TangentSpace I x := sorry
+    have : IsManifold I (↑k + 1 + 1) M := IsManifold.of_le (n := k + 2) (le_of_eq (by grind))
+    have : IsContMDiffRiemannianBundle I (↑k + 1) E fun (x : M) ↦ TangentSpace I x :=
+      IsContMDiffRiemannianBundle.of_le (n := k + 2) (by gcongr; simp)
     apply contMDiff_musicalIso_apply (k := k + 1) (IB := I)
 
     -- The final step is applying our smoothness criterion for the tensoriality construction.
-    have : IsManifold I (↑k + 1) M := sorry
+    have : IsManifold I (↑k + 1) M := IsManifold.of_le (n := k + 2) (by gcongr; simp)
     apply TensorialAt.contMDiff_mkHom₂ (by simp)
     intro x τ hτ τ' hτ'
     unfold leviCivitaAuxInner
@@ -456,6 +458,7 @@ instance leviCivitaConnection_baz :
     let D (x) := ⟪σ x, mlieBracket I τ τ' x⟫
     let E (x) := ⟪τ' x, mlieBracket I σ τ x⟫
     let F (x) := ⟪τ x, mlieBracket I τ' σ x⟫
+    -- XXX: can fun_prop solve all these with the right tagging? that's the morally correct proof
     have hA : ContMDiffAt I 𝓘(ℝ, ℝ) (k + 1) A x := by
       unfold A
       apply ContMDiffAt.mvfderiv (n := k + 2) -- TODO: count of derivatives doesn't match yet
