@@ -413,7 +413,7 @@ public lemma isLeviCivitaConnection_leviCivitaConnection :
     (leviCivitaConnection I M).IsLeviCivitaConnection :=
   ⟨isMetricCompatible_leviCivitaConnection I, torsion_leviCivitaConnection_eq_zero I⟩
 
-omit [IsManifold I 2 M]
+omit [IsManifold I 2 M] -- TODO: this doesn't do what I want!
 variable {k : ℕ∞}
   [IsContMDiffRiemannianBundle I (k + 3) E (fun (x : M) ↦ TangentSpace% x)]
   [IsManifold I (k + 3) M]
@@ -497,6 +497,78 @@ lemma aux9 (k : ℕ∞) : k + 1 ≤ (k : ℕ∞ω) + 1 + 1 := by
   · simp
   norm_cast; simp
 
+lemma aux'' (k : ℕ∞) : 2 ≤ (k : ℕ∞ω) + 3 := by
+  basify
+  · sorry -- some missing lemma!
+  norm_cast
+  norm_cast
+  lia
+
+/-- A macro for a proving common lemmas when counting derivatives -/
+syntax "mybasify" : tactic
+
+macro_rules
+  -- try `simp` on the first goal; for the second goal, cast to natural numbers and use `lia`
+  | `(tactic| mybasify) => do `(tactic| basify; try simp; try repeat norm_cast; try lia)
+
+theorem contMDiffAt_leviCivitaAuxInner
+    [IsManifold I 2 M]
+    [IsContMDiffRiemannianBundle I (k + 3) E (fun (x : M) ↦ TangentSpace% x)]
+    {σ : (x : M) → TangentSpace I x} (hσ : ContMDiffAt I (I.prod 𝓘(ℝ, E)) (↑k + 1 + 1) (T% σ) x)
+    {τ : (x : M) → TangentSpace I x}
+    (hτ : ContMDiffAt I (I.prod 𝓘(ℝ, E)) (↑k + 1 + 1) (T% τ) x)
+    {τ' : (x : M) → TangentSpace I x}
+    (hτ' : ContMDiffAt I (I.prod 𝓘(ℝ, E)) (↑k + 1 + 1) (T% τ') x) :
+    ContMDiffAt I (I.prod 𝓘(ℝ, ℝ)) (↑k + 1)
+      (fun x ↦ TotalSpace.mk' ℝ x (leviCivitaAuxInner I τ σ τ' x)) x := by
+    unfold leviCivitaAuxInner
+    dsimp
+    apply ContMDiffAt.smul_section; swap
+    · simpa [contMDiffAt_section_iff] using contMDiffAt_const
+    have : IsContMDiffRiemannianBundle I (k + 2) E fun (x : M) ↦ TangentSpace I x :=
+      IsContMDiffRiemannianBundle.of_le (n := k + 3) (aux6 k) -- TODO: need a better tactic!
+    have : IsContMDiffRiemannianBundle I (k + 1) E fun (x : M) ↦ TangentSpace I x :=
+      IsContMDiffRiemannianBundle.of_le (n := k + 3) (by mybasify)
+    let A (x) := ((d% fun x ↦ ⟪σ x, τ' x⟫) x) (τ x)
+    let B (x) := ((d% fun x ↦ ⟪τ' x, τ x⟫) x) (σ x)
+    let C (x) := ((d% fun x ↦ ⟪τ x, σ x⟫) x) (τ' x)
+    let D (x) := ⟪σ x, mlieBracket I τ τ' x⟫
+    let E (x) := ⟪τ' x, mlieBracket I σ τ x⟫
+    let F (x) := ⟪τ x, mlieBracket I τ' σ x⟫
+    have : IsManifold I (↑(k + 2) + 1) M := IsManifold.of_le (n := k + 3) (by mybasify)
+    -- XXX: can fun_prop solve all these with the right tagging? that's the morally correct proof
+    have hA : CMDiffAt (k + 1) A x := by
+      unfold A
+      apply ContMDiffAt.mvfderiv ?_ (n := k + 2) (hτ.of_le (by mybasify)) (by mybasify)
+      apply ContMDiffAt.inner_bundle'
+      · apply hσ.of_le (by mybasify)
+      · -- Papercut: have hypotheses (k + 1 + 1)-differentiability; want k + 2-differentiability
+        -- convert won't do it, but creates k = k + 1 and 2 = 1 goals
+        apply hτ'.of_le (by mybasify)
+    have hB : CMDiffAt (k + 1) B x := by
+      apply ContMDiffAt.mvfderiv ?_ (n := k + 2) (hσ.of_le (by mybasify)) (by mybasify)
+      exact (hτ'.of_le (by mybasify)).inner_bundle' (hτ.of_le (by mybasify))
+    have hC : CMDiffAt (k + 1) C x := by
+      apply ContMDiffAt.mvfderiv ?_ (n := k + 2) (hτ'.of_le (by mybasify)) (by mybasify)
+      exact (hτ.of_le (by mybasify)).inner_bundle' (hσ.of_le (by mybasify))
+    have : IsManifold I (minSmoothness ℝ 2) M := IsManifold.of_le (n := k + 3) (by simp [aux'' k])
+    have hD : CMDiffAt (k + 1) D x := by
+      unfold D
+      apply ContMDiffAt.inner_bundle'
+      · apply hσ.of_le (by simp)
+      · apply ContMDiffAt.mlieBracket_vectorField (n := k + 2)
+        · apply hτ.of_le (aux8 k)
+          -- TODO: want better automation here
+          /- the goal k + 1 + 1 = k + 2 can be done by neither simp nor grind -/
+        · apply hτ'.of_le (by mybasify)
+        simp only [minSmoothness_of_isRCLikeNormedField]
+        mybasify
+    have hE : CMDiffAt (k + 1) E x := sorry -- analogous
+    have hF : CMDiffAt (k + 1) F x := sorry -- analogous
+    repeat apply ContMDiffAt.add
+    all_goals try apply ContMDiffAt.neg
+    all_goals assumption
+
 /-- If `M` is a `C^{k+2}` manifold (for `k ≥ 1`) endowed with a `C^{k+1}` metric,
 its Levi-Civita connection is a `C^k` connection.
 RFC: we don't want to have a condition `k ≠ 0` or `1 ≤ k`, as typeclass inference cannot prove that.
@@ -508,9 +580,9 @@ instance leviCivitaConnection_baz :
     dsimp [leviCivitaConnection]
     unfold leviCivitaAux
     refine ⟨fun {σ} hσ ↦ ?_⟩
-    rw [contMDiffOn_univ]
+    rw [contMDiffOn_univ] at hσ ⊢
     -- The next few lines all allow replacing the goal by smoothness of `leviCivitaAuxOfMDiffAt`.
-    have := (contMDiffOn_univ.mp hσ).mdifferentiable (by simp)
+    have := hσ.mdifferentiable (by simp)
     let arg : M → TotalSpace (E →L[ℝ] E) fun (x : M) ↦ TangentSpace I x →L[ℝ] TangentSpace I x :=
       fun x ↦ TotalSpace.mk' _ x (leviCivitaAuxOfMDiffAt I (this x))
     suffices hyp : ContMDiff I (I.prod 𝓘(ℝ, E →L[ℝ] E)) (k + 1) arg by
@@ -518,73 +590,16 @@ instance leviCivitaConnection_baz :
       intro y
       simp [arg, this y]
     unfold arg leviCivitaAuxOfMDiffAt
-
     -- Next, we handle the application of the musical isomorphism.
     have : IsManifold I (↑k + 1 + 1) M := IsManifold.of_le (n := k + 3) (aux1 k)
     have : IsContMDiffRiemannianBundle I (k + 1) E fun (x : M) ↦ TangentSpace I x :=
       IsContMDiffRiemannianBundle.of_le (n := k + 3) (aux5 k)
     apply contMDiff_musicalIso_apply
-
     -- The final step is applying our smoothness criterion for the tensoriality construction.
     have : IsManifold I (k + 1) M := IsManifold.of_le (n := k + 3) (aux5 k)
     -- NB. We apply the version involving a loss of derivatives, because this is what happens here.
     apply TensorialAt.contMDiff_mkHom₂' (by simp)
-    intro x τ hτ τ' hτ'
-    unfold leviCivitaAuxInner
-    dsimp
-    rw [contMDiffOn_univ] at hσ
-    apply ContMDiffAt.smul_section; swap
-    · simpa [contMDiffAt_section_iff] using contMDiffAt_const
-    have : IsContMDiffRiemannianBundle I (k + 2) E fun (x : M) ↦ TangentSpace I x :=
-      IsContMDiffRiemannianBundle.of_le (n := k + 3) (aux6 k)
-    let A (x) := ((d% fun x ↦ ⟪σ x, τ' x⟫) x) (τ x)
-    let B (x) := ((d% fun x ↦ ⟪τ' x, τ x⟫) x) (σ x) - ((d% fun x ↦ ⟪τ x, σ x⟫) x) (τ' x)
-    let D (x) := ⟪σ x, mlieBracket I τ τ' x⟫
-    let E (x) := ⟪τ' x, mlieBracket I σ τ x⟫
-    let F (x) := ⟪τ x, mlieBracket I τ' σ x⟫
-    have : IsManifold I (↑(k + 2) + 1) M := IsManifold.of_le (n := k + 3) (aux7 k)
-    -- XXX: can fun_prop solve all these with the right tagging? that's the morally correct proof
-    have hA : ContMDiffAt I 𝓘(ℝ, ℝ) (k + 1) A x := by
-      unfold A
-      apply ContMDiffAt.mvfderiv (n := k + 2)
-      · apply ContMDiffAt.inner_bundle'
-        · apply hσ.of_le (aux8 k)
-        · -- Papercut: have hypotheses (k + 1 + 1)-differentiability; want k + 2-differentiability
-          -- convert won't do it, but creates k = k + 1 and 2 = 1 goals
-          apply hτ'.of_le (aux8 k)
-      · apply hτ.of_le (aux9 k)
-      apply aux2 k
-    have hB : ContMDiffAt I 𝓘(ℝ, ℝ) (k + 1) B x := by
-      apply ContMDiffAt.sub <;> sorry -- essentially the above
-    have hD : ContMDiffAt I 𝓘(ℝ, ℝ) (k + 1) D x := by
-      unfold D
-      apply ContMDiffAt.inner_bundle'
-      · apply hσ.of_le (by simp)
-      · have : IsManifold I (minSmoothness ℝ 2) M := by
-          apply IsManifold.of_le (n := k + 3)
-          simp only [minSmoothness_of_isRCLikeNormedField]
-          -- goal: 2 ≤ (k : ℕ∞ω) + 3; this should be a one-line tactic!
-          basify
-          · -- goal: 2 ≤ (k : ℕ∞ω) + 3; this is too painful!
-            trans ∞
-            · simp
-            simp
-          -- finite case should definitely be a tactic!
-          sorry -- up to counting derivatives
-        apply ContMDiffAt.mlieBracket_vectorField (n := k + 2)
-        · apply hτ.of_le (aux8 k)
-          -- TODO: want better automation here
-          /- the goal k + 1 + 1 = k + 2 can be done by neither simp nor grind -/
-        · apply hτ'.of_le (aux8 k)
-        apply le_of_eq
-        simp; grind
-    have hE : ContMDiffAt I 𝓘(ℝ, ℝ) (k + 1) E x := sorry -- analogous
-    have hF : ContMDiffAt I 𝓘(ℝ, ℝ) (k + 1) F x := sorry -- analogous
-    have : ContMDiffAt I 𝓘(ℝ, ℝ) (k + 1) (fun x ↦ A x + B x + D x + E x + F x) x := by
-      sorry
-    convert this with x₀
-    unfold A B D E
-    sorry -- why doesn't this simplify?
+    exact fun x τ hτ τ' hτ' ↦ contMDiffAt_leviCivitaAuxInner I (hσ x) hτ hτ'
 
 end existence
 
