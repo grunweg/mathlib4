@@ -420,19 +420,35 @@ variable {k : ℕ∞}
 
 attribute [local instance] TangentBundle.contMDiffVectorBundle
 
+-- different form of `missing` below; don't understand why `trivial` solves it
+lemma related (a : ℕ) : (∞ : ℕ∞ω) + a = ∞ := by
+  basify
+  trivial
+
+#click_suggestions
+
+@[simp, basify_simp]
+lemma missing (a : ℕ) : (∞ : ℕ∞ω) + (ofNat(a) : ℕ∞ω) = ∞ := by
+  induction a with
+  | zero => simp
+  | succ n hn =>
+    have : (OfNat.ofNat (n + 1) : ℕ∞ω) = OfNat.ofNat n + 1 := by
+      sorry
+    rwa [this, ← add_assoc, ENat.add_one_eq_coe_top_iff]
+
+attribute [basify_simp] le_rfl
+
 -- manual tweak of aux1
 lemma aux0 (k : ℕ∞) : (k : ℕ∞ω) + 1 + 1 + 1 ≤ k + 3 := by
   -- apply le_of_eq; grind works but needs thinking
   -- the following works (but norm_cast only succeeds because the goal is easy enough)
   basify
-  · simp
   norm_cast
 
 -- real example in the lemma below
 lemma aux1 (k : ℕ∞) : (k : ℕ∞ω) + 1 + 1 ≤ k + 3 := by
   -- gcongr fails; cannot use a suitable pattern either
   basify
-  · simp
   -- question/bug(?): norm_cast is not idempotent here
   norm_cast
   norm_cast
@@ -444,7 +460,6 @@ lemma aux2 (k : ℕ∞) : (k : ℕ∞ω) + 1 + 1 ≤ k + 2 := by
   --apply le_of_eq
   --grind
   basify
-  · simp
   norm_cast
 
 -- manual tweak of the example above
@@ -452,41 +467,28 @@ lemma aux3 (k : ℕ∞) : (k : ℕ∞ω) + 1 ≤ k + 2 := by
   -- works, but requires thinking
   --gcongr; simp
   basify
-  · simp
   norm_cast; norm_cast; lia
 
 -- real example in the lemma below
 lemma aux5 (k : ℕ∞) : (k : ℕ∞ω) + 1 ≤ k + 3 := by
+  --basify
+  --norm_cast; norm_cast; lia
   gcongr; simp
 
--- different form of `missing` below; don't understand why `trivial` solves it
-lemma related (a : ℕ) : (∞ : ℕ∞ω) + a = ∞ := by
-  basify
-  trivial
-
-@[simp]
-lemma missing (a : ℕ) : (∞ : ℕ∞ω) + (ofNat(a) : ℕ∞ω) = ∞ := by
-  -- TODO: how to prove this?
-  sorry
 
 -- real example in the lemma below
 lemma aux6 (k : ℕ∞) : (k : ℕ∞ω) + 2 ≤ k + 3 := by
   basify
-  · -- simp works thanks ot the lemma missing above
-    trans ∞
-    · apply le_of_eq
-      exact ENat.add_one_eq_coe_top_iff.mp rfl
-    · apply le_of_eq
-      symm
-      -- XXX: how does this work for adding three?
-      exact ENat.add_one_eq_coe_top_iff.mp rfl
+  -- · apply le_rfl
+  --   -- simp works thanks ot the lemma missing above
+  --   trans ∞
+  --   · apply le_of_eq
+  --     exact ENat.add_one_eq_coe_top_iff.mp rfl
+  --   · apply le_of_eq
+  --     symm
+  --     -- XXX: how does this work for adding three?
+  --     exact ENat.add_one_eq_coe_top_iff.mp rfl
   norm_cast; norm_cast; lia
-  -- note: basify's first side goal cannot be solved by simp, and the second one is also hard...
-  -- TODO: do we need better basify tagging for enat? or applying it twice?
-  -- basify
-  -- · sorry
-  -- sorry
-  -- gcongr; norm_num
 
 lemma aux6' (k : ℕ∞ω) (hk : k ≠ ω) : k + 2 ≤ k + 3 := by
   -- gcongr; norm_num
@@ -497,7 +499,6 @@ lemma aux6' (k : ℕ∞ω) (hk : k ≠ ω) : k + 2 ≤ k + 3 := by
 lemma aux7 (k : ℕ∞) : (k + 2 : ℕ∞ω) + 1 ≤ ↑k + 3 := by
   -- `apply le_of_eq (by grind)` works; let's try a proof without thinking
   basify
-  · simp
   -- gcongr fails again
   norm_cast
 
@@ -505,19 +506,18 @@ lemma aux7 (k : ℕ∞) : (k + 2 : ℕ∞ω) + 1 ≤ ↑k + 3 := by
 lemma aux8 (k : ℕ∞) : k + 2 ≤ (k : ℕ∞ω) + 1 + 1 := by
   -- apply le_of_eq; grind works
   basify
-  · simp
   norm_cast
 
 -- real example in the lemma below
 lemma aux9 (k : ℕ∞) : k + 1 ≤ (k : ℕ∞ω) + 1 + 1 := by
   -- apply le_of_eq; grind works
   basify
-  · simp
   norm_cast; simp
+
+attribute [basify_simp] ENat.LEInfty.out
 
 lemma aux'' (k : ℕ∞) : 2 ≤ (k : ℕ∞ω) + 3 := by
   basify
-  · simp
   norm_cast
   norm_cast
   lia
@@ -526,8 +526,8 @@ lemma aux'' (k : ℕ∞) : 2 ≤ (k : ℕ∞ω) + 3 := by
 syntax "mybasify" : tactic
 
 macro_rules
-  -- try `simp` on the first goal; for the second goal, cast to natural numbers and use `lia`
-  | `(tactic| mybasify) => do `(tactic| basify; try simp; try repeat norm_cast; try lia)
+  -- In all cases, there should be only one goal left. Cast to natural numbers and use `lia`
+  | `(tactic| mybasify) => do `(tactic| basify; on_goal 1 => try repeat norm_cast; try lia)
 
 theorem contMDiffAt_leviCivitaAuxInner
     [IsManifold I 2 M]
@@ -544,7 +544,7 @@ theorem contMDiffAt_leviCivitaAuxInner
     apply ContMDiffAt.smul_section; swap
     · simpa [contMDiffAt_section_iff] using contMDiffAt_const
     have : IsContMDiffRiemannianBundle I (k + 2) E fun (x : M) ↦ TangentSpace I x :=
-      IsContMDiffRiemannianBundle.of_le (n := k + 3) (aux6 k) -- TODO: need a better tactic!
+      IsContMDiffRiemannianBundle.of_le (n := k + 3) (by mybasify)
     have : IsContMDiffRiemannianBundle I (k + 1) E fun (x : M) ↦ TangentSpace I x :=
       IsContMDiffRiemannianBundle.of_le (n := k + 3) (by mybasify)
     have : IsManifold I (↑(k + 2) + 1) M := IsManifold.of_le (n := k + 3) (by mybasify)
@@ -565,7 +565,7 @@ theorem contMDiffAt_leviCivitaAuxInner
     · apply ContMDiffAt.inner_bundle'
       · apply hσ.of_le (by simp)
       · apply ContMDiffAt.mlieBracket_vectorField (n := k + 2)
-        · apply hτ.of_le (aux8 k)
+        · apply hτ.of_le (by mybasify)
           -- TODO: want better automation here
           /- the goal k + 1 + 1 = k + 2 can be done by neither simp nor grind -/
         · apply hτ'.of_le (by mybasify)
@@ -608,12 +608,12 @@ instance leviCivitaConnection_baz :
       simp [arg, this y]
     unfold arg leviCivitaAuxOfMDiffAt
     -- Next, we handle the application of the musical isomorphism.
-    have : IsManifold I (↑k + 1 + 1) M := IsManifold.of_le (n := k + 3) (aux1 k)
+    have : IsManifold I (↑k + 1 + 1) M := IsManifold.of_le (n := k + 3) (by mybasify)
     have : IsContMDiffRiemannianBundle I (k + 1) E fun (x : M) ↦ TangentSpace I x :=
-      IsContMDiffRiemannianBundle.of_le (n := k + 3) (aux5 k)
+      IsContMDiffRiemannianBundle.of_le (n := k + 3) (by mybasify)
     apply contMDiff_musicalIso_apply
     -- The final step is applying our smoothness criterion for the tensoriality construction.
-    have : IsManifold I (k + 1) M := IsManifold.of_le (n := k + 3) (aux5 k)
+    have : IsManifold I (k + 1) M := IsManifold.of_le (n := k + 3) (by mybasify)
     -- NB. We apply the version involving a loss of derivatives, because this is what happens here.
     apply TensorialAt.contMDiff_mkHom₂' (by simp)
     exact fun x τ hτ τ' hτ' ↦ contMDiffAt_leviCivitaAuxInner I (hσ x) hτ hτ'
