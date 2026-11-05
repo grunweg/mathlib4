@@ -529,32 +529,22 @@ theorem contMDiffAt_leviCivitaAuxInner
       IsContMDiffRiemannianBundle.of_le (n := k + 3) (aux6 k) -- TODO: need a better tactic!
     have : IsContMDiffRiemannianBundle I (k + 1) E fun (x : M) ↦ TangentSpace I x :=
       IsContMDiffRiemannianBundle.of_le (n := k + 3) (by mybasify)
-    let A (x) := ((d% fun x ↦ ⟪σ x, τ' x⟫) x) (τ x)
-    let B (x) := ((d% fun x ↦ ⟪τ' x, τ x⟫) x) (σ x)
-    let C (x) := ((d% fun x ↦ ⟪τ x, σ x⟫) x) (τ' x)
-    let D (x) := ⟪σ x, mlieBracket I τ τ' x⟫
-    let E (x) := ⟪τ' x, mlieBracket I σ τ x⟫
-    let F (x) := ⟪τ x, mlieBracket I τ' σ x⟫
     have : IsManifold I (↑(k + 2) + 1) M := IsManifold.of_le (n := k + 3) (by mybasify)
-    -- XXX: can fun_prop solve all these with the right tagging? that's the morally correct proof
-    have hA : CMDiffAt (k + 1) A x := by
-      unfold A
-      apply ContMDiffAt.mvfderiv ?_ (n := k + 2) (hτ.of_le (by mybasify)) (by mybasify)
+    have : IsManifold I (minSmoothness ℝ 2) M := IsManifold.of_le (n := k + 3) (by simp [aux'' k])
+    repeat apply ContMDiffAt.add
+    all_goals try apply ContMDiffAt.neg
+    -- TODO: all of these should be proven by fun_prop, eventually!
+    · apply ContMDiffAt.mvfderiv ?_ (n := k + 2) (hτ.of_le (by mybasify)) (by mybasify)
       apply ContMDiffAt.inner_bundle'
       · apply hσ.of_le (by mybasify)
       · -- Papercut: have hypotheses (k + 1 + 1)-differentiability; want k + 2-differentiability
         -- convert won't do it, but creates k = k + 1 and 2 = 1 goals
         apply hτ'.of_le (by mybasify)
-    have hB : CMDiffAt (k + 1) B x := by
-      apply ContMDiffAt.mvfderiv ?_ (n := k + 2) (hσ.of_le (by mybasify)) (by mybasify)
+    · apply ContMDiffAt.mvfderiv ?_ (n := k + 2) (hσ.of_le (by mybasify)) (by mybasify)
       exact (hτ'.of_le (by mybasify)).inner_bundle' (hτ.of_le (by mybasify))
-    have hC : CMDiffAt (k + 1) C x := by
-      apply ContMDiffAt.mvfderiv ?_ (n := k + 2) (hτ'.of_le (by mybasify)) (by mybasify)
+    · apply ContMDiffAt.mvfderiv ?_ (n := k + 2) (hτ'.of_le (by mybasify)) (by mybasify)
       exact (hτ.of_le (by mybasify)).inner_bundle' (hσ.of_le (by mybasify))
-    have : IsManifold I (minSmoothness ℝ 2) M := IsManifold.of_le (n := k + 3) (by simp [aux'' k])
-    have hD : CMDiffAt (k + 1) D x := by
-      unfold D
-      apply ContMDiffAt.inner_bundle'
+    · apply ContMDiffAt.inner_bundle'
       · apply hσ.of_le (by simp)
       · apply ContMDiffAt.mlieBracket_vectorField (n := k + 2)
         · apply hτ.of_le (aux8 k)
@@ -563,11 +553,20 @@ theorem contMDiffAt_leviCivitaAuxInner
         · apply hτ'.of_le (by mybasify)
         simp only [minSmoothness_of_isRCLikeNormedField]
         mybasify
-    have hE : CMDiffAt (k + 1) E x := sorry -- analogous
-    have hF : CMDiffAt (k + 1) F x := sorry -- analogous
-    repeat apply ContMDiffAt.add
-    all_goals try apply ContMDiffAt.neg
-    all_goals assumption
+    · apply ContMDiffAt.inner_bundle'
+      · apply hτ'.of_le (by simp)
+      · apply ContMDiffAt.mlieBracket_vectorField (n := k + 2)
+        · apply hσ.of_le (by mybasify)
+        · apply hτ.of_le (by mybasify)
+        simp only [minSmoothness_of_isRCLikeNormedField]
+        mybasify
+    · apply ContMDiffAt.inner_bundle'
+      · apply hτ.of_le (by simp)
+      · apply ContMDiffAt.mlieBracket_vectorField (n := k + 2)
+        · apply hτ'.of_le (by mybasify)
+        · apply hσ.of_le (by mybasify)
+        simp only [minSmoothness_of_isRCLikeNormedField]
+        mybasify
 
 /-- If `M` is a `C^{k+2}` manifold (for `k ≥ 1`) endowed with a `C^{k+1}` metric,
 its Levi-Civita connection is a `C^k` connection.
