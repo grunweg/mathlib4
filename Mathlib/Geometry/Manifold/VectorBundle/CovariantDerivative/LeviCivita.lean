@@ -433,7 +433,7 @@ lemma aux1 (k : ℕ∞) : (k : ℕ∞ω) + 1 + 1 ≤ k + 3 := by
   -- gcongr fails; cannot use a suitable pattern either
   basify
   · simp
-  -- bug: norm_cast is not idempotent here!
+  -- question/bug(?): norm_cast is not idempotent here
   norm_cast
   norm_cast
   simp
@@ -453,22 +453,40 @@ lemma aux3 (k : ℕ∞) : (k : ℕ∞ω) + 1 ≤ k + 2 := by
   --gcongr; simp
   basify
   · simp
-  -- now, need to think
-  gcongr
-  simp
+  norm_cast; norm_cast; lia
 
 -- real example in the lemma below
 lemma aux5 (k : ℕ∞) : (k : ℕ∞ω) + 1 ≤ k + 3 := by
   gcongr; simp
 
+-- different form of `missing` below; don't understand why `trivial` solves it
+lemma related (a : ℕ) : (∞ : ℕ∞ω) + a = ∞ := by
+  basify
+  trivial
+
+@[simp]
+lemma missing (a : ℕ) : (∞ : ℕ∞ω) + (ofNat(a) : ℕ∞ω) = ∞ := by
+  -- TODO: how to prove this?
+  sorry
+
 -- real example in the lemma below
 lemma aux6 (k : ℕ∞) : (k : ℕ∞ω) + 2 ≤ k + 3 := by
+  basify
+  · -- simp works thanks ot the lemma missing above
+    trans ∞
+    · apply le_of_eq
+      exact ENat.add_one_eq_coe_top_iff.mp rfl
+    · apply le_of_eq
+      symm
+      -- XXX: how does this work for adding three?
+      exact ENat.add_one_eq_coe_top_iff.mp rfl
+  norm_cast; norm_cast; lia
   -- note: basify's first side goal cannot be solved by simp, and the second one is also hard...
   -- TODO: do we need better basify tagging for enat? or applying it twice?
   -- basify
   -- · sorry
   -- sorry
-  gcongr; norm_num
+  -- gcongr; norm_num
 
 lemma aux6' (k : ℕ∞ω) (hk : k ≠ ω) : k + 2 ≤ k + 3 := by
   -- gcongr; norm_num
@@ -479,7 +497,7 @@ lemma aux6' (k : ℕ∞ω) (hk : k ≠ ω) : k + 2 ≤ k + 3 := by
 lemma aux7 (k : ℕ∞) : (k + 2 : ℕ∞ω) + 1 ≤ ↑k + 3 := by
   -- `apply le_of_eq (by grind)` works; let's try a proof without thinking
   basify
-  · sorry -- simp makes no progress
+  · simp
   -- gcongr fails again
   norm_cast
 
@@ -499,7 +517,7 @@ lemma aux9 (k : ℕ∞) : k + 1 ≤ (k : ℕ∞ω) + 1 + 1 := by
 
 lemma aux'' (k : ℕ∞) : 2 ≤ (k : ℕ∞ω) + 3 := by
   basify
-  · sorry -- some missing lemma!
+  · simp
   norm_cast
   norm_cast
   lia
