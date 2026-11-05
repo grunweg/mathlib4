@@ -426,15 +426,29 @@ lemma related (a : ℕ) : (∞ : ℕ∞ω) + a = ∞ := by
   trivial
 
 #click_suggestions
+lemma jkl (n m : ℕ) : (ofNat(n + m) : ℕ∞ω) = ofNat(n) + ofNat(m) := by
+  sorry
+
+lemma asdf (n : ℕ) : (ofNat(n + 1) : ℕ∞ω) = ofNat(n) + 1 := by
+  -- exact jkl n 1
+  induction n with
+  | zero => simp
+  | succ n hn =>
+
+    sorry
+
+-- ofNat(a) : WithTop α = WithTop.some (ofNat a)
+
+--lemma aux {α : Type*} (n : ℕ) [OfNat α n] [Add α] (a : α) :
+--    WithTop.some a + (ofNat(n)) = WithTop.some (α := α) (a + ofNat(n)) := sorry
 
 @[simp, basify_simp]
 lemma missing (a : ℕ) : (∞ : ℕ∞ω) + (ofNat(a) : ℕ∞ω) = ∞ := by
+  --simp
   induction a with
   | zero => simp
   | succ n hn =>
-    have : (OfNat.ofNat (n + 1) : ℕ∞ω) = OfNat.ofNat n + 1 := by
-      sorry
-    rwa [this, ← add_assoc, ENat.add_one_eq_coe_top_iff]
+    rwa [asdf, ← add_assoc, ENat.add_one_eq_coe_top_iff]
 
 attribute [basify_simp] le_rfl
 
@@ -456,6 +470,7 @@ lemma aux1 (k : ℕ∞) : (k : ℕ∞ω) + 1 + 1 ≤ k + 3 := by
 
 -- manual tweak of the example above
 lemma aux2 (k : ℕ∞) : (k : ℕ∞ω) + 1 + 1 ≤ k + 2 := by
+  --norm_cast; norm_cast
   -- the following works, but requires "thinking"
   --apply le_of_eq
   --grind
@@ -467,6 +482,7 @@ lemma aux3 (k : ℕ∞) : (k : ℕ∞ω) + 1 ≤ k + 2 := by
   -- works, but requires thinking
   --gcongr; simp
   basify
+  -- ask Claude, investigate why norm_cast is not idempotent
   norm_cast; norm_cast; lia
 
 -- real example in the lemma below
