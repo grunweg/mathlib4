@@ -901,14 +901,14 @@ variable {E} [(x : B) → Zero (E x)] [TopologicalSpace (TotalSpace F E)] [Fiber
 The details of the extension are mostly unspecified: for covariant derivatives, the value of
 `s` at points other than `x` will not matter (except for shorter proofs).
 -/
-noncomputable def extend {x : B} (v₀ : E x) (x' : B) : E x' :=
+protected noncomputable def extend {x : B} (v₀ : E x) (x' : B) : E x' :=
   letI t := trivializationAt F E x
   letI w : F := (t ⟨x, v₀⟩).2
   -- TODO: use the `funToSec` helper from #36036 once available
   t.symm x' w
 
-@[simp] lemma extend_apply_self {x : B} (v : E x) : extend F v x = v := by
-  simp [extend, FiberBundle.mem_baseSet_trivializationAt' x]
+@[simp] lemma extend_apply_self {x : B} (v : E x) : FiberBundle.extend F v x = v := by
+  simp [FiberBundle.extend, FiberBundle.mem_baseSet_trivializationAt' x]
 
 end extend
 end FiberBundle
