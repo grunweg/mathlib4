@@ -72,7 +72,7 @@ variable (I) in
 /-- Given a chart `f` on a manifold with corners, `f.extend I` is the extended chart to the model
 vector space. -/
 @[simp, mfld_simps]
-protected def extend : PartialEquiv M E :=
+def extend : PartialEquiv M E :=
   f.toPartialEquiv ≫ I.toPartialEquiv
 
 theorem extend_coe : ⇑(f.extend I) = I ∘ f :=
@@ -82,20 +82,17 @@ theorem extend_coe_symm : ⇑(f.extend I).symm = f.symm ∘ I.symm :=
   rfl
 
 theorem extend_source : (f.extend I).source = f.source := by
-  rw [OpenPartialHomeomorph.extend, PartialEquiv.trans_source,
-    I.source_eq, preimage_univ, inter_univ]
+  rw [extend, PartialEquiv.trans_source, I.source_eq, preimage_univ, inter_univ]
 
 theorem isOpen_extend_source : IsOpen (f.extend I).source := by
   rw [extend_source]
   exact f.open_source
 
 theorem extend_target : (f.extend I).target = I.symm ⁻¹' f.target ∩ range I := by
-  simp_rw [OpenPartialHomeomorph.extend, PartialEquiv.trans_target,
-    I.target_eq, I.toPartialEquiv_coe_symm, inter_comm]
+  simp_rw [extend, PartialEquiv.trans_target, I.target_eq, I.toPartialEquiv_coe_symm, inter_comm]
 
 theorem extend_target' : (f.extend I).target = I '' f.target := by
-  rw [OpenPartialHomeomorph.extend, PartialEquiv.trans_target'',
-    I.source_eq, univ_inter, I.toPartialEquiv_coe]
+  rw [extend, PartialEquiv.trans_target'', I.source_eq, univ_inter, I.toPartialEquiv_coe]
 
 theorem extend_target_eq_image_source : (f.extend I).target = (f.extend I) '' f.source := by
   rw [f.extend_target', ← f.image_source_eq_target, ← image_comp, f.extend_coe]
